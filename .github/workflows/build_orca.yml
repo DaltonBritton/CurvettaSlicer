@@ -264,7 +264,7 @@ jobs:
         run: |
           ./CurvettaSlicer_profile_validator -p ${{ github.workspace }}/resources/profiles -g 1
           cd ${{ github.workspace }}/resources/profiles
-          zip -r orca_custom_preset_tests.zip user/
+          zip -r curvetta_custom_preset_tests.zip user/
 
       - name: Upload artifacts Ubuntu
         if: ${{ ! env.ACT && inputs.os == 'ubuntu-20.04' || inputs.os == 'ubuntu-24.04' }}
