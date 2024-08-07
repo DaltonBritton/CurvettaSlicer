@@ -787,7 +787,7 @@ set (CPACK_PACKAGE_FILE_NAME "CurvettaSlicer_Windows_Installer_V${SoftFever_VERS
 set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Curvetta Slicer is an open source slicer for FDM printers")
 set (CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/DaltonBritton/CurvettaSlicer")
 set (CPACK_PACKAGE_INSTALL_DIRECTORY ${CPACK_PACKAGE_NAME})
-set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/resources/images\\\\OrcaSlicer.ico")
+set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/resources/images\\\\CurvettaSlicer.ico")
 set (CPACK_NSIS_MUI_ICON "${CPACK_PACKAGE_ICON}")
 set (CPACK_NSIS_MUI_UNIICON "${CPACK_PACKAGE_ICON}")
 set (CPACK_NSIS_INSTALLED_ICON_NAME  "$INSTDIR\\\\curvetta-slicer.exe")
