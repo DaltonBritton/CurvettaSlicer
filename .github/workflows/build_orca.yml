@@ -94,8 +94,8 @@ jobs:
           ./build_release_macos.sh -s -n -x -a ${{inputs.arch}} -t 10.15 -1
 
  # Thanks to RaySajuuk, it's working now
-      - name: Sign app and notary
-        if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && inputs.os == 'macos-14'
+      - name: Sign app and notary # disabled
+        if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && inputs.os == 'macos-14' && false
         working-directory: ${{ github.workspace }}
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
