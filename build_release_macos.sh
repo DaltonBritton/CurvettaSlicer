@@ -144,7 +144,7 @@ function pack_deps() {
         set -x
         mkdir -p "$DEPS"
         cd "$DEPS_BUILD_DIR"
-        tar -zcvf "OrcaSlicer_dep_mac_${ARCH}_$(date +"%Y%m%d").tar.gz" "OrcaSlicer_dep_$ARCH"
+        tar -zcvf "CurvettaSlicer_dep_mac_${ARCH}_$(date +"%Y%m%d").tar.gz" "CurvettaSlicer_dep_$ARCH"
     )
 }
 
@@ -159,7 +159,7 @@ function build_slicer() {
                 -G "${SLICER_CMAKE_GENERATOR}" \
                 -DBBL_RELEASE_TO_PUBLIC=1 \
                 -DCMAKE_PREFIX_PATH="$DEPS/usr/local" \
-                -DCMAKE_INSTALL_PREFIX="$PWD/OrcaSlicer" \
+                -DCMAKE_INSTALL_PREFIX="$PWD/CurvettaSlicer" \
                 -DCMAKE_BUILD_TYPE="$BUILD_CONFIG" \
                 -DCMAKE_MACOSX_RPATH=ON \
                 -DCMAKE_INSTALL_RPATH="${DEPS}/usr/local" \
@@ -179,18 +179,18 @@ function build_slicer() {
     echo "Fix macOS app package..."
     (
         cd "$PROJECT_BUILD_DIR"
-        mkdir -p OrcaSlicer
-        cd OrcaSlicer
+        mkdir -p CurvettaSlicer
+        cd CurvettaSlicer
         # remove previously built app
-        rm -rf ./OrcaSlicer.app
+        rm -rf ./CurvettaSlicer.app
         # fully copy newly built app
-        cp -pR "../src$BUILD_DIR_CONFIG_SUBDIR/OrcaSlicer.app" ./OrcaSlicer.app
+        cp -pR "../src$BUILD_DIR_CONFIG_SUBDIR/CurvettaSlicer.app" ./CurvettaSlicer.app
         # fix resources
-        resources_path=$(readlink ./OrcaSlicer.app/Contents/Resources)
-        rm ./OrcaSlicer.app/Contents/Resources
-        cp -R "$resources_path" ./OrcaSlicer.app/Contents/Resources
+        resources_path=$(readlink ./CurvettaSlicer.app/Contents/Resources)
+        rm ./CurvettaSlicer.app/Contents/Resources
+        cp -R "$resources_path" ./CurvettaSlicer.app/Contents/Resources
         # delete .DS_Store file
-        find ./OrcaSlicer.app/ -name '.DS_Store' -delete
+        find ./CurvettaSlicer.app/ -name '.DS_Store' -delete
     )
 
     # extract version
@@ -202,7 +202,7 @@ function build_slicer() {
     #     ver=${ver}_dev
     # fi
 
-    # zip -FSr OrcaSlicer${ver}_Mac_${ARCH}.zip OrcaSlicer.app
+    # zip -FSr CurvettaSlicer${ver}_Mac_${ARCH}.zip CurvettaSlicer.app
 }
 
 case "${BUILD_TARGET}" in
