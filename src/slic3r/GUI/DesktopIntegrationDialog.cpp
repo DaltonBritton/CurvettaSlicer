@@ -294,7 +294,7 @@ void DesktopIntegrationDialog::perform_desktop_integration()
         if (contains_path_dir(target_candidates[i], "images")) {
             target_dir_icons = target_candidates[i];
             std::string icon_path = GUI::format("%1%/images/CurvettaSlicer.png",resources_dir());
-            std::string dest_path = GUI::format("%1%/images/%2%OrcaSlicer%3%.png", target_dir_icons, icon_theme_path, version_suffix);
+            std::string dest_path = GUI::format("%1%/images/%2%CurvettaSlicer%3%.png", target_dir_icons, icon_theme_path, version_suffix);
             if (copy_icon(icon_path, dest_path))
                 break; // success
             else
