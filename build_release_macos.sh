@@ -144,7 +144,7 @@ function pack_deps() {
         set -x
         mkdir -p "$DEPS"
         cd "$DEPS_BUILD_DIR"
-        tar -zcvf "CurvettaSlicer_dep_mac_${ARCH}_$(date +"%Y%m%d").tar.gz" "CurvettaSlicer_dep_$ARCH"
+        tar -zcvf "OrcaSlicer_dep_mac_${ARCH}_$(date +"%Y%m%d").tar.gz" "OrcaSlicer_dep_$ARCH"
     )
 }
 
