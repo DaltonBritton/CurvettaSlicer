@@ -33,6 +33,9 @@
       <array>
         <string>curvettasliceropen</string>
         <string>curvettaslicer</string>
+        <string>orcasliceropen</string>
+        <string>orcaslicer</string>
+        <string>bambustudioopen</string>
       </array>
     </dict>
   </array>
