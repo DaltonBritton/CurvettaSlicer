@@ -246,7 +246,7 @@ void Bed3D::Axes::render()
 
 //BBS: add part plate logic
 bool Bed3D::set_shape(const Pointfs& printable_area, const double printable_height, const std::string& custom_model, bool force_as_custom,
-    const Vec2d position, bool with_reset)
+    const Vec2d& position, bool with_reset)
 {
     /*auto check_texture = [](const std::string& texture) {
         boost::system::error_code ec; // so the exists call does not throw (e.g. after a permission problem)
@@ -612,7 +612,7 @@ void Bed3D::render_system(GLCanvas3D& canvas, const Transform3d& view_matrix, co
 void Bed3D::update_model_offset()
 {
     // move the model so that its origin (0.0, 0.0, 0.0) goes into the bed shape center and a bit down to avoid z-fighting with the texture quad
-    Vec3d shift = m_extended_bounding_box.center();
+    Vec3d shift = m_build_volume.bounding_volume().center();
     shift(2) = -0.03;
     Vec3d* model_offset_ptr = const_cast<Vec3d*>(&m_model_offset);
     *model_offset_ptr = shift;
@@ -649,8 +649,8 @@ void Bed3D::update_bed_triangles()
     (*model_offset_ptr)(2) = -0.41 + GROUND_Z;
 
     std::vector<Vec2d> origin_bed_shape;
-    for (size_t i = 0; i < m_bed_shape.size(); i++) { 
-        origin_bed_shape.push_back(m_bed_shape[i] - m_bed_shape[0]);
+    for (size_t i = 0; i < m_bed_shape.size(); i++) {
+         origin_bed_shape.push_back(m_bed_shape[i]);
     }
     std::vector<Vec2d> new_bed_shape; // offset to correct origin
     for (auto point : origin_bed_shape) {
@@ -729,7 +729,9 @@ void Bed3D::render_default(bool bottom, const Transform3d& view_matrix, const Tr
         if (m_model.get_filename().empty() && !bottom) {
             // draw background
             glsafe(::glDepthMask(GL_FALSE));
-            m_triangles.set_color(DEFAULT_MODEL_COLOR);
+            ColorRGBA color = m_is_dark ? DEFAULT_MODEL_COLOR_DARK : DEFAULT_MODEL_COLOR;   // ORCA add dark mode support
+            color = ColorRGBA(color[0] * 0.8f, color[1] * 0.8f,color[2] * 0.8f, color[3]);  // ORCA shift color a darker tone to fix difference between flat / gouraud_light shader
+            m_triangles.set_color(color);
             m_triangles.render();
             glsafe(::glDepthMask(GL_TRUE));
         }

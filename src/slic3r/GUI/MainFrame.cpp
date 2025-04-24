@@ -66,6 +66,7 @@
 #ifdef _WIN32
 #include <dbt.h>
 #include <shlobj.h>
+#include <shellapi.h>
 #endif // _WIN32
 #include <slic3r/GUI/CreatePresetsDialog.hpp>
 
@@ -167,8 +168,10 @@ wxDEFINE_EVENT(EVT_SYNC_CLOUD_PRESET,     SimpleEvent);
 
 #ifdef __APPLE__
 static const wxString ctrl = ("Ctrl+");
+static const std::string ctrl_t = "⌘";
 #else
 static const wxString ctrl = _L("Ctrl+");
+static const wxString ctrl_t = ctrl;
 #endif
 
 MainFrame::MainFrame() :
@@ -634,8 +637,64 @@ void MainFrame::bind_diff_dialog()
 
 #ifdef __WIN32__
 
+// Orca: Fix maximized window overlaps taskbar when taskbar auto hide is enabled (#8085)
+// Adopted from https://gist.github.com/MortenChristiansen/6463580
+static void AdjustWorkingAreaForAutoHide(const HWND hWnd, MINMAXINFO* mmi)
+{
+    const auto taskbarHwnd = FindWindowA("Shell_TrayWnd", nullptr);
+    if (!taskbarHwnd) {
+        return;
+    }
+    const auto monitorContainingApplication = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONULL);
+    const auto monitorWithTaskbarOnIt = MonitorFromWindow(taskbarHwnd, MONITOR_DEFAULTTONULL);
+    if (monitorContainingApplication != monitorWithTaskbarOnIt) {
+        return;
+    }
+    APPBARDATA abd;
+    abd.cbSize = sizeof(APPBARDATA);
+    abd.hWnd   = taskbarHwnd;
+
+    // Find if task bar has auto-hide enabled
+    const auto uState = (UINT) SHAppBarMessage(ABM_GETSTATE, &abd);
+    if ((uState & ABS_AUTOHIDE) != ABS_AUTOHIDE) {
+        return;
+    }
+
+    RECT borderThickness;
+    SetRectEmpty(&borderThickness);
+    AdjustWindowRectEx(&borderThickness, GetWindowLongPtr(hWnd, GWL_STYLE) & ~WS_CAPTION, FALSE, 0);
+
+    // Determine taskbar position
+    SHAppBarMessage(ABM_GETTASKBARPOS, &abd);
+    const auto& rc = abd.rc;
+    if (rc.top == rc.left && rc.bottom > rc.right) {
+        // Left
+        const auto offset = borderThickness.left + 2;
+        mmi->ptMaxPosition.x += offset;
+        mmi->ptMaxTrackSize.x -= offset;
+        mmi->ptMaxSize.x -= offset;
+    } else if (rc.top == rc.left && rc.bottom < rc.right) {
+        // Top
+        const auto offset = borderThickness.top + 2;
+        mmi->ptMaxPosition.y += offset;
+        mmi->ptMaxTrackSize.y -= offset;
+        mmi->ptMaxSize.y -= offset;
+    } else if (rc.top > rc.left) {
+        // Bottom
+        const auto offset = borderThickness.bottom + 2;
+        mmi->ptMaxSize.y -= offset;
+        mmi->ptMaxTrackSize.y -= offset;
+    } else {
+        // Right
+        const auto offset = borderThickness.right + 2;
+        mmi->ptMaxSize.x -= offset;
+        mmi->ptMaxTrackSize.x -= offset;
+    }
+}
+
 WXLRESULT MainFrame::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
+    HWND hWnd = GetHandle();
     /* When we have a custom titlebar in the window, we don't need the non-client area of a normal window
      * to be painted. In order to achieve this, we handle the "WM_NCCALCSIZE" which is responsible for the
      * size of non-client area of a window and set the return value to 0. Also we have to tell the
@@ -654,7 +713,6 @@ WXLRESULT MainFrame::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam
     its wParam value is TRUE and the return value is 0 */
     case WM_NCCALCSIZE:
         if (wParam) {
-            HWND hWnd = GetHandle();
             /* Detect whether window is maximized or not. We don't need to change the resize border when win is
              *  maximized because all resize borders are gone automatically */
             WINDOWPLACEMENT wPos;
@@ -677,6 +735,13 @@ WXLRESULT MainFrame::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam
             }
         }
         break;
+
+    case WM_GETMINMAXINFO: {
+        auto mmi = (MINMAXINFO*) lParam;
+        HandleGetMinMaxInfo(mmi);
+        AdjustWorkingAreaForAutoHide(hWnd, mmi);
+        return 0;
+    }
     }
     return wxFrame::MSWWindowProc(nMsg, wParam, lParam);
 }
@@ -916,7 +981,6 @@ void MainFrame::update_title_colour_after_set_title()
 
 void MainFrame::show_option(bool show)
 {
-    if (!this) { return; }
     if (!show) {
         if (m_slice_btn->IsShown()) {
             m_slice_btn->Hide();
@@ -2121,14 +2185,13 @@ void MainFrame::on_sys_color_changed()
     this->Refresh();
 }
 
-#ifdef _MSC_VER
-    // \xA0 is a non-breaking space. It is entered here to spoil the automatic accelerators,
-    // as the simple numeric accelerators spoil all numeric data entry.
-static const wxString sep = "\t\xA0";
-static const wxString sep_space = "\xA0";
-#else
+// On macOS, we use system menu bar, which handles the key accelerators automatically and breaks key handling in normal typing
+// See https://github.com/SoftFever/OrcaSlicer/issues/8152
+// So we disable some of the accelerators on macOS, by replacing the accelerator seperator to a hyphen.
+#ifdef __APPLE__
 static const wxString sep = " - ";
-static const wxString sep_space = "";
+#else
+static const wxString sep = "\t";
 #endif
 
 static wxMenu* generate_help_menu()
@@ -2441,7 +2504,7 @@ void MainFrame::init_menubar_as_editor()
         editMenu->AppendSeparator();
 #else
         // BBS undo
-        append_menu_item(editMenu, wxID_ANY, _L("Undo") + "\t" + ctrl + "Z",
+        append_menu_item(editMenu, wxID_ANY, _L("Undo") + sep + ctrl_t + "Z",
             _L("Undo"), [this, handle_key_event](wxCommandEvent&) {
                 wxKeyEvent e;
                 e.SetEventType(wxEVT_KEY_DOWN);
@@ -2453,7 +2516,7 @@ void MainFrame::init_menubar_as_editor()
                 m_plater->undo(); },
             "", nullptr, [this](){return m_plater->can_undo(); }, this);
         // BBS redo
-        append_menu_item(editMenu, wxID_ANY, _L("Redo") + "\t" + ctrl + "Y",
+        append_menu_item(editMenu, wxID_ANY, _L("Redo") + sep + ctrl_t + "Y",
             _L("Redo"), [this, handle_key_event](wxCommandEvent&) {
                 wxKeyEvent e;
                 e.SetEventType(wxEVT_KEY_DOWN);
@@ -2466,7 +2529,7 @@ void MainFrame::init_menubar_as_editor()
             "", nullptr, [this](){return m_plater->can_redo(); }, this);
         editMenu->AppendSeparator();
         // BBS Cut TODO
-        append_menu_item(editMenu, wxID_ANY, _L("Cut") + "\t" + ctrl + "X",
+        append_menu_item(editMenu, wxID_ANY, _L("Cut") + sep + ctrl_t + "X",
             _L("Cut selection to clipboard"), [this, handle_key_event](wxCommandEvent&) {
                 wxKeyEvent e;
                 e.SetEventType(wxEVT_KEY_DOWN);
@@ -2478,7 +2541,7 @@ void MainFrame::init_menubar_as_editor()
                 m_plater->cut_selection_to_clipboard(); },
             "", nullptr, [this]() {return m_plater->can_copy_to_clipboard(); }, this);
         // BBS Copy
-        append_menu_item(editMenu, wxID_ANY, _L("Copy") + "\t" + ctrl + "C",
+        append_menu_item(editMenu, wxID_ANY, _L("Copy") + sep + ctrl_t + "C",
             _L("Copy selection to clipboard"), [this, handle_key_event](wxCommandEvent&) {
                 wxKeyEvent e;
                 e.SetEventType(wxEVT_KEY_DOWN);
@@ -2490,7 +2553,7 @@ void MainFrame::init_menubar_as_editor()
                 m_plater->copy_selection_to_clipboard(); },
             "", nullptr, [this](){return m_plater->can_copy_to_clipboard(); }, this);
         // BBS Paste
-        append_menu_item(editMenu, wxID_ANY, _L("Paste") + "\t" + ctrl + "V",
+        append_menu_item(editMenu, wxID_ANY, _L("Paste") + sep + ctrl_t + "V",
             _L("Paste clipboard"), [this, handle_key_event](wxCommandEvent&) {
                 wxKeyEvent e;
                 e.SetEventType(wxEVT_KEY_DOWN);
@@ -2546,7 +2609,7 @@ void MainFrame::init_menubar_as_editor()
 #endif
 
         // BBS Select All
-        append_menu_item(editMenu, wxID_ANY, _L("Select all") + "\t" + ctrl + "A",
+        append_menu_item(editMenu, wxID_ANY, _L("Select all") + sep + ctrl_t + "A",
             _L("Selects all objects"), [this, handle_key_event](wxCommandEvent&) { 
                 wxKeyEvent e;
                 e.SetEventType(wxEVT_KEY_DOWN);
@@ -2558,7 +2621,7 @@ void MainFrame::init_menubar_as_editor()
                 m_plater->select_all(); },
             "", nullptr, [this](){return can_select(); }, this);
         // BBS Deslect All
-        append_menu_item(editMenu, wxID_ANY, _L("Deselect all") + "\tEsc",
+        append_menu_item(editMenu, wxID_ANY, _L("Deselect all") + sep + "Esc",
             _L("Deselects all objects"), [this, handle_key_event](wxCommandEvent&) {
                 wxKeyEvent e;
                 e.SetEventType(wxEVT_KEY_DOWN);
@@ -2614,13 +2677,22 @@ void MainFrame::init_menubar_as_editor()
                 wxGetApp().app_config->set_bool("use_perspective_camera", false);
                 wxGetApp().update_ui_from_settings();
             }, nullptr);
-        if (wxGetApp().app_config->get("use_perspective_camera").compare("true") == 0)
-            viewMenu->Check(wxID_CAMERA_PERSPECTIVE + camera_id_base, true);
-        else
-            viewMenu->Check(wxID_CAMERA_ORTHOGONAL + camera_id_base, true);
+        this->Bind(wxEVT_UPDATE_UI, [viewMenu, camera_id_base](wxUpdateUIEvent& evt) {
+                if (wxGetApp().app_config->get("use_perspective_camera").compare("true") == 0)
+                    viewMenu->Check(wxID_CAMERA_PERSPECTIVE + camera_id_base, true);
+                else
+                    viewMenu->Check(wxID_CAMERA_ORTHOGONAL + camera_id_base, true);
+            }, perspective_item->GetId());
+        append_menu_check_item(viewMenu, wxID_ANY, _L("Auto Perspective"), _L("Automatically switch between orthographic and perspective when changing from top/bottom/side views"),
+            [this](wxCommandEvent&) {
+                wxGetApp().app_config->set_bool("auto_perspective", !wxGetApp().app_config->get_bool("auto_perspective"));
+                m_plater->get_current_canvas3D()->post_event(SimpleEvent(wxEVT_PAINT));
+            },
+            this, [this]() { return m_tabpanel->GetSelection() == TabPosition::tp3DEditor || m_tabpanel->GetSelection() == TabPosition::tpPreview; },
+            [this]() { return wxGetApp().app_config->get_bool("auto_perspective"); }, this);
 
         viewMenu->AppendSeparator();
-        append_menu_check_item(viewMenu, wxID_ANY, _L("Show &G-code Window") + "\tC", _L("Show g-code window in Preview scene"),
+        append_menu_check_item(viewMenu, wxID_ANY, _L("Show &G-code Window") + sep + "C", _L("Show g-code window in Preview scene"),
             [this](wxCommandEvent &) {
                 wxGetApp().toggle_show_gcode_window();
                 m_plater->get_current_canvas3D()->post_event(SimpleEvent(wxEVT_PAINT));
@@ -2659,7 +2731,7 @@ void MainFrame::init_menubar_as_editor()
             this, [this]() { return m_plater->is_view3D_shown(); }, [this]() { return m_plater->is_view3D_overhang_shown(); }, this);
 
         append_menu_check_item(
-            viewMenu, wxID_ANY, _L("Show Selected Outline (Experimental)"), _L("Show outline around selected object in 3D scene"),
+            viewMenu, wxID_ANY, _L("Show Selected Outline (beta)"), _L("Show outline around selected object in 3D scene"),
             [this](wxCommandEvent&) {
                 wxGetApp().toggle_show_outline();
                 m_plater->get_current_canvas3D()->post_event(SimpleEvent(wxEVT_PAINT));
@@ -2903,6 +2975,43 @@ void MainFrame::init_menubar_as_editor()
         },
         "", nullptr,
         [this]() {return m_plater->is_view3D_shown();; }, this);
+        
+    // Input Shaping calibrations
+    auto input_shaping_menu = new wxMenu();
+    
+    append_menu_item(
+        input_shaping_menu, wxID_ANY, _L("Input Shaping Frequency"), _L("Input Shaping Frequency"),
+        [this](wxCommandEvent&) {
+            if (!m_IS_freq_calib_dlg)
+                m_IS_freq_calib_dlg = new Input_Shaping_Freq_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
+            m_IS_freq_calib_dlg->ShowModal();
+        },
+        "", nullptr,
+        [this]() {return m_plater->is_view3D_shown();; }, this);
+        
+    append_menu_item(
+        input_shaping_menu, wxID_ANY, _L("Input Shaping Damping/zeta factor"), _L("Input Shaping Damping/zeta factor"),
+        [this](wxCommandEvent&) {
+            if (!m_IS_damp_calib_dlg)
+                m_IS_damp_calib_dlg = new Input_Shaping_Damp_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
+            m_IS_damp_calib_dlg->ShowModal();
+        },
+        "", nullptr,
+        [this]() {return m_plater->is_view3D_shown();; }, this);
+    
+    m_topbar->GetCalibMenu()->AppendSubMenu(input_shaping_menu, _L("Input Shaping"));
+    
+    // Add Junction Deviation option to More menu
+    append_menu_item(
+        advance_menu, wxID_ANY, _L("Junction Deviation"), _L("Junction Deviation calibration"),
+        [this](wxCommandEvent&) {
+            if (!m_junction_deviation_calib_dlg)
+                m_junction_deviation_calib_dlg = new Junction_Deviation_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
+            m_junction_deviation_calib_dlg->ShowModal();
+        },
+        "", nullptr,
+        [this]() {return m_plater->is_view3D_shown();; }, this);
+        
     m_topbar->GetCalibMenu()->AppendSubMenu(advance_menu, _L("More..."));
 
     // help 
@@ -3001,6 +3110,41 @@ void MainFrame::init_menubar_as_editor()
         }, "", nullptr,
         [this]() {return m_plater->is_view3D_shown();; }, this);    
        
+    // Add Junction Deviation option to More menu
+    append_menu_item(
+        advance_menu, wxID_ANY, _L("Junction Deviation"), _L("Junction Deviation calibration"),
+        [this](wxCommandEvent&) {
+            if (!m_junction_deviation_calib_dlg)
+                m_junction_deviation_calib_dlg = new Junction_Deviation_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
+            m_junction_deviation_calib_dlg->ShowModal();
+        }, "", nullptr,
+        [this]() {return m_plater->is_view3D_shown();; }, this);
+        
+    // Input Shaping calibrations
+    auto input_shaping_menu = new wxMenu();
+    
+    append_menu_item(
+        input_shaping_menu, wxID_ANY, _L("Input Shaping Frequency"), _L("Input Shaping Frequency"),
+        [this](wxCommandEvent&) {
+            if (!m_IS_freq_calib_dlg)
+                m_IS_freq_calib_dlg = new Input_Shaping_Freq_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
+            m_IS_freq_calib_dlg->ShowModal();
+        },
+        "", nullptr,
+        [this]() {return m_plater->is_view3D_shown();; }, this);
+        
+    append_menu_item(
+        input_shaping_menu, wxID_ANY, _L("Input Shaping Damping/zeta factor"), _L("Input Shaping Damping/zeta factor"),
+        [this](wxCommandEvent&) {
+            if (!m_IS_damp_calib_dlg)
+                m_IS_damp_calib_dlg = new Input_Shaping_Damp_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
+            m_IS_damp_calib_dlg->ShowModal();
+        },
+        "", nullptr,
+        [this]() {return m_plater->is_view3D_shown();; }, this);
+    
+    calib_menu->AppendSubMenu(input_shaping_menu, _L("Input Shaping"));
+    
     append_submenu(calib_menu, advance_menu, wxID_ANY, _L("More..."), _L("More calibrations"), "",
         [this]() {return m_plater->is_view3D_shown();; });
     // help
@@ -3155,10 +3299,10 @@ struct ConfigsOverwriteConfirmDialog : MessageDialog
 {
     ConfigsOverwriteConfirmDialog(wxWindow *parent, wxString name, bool exported)
         : MessageDialog(parent,
-                        wxString::Format(exported ? _L("A file exists with the same name: %s, do you want to override it.") :
-                                                  _L("A config exists with the same name: %s, do you want to override it."),
+                        wxString::Format(exported ? _L("A file exists with the same name: %s, do you want to overwrite it?") :
+                                                  _L("A config exists with the same name: %s, do you want to overwrite it?"),
                                          name),
-                        _L(exported ? "Overwrite file" : "Overwrite config"),
+                        exported ? _L("Overwrite file") : _L("Overwrite config"),
                         wxYES_NO | wxNO_DEFAULT)
     {
         add_button(wxID_YESTOALL, false, _L("Yes to All"));

@@ -4,23 +4,33 @@ Curvetta Slicer is an open source slicer for FDM printers.
 
 ![discord-mark-blue](https://github.com/SoftFever/OrcaSlicer/assets/103989404/b97d5ffc-072d-4d0a-bbda-e67ef373876f) Join community: [OrcaSlicer Official Discord Server](https://discord.gg/P4VE9UY9gJ)   
 
-🚨🚨🚨Alert🚨🚨🚨: "orcaslicer.net" is **NOT** our website and appears to be potentially malicious. The content there is AI-generated, which means it lacks genuine context and it's only purpose is to profit from ADs and worse: they can redirect download links to harmful sources. Please avoid downloading OrcaSlicer from this site, as the download links could be compromised at any time.
-The only official platforms for OrcaSlicer are the GitHub project page and the Discord channel mentioned above.
-I really value the OrcaSlicer community and appreciate all the social groups that have formed. However, it’s important to address that it’s harmful if any group falsely claims to be official or misleads its members. If you notice such a group or are part of one, please help by encouraging the group owner to add a clear disclaimer or by warning its members.
+<h3>🚨🚨🚨Important Security Alert🚨🚨🚨</h3>
+
+The only official platforms for OrcaSlicer are **our GitHub project page**, <a href="https://orcaslicer.com/">**orcaslicer.com**</a>, and the <a href="https://discord.gg/P4VE9UY9gJ">**official Discord channel**</a>.
+
+Please be aware that "**orcaslicer.net**", "**orcaslicer.co**" or "**orca-slicer.com**" are NOT an official website for OrcaSlicer and may be potentially malicious. These sites appear to use AI-generated content, lacking genuine context and seems to exist solely to profit from advertisements. Worse, it may redirect download links to harmful sources. For your safety, avoid downloading OrcaSlicer from this site as the links may be compromised. 
+
+If you see the above sites in your searches, report them as spam or unsafe to the search engine. This small action will assist everyone.
+
+We deeply value our OrcaSlicer community and appreciate all the social groups that support us. However, it is crucial to address the risk posed by any group that falsely claims to be official or misleads its members. If you encounter such a group or are part of one, please assist by encouraging the group owner to add a clear disclaimer or by alerting its members.
+
+
+
+Thank you for your vigilance and support in keeping our community safe!
 
 # Main features
-- Auto calibrations for all printers
-- Sandwich(inner-outer-inner) mode - an improved version of the `External perimeters first` mode
+- Auto-calibration for all printers
+- Sandwich (inner-outer-inner) mode - An improved version of the `External Perimeters First` mode
 - [Precise wall](https://github.com/DaltonBritton/CurvettaSlicer/wiki/Precise-wall)
-- Polyholes conversion support [SuperSlicer Wiki: Polyholes](https://github.com/supermerill/SuperSlicer/wiki/Polyholes)
+- Polyholes conversion support: [SuperSlicer Wiki: Polyholes](https://github.com/supermerill/SuperSlicer/wiki/Polyholes)
 - Klipper support
 - More granular controls
-- More features can be found in [change notes](https://github.com/DaltonBritton/CurvettaSlicer/releases/)  
+- Additional features can be found in [change notes](https://github.com/DaltonBritton/CurvettaSlicer/releases/)
 
 # Wiki
-The wiki below aims to provide a detailed explanation of the slicer settings, how to get the most out of them as well as how to calibrate and setup your printer.
+The wiki below aims to provide a detailed explanation of the slicer settings, including how to maximize their use and how to calibrate and set up your printer.
 
-The wiki is work in progress so bear with us while we get it up and running!
+Please note that the wiki is a work in progress. We appreciate your patience as we continue to develop and improve it!
 
 **[Access the wiki here](https://github.com/SoftFever/OrcaSlicer/wiki)**  
 
@@ -50,7 +60,7 @@ Explore the latest developments in Orca Slicer with our nightly builds. Feedback
 **Mac**:
 1. Download the DMG for your computer: `arm64` version for Apple Silicon and `x86_64` for Intel CPU.  
 2. Drag OrcaSlicer.app to Application folder. 
-3. *If you want to run a build from a PR, you also need following instructions below*  
+3. *If you want to run a build from a PR, you also need to follow the instructions below:*  
     <details quarantine>
     - Option 1 (You only need to do this once. After that the app can be opened normally.):
       - Step 1: Hold _cmd_ and right click the app, from the context menu choose **Open**.
@@ -76,28 +86,38 @@ Explore the latest developments in Orca Slicer with our nightly builds. Feedback
 - Windows 64-bit  
   - Tools needed: Visual Studio 2019, Cmake, git, git-lfs, Strawberry Perl.
       - You will require cmake version 3.14 or later, which is available [on their website](https://cmake.org/download/).
-      - Strawberry Perl is [available on their github repository](https://github.com/StrawberryPerl/Perl-Dist-Strawberry/releases/).
+      - Strawberry Perl is [available on their GitHub repository](https://github.com/StrawberryPerl/Perl-Dist-Strawberry/releases/).
   - Run `build_release.bat` in `x64 Native Tools Command Prompt for VS 2019`
   - Note: Don't forget to run `git lfs pull` after cloning the repository to download tools on Windows
 
 - Mac 64-bit  
   - Tools needed: Xcode, Cmake, git, gettext, libtool, automake, autoconf, texinfo
       - You can install most of them by running `brew install cmake gettext libtool automake autoconf texinfo`
+      - If you haven't since upgrading Xcode, start Xcode and install macOS build support.
   - run `build_release_macos.sh`
-  - To build and debug in XCode:
-      - run `XCode.app`
-      - open ``build_`arch`/OrcaSlicer.xcodeproj``
+  - open `build_arm64/OrcaSlicer/OrcaSlicer.app`
+  - To build and debug in Xcode:
+      - run `Xcode.app`
+      - open ``build_`arch`/OrcaSlicer.Xcodeproj``
       - menu bar: Product => Scheme => OrcaSlicer
       - menu bar: Product => Scheme => Edit Scheme...
           - Run => Info tab => Build Configuration: `RelWithDebInfo`
           - Run => Options tab => Document Versions: uncheck `Allow debugging when browsing versions`
       - menu bar: Product => Run
 
-- Ubuntu 
-  - Dependencies **Will be auto installed with the shell script**: `libmspack-dev libgstreamerd-3-dev libsecret-1-dev libwebkit2gtk-4.0-dev libosmesa6-dev libssl-dev libcurl4-openssl-dev eglexternalplatform-dev libudev-dev libdbus-1-dev extra-cmake-modules libgtk2.0-dev libglew-dev libudev-dev libdbus-1-dev cmake git texinfo`
-  - run 'sudo ./BuildLinux.sh -u'
-  - run './BuildLinux.sh -dsir'
-
+- Linux (All Distros)
+    - Docker
+        - Dependencies: Docker [Installation Instructions](https://www.docker.com/get-started/), git
+        - clone this repository `git clone https://github.com/SoftFever/OrcaSlicer`
+        - run `cd OrcaSlicer`
+        - run `./DockerBuild.sh`
+        - To run OrcaSlicer:
+            - run `./DockerRun.sh`
+                - For most common errors, open `DockerRun.sh` and read the comments.  
+    - Ubuntu 
+      - Dependencies **Will be auto installed with the shell script**: `libmspack-dev libgstreamerd-3-dev libsecret-1-dev libwebkit2gtk-4.0-dev libosmesa6-dev libssl-dev libcurl4-openssl-dev eglexternalplatform-dev libudev-dev libdbus-1-dev extra-cmake-modules libgtk2.0-dev libglew-dev libudev-dev libdbus-1-dev cmake git texinfo`
+      - run 'sudo ./BuildLinux.sh -u'
+      - run './BuildLinux.sh -dsi'
 
 # Note: 
 If you're running Klipper, it's recommended to add the following configuration to your `printer.cfg` file.
@@ -111,7 +131,7 @@ resolution: 0.1
 ```
 
 # Supports
-**Orca Slicer** is an open-source project, and I'm deeply grateful to all my sponsors and backers.   
+**Orca Slicer** is an open-source project and I'm deeply grateful to all my sponsors and backers.   
 Their generous support enables me to purchase filaments and other essential 3D printing materials for the project.   
 Thank you! :)
 
@@ -121,11 +141,6 @@ Thank you! :)
 <td>
 <a href="https://qidi3d.com/">
     <img src="SoftFever_doc\sponsor_logos\QIDI.png" alt="QIDI" width="96" height="">
-</a>
-</td>
-<td>
-<a href="https://phrozen3d.com/">
-    <img src="SoftFever_doc\sponsor_logos\Phrozen_Logo圓_.png" alt="Phrozen Technology" width="96" height="">
 </a>
 </td>
 <td>
@@ -148,10 +163,10 @@ Thank you! :)
 
 
 ## Some background
-OrcaSlicer is originally forked from Bambu Studio, it was previously known as BambuStudio-SoftFever.
+OrcaSlicer was originally forked from Bambu Studio, it was previously known as BambuStudio-SoftFever.
 
-Bambu Studio is forked from [PrusaSlicer](https://github.com/prusa3d/PrusaSlicer) by Prusa Research, which is from [Slic3r](https://github.com/Slic3r/Slic3r) by Alessandro Ranellucci and the RepRap community. 
-Orca Slicer incorporates a lot of features from SuperSlicer by @supermerill
+[Bambu Studio](https://github.com/bambulab/BambuStudio) is forked from [PrusaSlicer](https://github.com/prusa3d/PrusaSlicer) by Prusa Research, which is from [Slic3r](https://github.com/Slic3r/Slic3r) by Alessandro Ranellucci and the RepRap community.
+Orca Slicer incorporates a lot of features from [SuperSlicer](https://github.com/supermerill/SuperSlicer) by @supermerill
 Orca Slicer's logo is designed by community member Justin Levine(@freejstnalxndr)  
 
 

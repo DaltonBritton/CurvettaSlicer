@@ -74,11 +74,11 @@ PickingModel GLGizmoBase::Grabber::s_cone;
 
 GLGizmoBase::Grabber::~Grabber()
 {
-    if (s_cube.model.is_initialized())
-        s_cube.model.reset();
+    //if (s_cube.model.is_initialized())
+    //    s_cube.model.reset();
 
-    if (s_cone.model.is_initialized())
-        s_cone.model.reset();
+    //if (s_cone.model.is_initialized())
+    //    s_cone.model.reset();
 }
 
 float GLGizmoBase::Grabber::get_half_size(float size) const
@@ -194,7 +194,104 @@ void GLGizmoBase::Grabber::render(float size, const ColorRGBA& render_color)
     }
 }
 
-GLGizmoBase::GLGizmoBase(GLCanvas3D& parent, const std::string& icon_filename, unsigned int sprite_id)
+bool GLGizmoBase::render_combo(const std::string &label, const std::vector<std::string> &lines, int &selection_idx, float label_width, float item_width)
+{
+    ImGuiWrapper::push_combo_style(m_parent.get_scale());
+    ImGui::AlignTextToFramePadding();
+    m_imgui->text(label);
+    ImGui::SameLine(label_width);
+    ImGui::PushItemWidth(item_width);
+
+    size_t selection_out = selection_idx;
+
+    const char *selected_str = (selection_idx >= 0 && selection_idx < int(lines.size())) ? lines[selection_idx].c_str() : "";
+    if (ImGui::BBLBeginCombo(("##" + label).c_str(), selected_str, 0)) {
+        for (size_t line_idx = 0; line_idx < lines.size(); ++line_idx) {
+            ImGui::PushID(int(line_idx));
+            if (ImGui::Selectable("", line_idx == selection_idx)) selection_out = line_idx;
+
+            ImGui::SameLine();
+            ImGui::Text("%s", lines[line_idx].c_str());
+            ImGui::PopID();
+        }
+
+        ImGui::EndCombo();
+    }
+
+    bool is_changed = selection_idx != selection_out;
+    selection_idx   = selection_out;
+
+    //if (is_changed) update_connector_shape();
+    ImGuiWrapper::pop_combo_style();
+
+    return is_changed;
+}
+
+void GLGizmoBase::render_cross_mark(const Vec3f &target, bool is_single)
+{
+    const float half_length = 4.0f;
+
+    glsafe(::glLineWidth(2.0f));
+
+    auto render_line = [](const Vec3f& p1, const Vec3f& p2, const ColorRGBA& color) {
+        GLModel::Geometry init_data;
+        init_data.format = {GLModel::Geometry::EPrimitiveType::Lines, GLModel::Geometry::EVertexLayout::P3};
+        init_data.color  = color;
+        init_data.reserve_vertices(2);
+        init_data.reserve_indices(2);
+
+        // vertices
+        init_data.add_vertex(p1);
+        init_data.add_vertex(p2);
+
+        // indices
+        init_data.add_line(0, 1);
+
+        GLModel model;
+        model.init_from(std::move(init_data));
+        model.render();
+    };
+
+    // draw line for x axis
+    if (!is_single) {
+        render_line(
+            {target(0) - half_length, target(1), target(2)}, 
+            {target(0) + half_length, target(1), target(2)},
+            ColorRGBA::RED());
+    }
+    else {
+        render_line(
+            {target(0), target(1), target(2)}, 
+            {target(0) + half_length, target(1), target(2)},
+            ColorRGBA::RED());
+    }
+    // draw line for y axis
+    if (!is_single) {
+        render_line(
+            {target(0), target(1) - half_length, target(2)}, 
+            {target(0), target(1) + half_length, target(2)},
+            ColorRGBA::GREEN());
+    } else {
+        render_line(
+            {target(0), target(1), target(2)}, 
+            {target(0), target(1) + half_length, target(2)},
+            ColorRGBA::GREEN());
+    }
+    // draw line for z axis
+    if (!is_single) {
+        render_line(
+            {target(0), target(1), target(2) - half_length}, 
+            {target(0), target(1), target(2) + half_length},
+            ColorRGBA::BLUE());
+    } else {
+        render_line(
+            {target(0), target(1), target(2)}, 
+            {target(0), target(1), target(2) + half_length},
+            ColorRGBA::BLUE());
+    }
+}
+
+GLGizmoBase::GLGizmoBase(GLCanvas3D &parent, const std::string &icon_filename, unsigned int sprite_id)
     : m_parent(parent)
     , m_group_id(-1)
     , m_state(Off)
