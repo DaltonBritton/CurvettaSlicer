@@ -390,7 +390,7 @@ static PrinterTechnology get_printer_technology(const DynamicConfig &config)
     return(ret);}
 #endif
 
-void record_exit_reson(std::string outputdir, int code, int plate_id, std::string error_message, sliced_info_t& sliced_info, std::map<std::string, std::string> key_values = std::map<std::string, std::string>())
+void record_exit_reson(const std::string& outputdir, int code, int plate_id, const std::string& error_message, sliced_info_t& sliced_info, const std::map<std::string, std::string>& key_values = std::map<std::string, std::string>())
 {
 #if defined(__linux__) || defined(__LINUX__)
     std::string result_file;
