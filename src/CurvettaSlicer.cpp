@@ -5,7 +5,6 @@
     #define WIN32_LEAN_AND_MEAN
     #define NOMINMAX
     #include <Windows.h>
-    #include <wchar.h>
     #ifdef SLIC3R_GUI
     extern "C"
     {
@@ -21,7 +20,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 #if defined(__linux__) || defined(__LINUX__)
 #include <condition_variable>
@@ -36,7 +35,6 @@ using namespace nlohmann;
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/nowide/args.hpp>
-#include <boost/nowide/cstdlib.hpp>
 #include <boost/nowide/iostream.hpp>
 #include <boost/nowide/fstream.hpp>
 #include <boost/nowide/filesystem.hpp>
@@ -55,11 +53,8 @@ using namespace nlohmann;
 #include "libslic3r/Print.hpp"
 #include "libslic3r/SLAPrint.hpp"
 #include "libslic3r/TriangleMesh.hpp"
-#include "libslic3r/Format/AMF.hpp"
-#include "libslic3r/Format/3mf.hpp"
 #include "libslic3r/Format/STL.hpp"
 #include "libslic3r/Format/OBJ.hpp"
-#include "libslic3r/Format/SL1.hpp"
 #include "libslic3r/Utils.hpp"
 #include "libslic3r/Time.hpp"
 #include "libslic3r/Thread.hpp"
@@ -71,7 +66,6 @@ using namespace nlohmann;
 
 #include "CurvettaSlicer.hpp"
 //BBS: add exception handler for win32
-#include <wx/stdpaths.h>
 #ifdef WIN32
 #include "BaseException.h"
 #endif
