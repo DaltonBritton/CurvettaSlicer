@@ -4691,10 +4691,7 @@ int CLI::run(int argc, char **argv)
                 record_exit_reson(outfile_dir, CLI_EXPORT_OBJ_ERROR, 0, cli_errors[CLI_EXPORT_OBJ_ERROR], sliced_info);
                 flush_and_exit(CLI_EXPORT_OBJ_ERROR);
             }
-        }/* else if (opt_key == "export_amf") {
-            if (! this->export_models(IO::AMF))
-                return 1;
-        } */else if (opt_key == "export_3mf") {
+        }else if (opt_key == "export_3mf") {
             export_to_3mf = true;
             export_3mf_file = m_config.opt_string(opt_key);
         }else if(opt_key=="no_check"){
@@ -5741,29 +5738,6 @@ int CLI::run(int argc, char **argv)
             part_plate->get_print(&print_base, &gcode_result, &print_index);
 
             Print *print = dynamic_cast<Print *>(print_base);
-
-             //don't render calibration picture
-            /*BuildVolume build_volume(part_plate->get_shape(), print_height);
-            const std::vector<BoundingBoxf3>& exclude_bounding_box = part_plate->get_exclude_areas();
-            Slic3r::GUI::GCodeViewer gcode_viewer;
-            gcode_viewer.init(ConfigOptionMode::comAdvanced, nullptr);
-            gcode_viewer.load(*gcode_result, *print, build_volume, exclude_bounding_box, false, ConfigOptionMode::comAdvanced, false);
-
-            std::vector<std::string> colors;
-            if (filament_color)
-                colors = filament_color->values;
-            gcode_viewer.refresh(*gcode_result, colors);
-
-            ThumbnailData* calibration_data = new ThumbnailData();
-            const ThumbnailsParams calibration_params = { {}, false, true, true, true, i };
-            //BBS fixed size
-            const int cali_thumbnail_width = 2560;
-            const int cali_thumbnail_height = 2560;
-            gcode_viewer.render_calibration_thumbnail(*calibration_data, cali_thumbnail_width, cali_thumbnail_height,
-                calibration_params, partplate_list, opengl_mgr);
-            //generate_calibration_thumbnail(*calibration_data, thumbnail_width, thumbnail_height, calibration_params);
-            //*plate_bboxes[index] = p->generate_first_layer_bbox();
-            calibration_thumbnails.push_back(calibration_data);*/
 
             PlateBBoxData* plate_bbox = new PlateBBoxData();
             std::vector<BBoxData>& id_bboxes = plate_bbox->bbox_objs;
