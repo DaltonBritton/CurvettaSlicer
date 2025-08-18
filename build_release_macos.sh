@@ -24,7 +24,7 @@ while getopts ":dpa:snt:xbc:h" opt; do
         export OSX_DEPLOYMENT_TARGET="$OPTARG"
         ;;
     x )
-        export SLICER_CMAKE_GENERATOR="Ninja"
+        export SLICER_CMAKE_GENERATOR="Ninja Multi-Config"
         export SLICER_BUILD_TARGET="all"
         export DEPS_CMAKE_GENERATOR="Ninja"
         ;;
@@ -43,7 +43,7 @@ while getopts ":dpa:snt:xbc:h" opt; do
         echo "   -s: Build slicer only"
         echo "   -n: Nightly build"
         echo "   -t: Specify minimum version of the target platform, default is 11.3"
-        echo "   -x: Use Ninja CMake generator, default is Xcode"
+        echo "   -x: Use Ninja Multi-Config CMake generator, default is Xcode"
         echo "   -b: Build without reconfiguring CMake"
         echo "   -c: Set CMake build configuration, default is Release"
         echo "   -1: Use single job for building"
@@ -110,14 +110,10 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_BUILD_DIR="$PROJECT_DIR/build/$ARCH"
 DEPS_DIR="$PROJECT_DIR/deps"
 DEPS_BUILD_DIR="$DEPS_DIR/build/$ARCH"
-DEPS="$DEPS_BUILD_DIR/OrcaSlicer_deps"
+DEPS="$DEPS_BUILD_DIR/CurvettaSlicer_deps"
 
-# Fix for Multi-config generators
-if [ "$SLICER_CMAKE_GENERATOR" == "Xcode" ]; then
-    export BUILD_DIR_CONFIG_SUBDIR="/$BUILD_CONFIG"
-else
-    export BUILD_DIR_CONFIG_SUBDIR=""
-fi
+# For Multi-config generators like Ninja and Xcode
+export BUILD_DIR_CONFIG_SUBDIR="/$BUILD_CONFIG"
 
 function build_deps() {
     # iterate over two architectures: x86_64 and arm64
@@ -127,7 +123,7 @@ function build_deps() {
 
             PROJECT_BUILD_DIR="$PROJECT_DIR/build/$_ARCH"
             DEPS_BUILD_DIR="$DEPS_DIR/build/$_ARCH"
-            DEPS="$DEPS_BUILD_DIR/OrcaSlicer_dep"
+            DEPS="$DEPS_BUILD_DIR/CurvettaSlicer_dep"
 
             echo "Building deps..."
             (
@@ -154,7 +150,7 @@ function pack_deps() {
     (
         set -x
         cd "$DEPS_DIR"
-        tar -zcvf "OrcaSlicer_dep_mac_${ARCH}_$(date +"%Y%m%d").tar.gz" "build"
+        tar -zcvf "CurvettaSlicer_dep_mac_${ARCH}_$(date +"%Y%m%d").tar.gz" "build"
     )
 }
 
@@ -166,7 +162,7 @@ function build_slicer() {
 
             PROJECT_BUILD_DIR="$PROJECT_DIR/build/$_ARCH"
             DEPS_BUILD_DIR="$DEPS_DIR/build/$_ARCH"
-            DEPS="$DEPS_BUILD_DIR/OrcaSlicer_dep"
+            DEPS="$DEPS_BUILD_DIR/CurvettaSlicer_dep"
 
             echo "Building slicer for $_ARCH..."
             (
@@ -177,6 +173,7 @@ function build_slicer() {
                 cmake "${PROJECT_DIR}" \
                     -G "${SLICER_CMAKE_GENERATOR}" \
                     -DBBL_RELEASE_TO_PUBLIC=1 \
+                    -DORCA_TOOLS=ON \
                     -DCMAKE_PREFIX_PATH="$DEPS/usr/local" \
                     -DCMAKE_INSTALL_PREFIX="$PWD/CurvettaSlicer" \
                     -DCMAKE_BUILD_TYPE="$BUILD_CONFIG" \
@@ -203,13 +200,22 @@ function build_slicer() {
             # remove previously built app
             rm -rf ./CurvettaSlicer.app
             # fully copy newly built app
-            cp -pR "../src$BUILD_DIR_CONFIG_SUBDIR/OrcaSlicer.app" ./OrcaSlicer.app
+            cp -pR "../src$BUILD_DIR_CONFIG_SUBDIR/CurvettaSlicer.app" ./CurvettaSlicer.app
             # fix resources
             resources_path=$(readlink ./CurvettaSlicer.app/Contents/Resources)
             rm ./CurvettaSlicer.app/Contents/Resources
             cp -R "$resources_path" ./CurvettaSlicer.app/Contents/Resources
             # delete .DS_Store file
             find ./CurvettaSlicer.app/ -name '.DS_Store' -delete
+            
+            # Copy CurvettaSlicer_profile_validator.app if it exists
+            if [ -f "../src$BUILD_DIR_CONFIG_SUBDIR/CurvettaSlicer_profile_validator.app/Contents/MacOS/CurvettaSlicer_profile_validator" ]; then
+                echo "Copying CurvettaSlicer_profile_validator.app..."
+                rm -rf ./CurvettaSlicer_profile_validator.app
+                cp -pR "../src$BUILD_DIR_CONFIG_SUBDIR/CurvettaSlicer_profile_validator.app" ./CurvettaSlicer_profile_validator.app
+                # delete .DS_Store file
+                find ./CurvettaSlicer_profile_validator.app/ -name '.DS_Store' -delete
+            fi
         )
 
         # extract version
@@ -221,7 +227,7 @@ function build_slicer() {
         #     ver=${ver}_dev
         # fi
 
-        # zip -FSr OrcaSlicer${ver}_Mac_${_ARCH}.zip OrcaSlicer.app
+        # zip -FSr CurvettaSlicer${ver}_Mac_${_ARCH}.zip CurvettaSlicer.app
 
     fi
     done
@@ -250,6 +256,26 @@ function build_universal() {
         -output "$UNIVERSAL_APP/$BINARY_PATH"
 
     echo "Universal binary created at $UNIVERSAL_APP"
+    
+    # Create universal binary for profile validator if it exists
+    if [ -f "$PROJECT_DIR/build/arm64/CurvettaSlicer/CurvettaSlicer_profile_validator.app/Contents/MacOS/CurvettaSlicer_profile_validator" ] && \
+       [ -f "$PROJECT_DIR/build/x86_64/CurvettaSlicer/CurvettaSlicer_profile_validator.app/Contents/MacOS/CurvettaSlicer_profile_validator" ]; then
+        echo "Creating universal binary for CurvettaSlicer_profile_validator..."
+        UNIVERSAL_VALIDATOR_APP="$PROJECT_BUILD_DIR/CurvettaSlicer/CurvettaSlicer_profile_validator.app"
+        rm -rf "$UNIVERSAL_VALIDATOR_APP"
+        cp -R "$PROJECT_DIR/build/arm64/CurvettaSlicer/CurvettaSlicer_profile_validator.app" "$UNIVERSAL_VALIDATOR_APP"
+        
+        # Get the binary path inside the profile validator .app bundle
+        VALIDATOR_BINARY_PATH="Contents/MacOS/CurvettaSlicer_profile_validator"
+        
+        # Create universal binary using lipo
+        lipo -create \
+            "$PROJECT_DIR/build/x86_64/CurvettaSlicer/CurvettaSlicer_profile_validator.app/$VALIDATOR_BINARY_PATH" \
+            "$PROJECT_DIR/build/arm64/CurvettaSlicer/CurvettaSlicer_profile_validator.app/$VALIDATOR_BINARY_PATH" \
+            -output "$UNIVERSAL_VALIDATOR_APP/$VALIDATOR_BINARY_PATH"
+            
+        echo "Universal binary for CurvettaSlicer_profile_validator created at $UNIVERSAL_VALIDATOR_APP"
+    fi
 }
 
 case "${BUILD_TARGET}" in

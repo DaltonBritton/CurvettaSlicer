@@ -362,7 +362,7 @@ void GCodeViewer::SequentialView::Marker::render(int canvas_width, int canvas_he
     std::string layer_time = ImGui::ColorMarkerStart + _u8L("Layer Time: ") + ImGui::ColorMarkerEnd;
     std::string fanspeed = ImGui::ColorMarkerStart + _u8L("Fan: ") + ImGui::ColorMarkerEnd;
     std::string temperature = ImGui::ColorMarkerStart + _u8L("Temperature: ") + ImGui::ColorMarkerEnd;
-    const float item_size = imgui.calc_text_size(std::string_view{"X: 000.000  "}).x;
+    const float item_size = imgui.calc_text_size(std::string_view{"X: 000.000       "}).x;
     const float item_spacing = imgui.get_item_spacing().x;
     const float window_padding = ImGui::GetStyle().WindowPadding.x;
 
@@ -2343,7 +2343,7 @@ void GCodeViewer::load_toolpaths(const GCodeProcessorResult& gcode_result, const
     static const unsigned int progress_threshold = 1000;
     //BBS: add only gcode mode
     ProgressDialog *          progress_dialog    = m_only_gcode_in_preview ?
-        new ProgressDialog(_L("Loading G-codes"), "...",
+        new ProgressDialog(_L("Loading G-code"), "...",
             100, wxGetApp().mainframe, wxPD_AUTO_HIDE | wxPD_APP_MODAL) : nullptr;
 
     wxBusyCursor busy;
@@ -4606,13 +4606,13 @@ void GCodeViewer::render_legend(float &legend_height, int canvas_width, int canv
     auto upto_label = [](double z) {
         char buf[64];
         ::sprintf(buf, "%.2f", z);
-        return _u8L("up to") + " " + std::string(buf) + " " + _u8L("mm");
+        return _u8L("up to") + " " + std::string(buf) + " " + "mm";
     };
 
     auto above_label = [](double z) {
         char buf[64];
         ::sprintf(buf, "%.2f", z);
-        return _u8L("above") + " " + std::string(buf) + " " + _u8L("mm");
+        return _u8L("above") + " " + std::string(buf) + " " + "mm";
     };
 
     auto fromto_label = [](double z1, double z2) {
@@ -4620,7 +4620,7 @@ void GCodeViewer::render_legend(float &legend_height, int canvas_width, int canv
         ::sprintf(buf1, "%.2f", z1);
         char buf2[64];
         ::sprintf(buf2, "%.2f", z2);
-        return _u8L("from") + " " + std::string(buf1) + " " + _u8L("to") + " " + std::string(buf2) + " " + _u8L("mm");
+        return _u8L("from") + " " + std::string(buf1) + " " + _u8L("to") + " " + std::string(buf2) + " " + "mm";
     };
 
     auto role_time_and_percent = [time_mode](ExtrusionRole role) {
@@ -4867,8 +4867,8 @@ void GCodeViewer::render_legend(float &legend_height, int canvas_width, int canv
         }
 
         // ORCA use % symbol for percentage and use "Usage" for "Used filaments"
-        offsets = calculate_offsets({ {_u8L("Line Type"), labels}, {_u8L("Time"), times}, {_u8L("%"), percents}, {"", used_filaments_length}, {"", used_filaments_weight}, {_u8L("Display"), {""}}}, icon_size);
-        append_headers({{_u8L("Line Type"), offsets[0]}, {_u8L("Time"), offsets[1]}, {_u8L("%"), offsets[2]}, {_u8L("Usage"), offsets[3]}, {_u8L("Display"), offsets[5]}});
+        offsets = calculate_offsets({ {_u8L("Line Type"), labels}, {_u8L("Time"), times}, {"%", percents}, {"", used_filaments_length}, {"", used_filaments_weight}, {_u8L("Display"), {""}}}, icon_size);
+        append_headers({{_u8L("Line Type"), offsets[0]}, {_u8L("Time"), offsets[1]}, {"%", offsets[2]}, {_u8L("Usage"), offsets[3]}, {_u8L("Display"), offsets[5]}});
         break;
     }
     case EViewType::Height:         { imgui.title(_u8L("Layer Height (mm)")); break; }
@@ -5503,7 +5503,7 @@ void GCodeViewer::render_legend(float &legend_height, int canvas_width, int canv
             }
         }
     }
-    // Custom g-code overview
+    // Custom G-code overview
     std::vector<CustomGCode::Item> custom_gcode_per_print_z = wxGetApp().is_editor() ?
                                                                   wxGetApp().plater()->model().get_curr_plate_custom_gcodes().gcodes :
                                                                   m_custom_gcode_per_print_z;
@@ -5511,13 +5511,13 @@ void GCodeViewer::render_legend(float &legend_height, int canvas_width, int canv
         float max_len = window_padding + 2 * ImGui::GetStyle().ItemSpacing.x;
         ImGui::Spacing();
         // Title Line
-        std::string cgcode_title_str       = _u8L("Custom g-code");
+        std::string cgcode_title_str       = _u8L("Custom G-code");
         std::string cgcode_layer_str       = _u8L("Layer");
         std::string cgcode_time_str        =  _u8L("Time");
         // Types of custom gcode
         std::string cgcode_pause_str = _u8L("Pause");
         std::string cgcode_template_str= _u8L("Template");
-        std::string cgcode_toolchange_str = _u8L("ToolChange");
+        std::string cgcode_toolchange_str = _u8L("Tool Change");
         std::string cgcode_custom_str = _u8L("Custom");
         std::string cgcode_unknown_str = _u8L("Unknown");
 
