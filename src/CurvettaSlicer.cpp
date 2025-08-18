@@ -366,7 +366,7 @@ void default_status_callback(const PrintBase::SlicingStatus& slicing_status)
 
 static PrinterTechnology get_printer_technology(const DynamicConfig &config)
 {
-    const ConfigOptionEnum<PrinterTechnology> *opt = config.option<ConfigOptionEnum<PrinterTechnology>>("printer_technology");
+    const auto *opt = config.option<ConfigOptionEnum<PrinterTechnology>>("printer_technology");
     return (opt == nullptr) ? ptUnknown : opt->value;
 }
 
@@ -531,28 +531,28 @@ static void load_default_gcodes_to_config(DynamicPrintConfig& config, Preset::Ty
         std::string change_filament_gcode = config.option<ConfigOptionString>("change_filament_gcode", true)->value;
         BOOST_LOG_TRIVIAL(trace) << __FUNCTION__<< ", change_filament_gcode: "<< change_filament_gcode;
 
-        ConfigOptionString* layer_change_gcode_opt = config.option<ConfigOptionString>("layer_change_gcode", true);
+        auto* layer_change_gcode_opt = config.option<ConfigOptionString>("layer_change_gcode", true);
         BOOST_LOG_TRIVIAL(trace) << __FUNCTION__<< ", layer_change_gcode: "<<layer_change_gcode_opt->value;
 
-        ConfigOptionString* machine_end_gcode_opt = config.option<ConfigOptionString>("machine_end_gcode", true);
+        auto* machine_end_gcode_opt = config.option<ConfigOptionString>("machine_end_gcode", true);
         BOOST_LOG_TRIVIAL(trace) << __FUNCTION__<< ", machine_end_gcode: "<<machine_end_gcode_opt->value;
 
-        ConfigOptionString* machine_pause_gcode_opt = config.option<ConfigOptionString>("machine_pause_gcode", true);
+        auto* machine_pause_gcode_opt = config.option<ConfigOptionString>("machine_pause_gcode", true);
         BOOST_LOG_TRIVIAL(trace) << __FUNCTION__<< ", machine_pause_gcode: "<<machine_pause_gcode_opt->value;
 
-        ConfigOptionString* machine_start_gcode_opt = config.option<ConfigOptionString>("machine_start_gcode", true);
+        auto* machine_start_gcode_opt = config.option<ConfigOptionString>("machine_start_gcode", true);
         BOOST_LOG_TRIVIAL(trace) << __FUNCTION__<< ", machine_start_gcode: "<<machine_start_gcode_opt->value;
 
-        ConfigOptionString* template_custom_gcode_opt = config.option<ConfigOptionString>("template_custom_gcode", true);
+        auto* template_custom_gcode_opt = config.option<ConfigOptionString>("template_custom_gcode", true);
         BOOST_LOG_TRIVIAL(trace) << __FUNCTION__<< ", template_custom_gcode: "<<template_custom_gcode_opt->value;
 
-        ConfigOptionString* printing_by_object_gcode_opt = config.option<ConfigOptionString>("printing_by_object_gcode", true);
+        auto* printing_by_object_gcode_opt = config.option<ConfigOptionString>("printing_by_object_gcode", true);
         BOOST_LOG_TRIVIAL(trace) << __FUNCTION__<< ", printing_by_object_gcode: "<<printing_by_object_gcode_opt->value;
 
-        ConfigOptionString* before_layer_change_gcode_opt = config.option<ConfigOptionString>("before_layer_change_gcode", true);
+        auto* before_layer_change_gcode_opt = config.option<ConfigOptionString>("before_layer_change_gcode", true);
         BOOST_LOG_TRIVIAL(trace) << __FUNCTION__<< ", before_layer_change_gcode: "<<before_layer_change_gcode_opt->value;
 
-        ConfigOptionString* timeplase_gcode_opt = config.option<ConfigOptionString>("time_lapse_gcode", true);
+        auto* timeplase_gcode_opt = config.option<ConfigOptionString>("time_lapse_gcode", true);
         BOOST_LOG_TRIVIAL(trace) << __FUNCTION__<< ", time_lapse_gcode: "<<timeplase_gcode_opt->value;
     }
     else if (type == Preset::TYPE_FILAMENT)
