@@ -361,8 +361,6 @@ void default_status_callback(const PrintBase::SlicingStatus& slicing_status)
         g_slicing_warnings.push_back(slicing_status);
     }
     BOOST_LOG_TRIVIAL(debug) << __FUNCTION__ << boost::format(": percent=%1%, warning_step=%2%, message=%3%, message_type=%4%")%slicing_status.percent %slicing_status.warning_step %slicing_status.text %(int)(slicing_status.message_type);
-
-    return;
 }
 
 
