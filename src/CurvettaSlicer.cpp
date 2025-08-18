@@ -2622,7 +2622,7 @@ int CLI::run(int argc, char **argv)
             load_default_gcodes_to_config(config, Preset::TYPE_FILAMENT);
 
             if (load_filament_count > 0) {
-                ConfigOptionStrings *opt_filament_settings = static_cast<ConfigOptionStrings *> (m_print_config.option("filament_settings_id", true));
+                ConfigOptionStrings *opt_filament_settings = dynamic_cast<ConfigOptionStrings *> (m_print_config.option("filament_settings_id", true));
                 std::string& filament_name = load_filaments_name[index];
                 ConfigOptionString* filament_name_setting = new ConfigOptionString(filament_name);
                 if (opt_filament_settings->size() < filament_count)
@@ -2631,7 +2631,7 @@ int CLI::run(int argc, char **argv)
                 config.erase("filament_settings_id");
 
                 std::string& filament_id = load_filaments_id[index];
-                ConfigOptionStrings *opt_filament_ids = static_cast<ConfigOptionStrings *> (m_print_config.option("filament_ids", true));
+                ConfigOptionStrings *opt_filament_ids = dynamic_cast<ConfigOptionStrings *> (m_print_config.option("filament_ids", true));
                 ConfigOptionString* filament_id_setting = new ConfigOptionString(filament_id);
                 if (opt_filament_ids->size() < filament_count)
                     opt_filament_ids->resize(filament_count, filament_id_setting);
@@ -2687,14 +2687,14 @@ int CLI::run(int argc, char **argv)
                 if (source_opt->is_scalar()) {
                     if (opt_key == "compatible_printers_condition") {
                         ConfigOption *opt = m_print_config.option("compatible_machine_expression_group", true);
-                        ConfigOptionStrings* opt_vec_dst = static_cast<ConfigOptionStrings*>(opt);
+                        ConfigOptionStrings* opt_vec_dst = dynamic_cast<ConfigOptionStrings*>(opt);
                         if (opt_vec_dst->size() == 0)
                             opt_vec_dst->resize(filament_count+2, new ConfigOptionString());
                         opt_vec_dst->set_at(source_opt, filament_index, 0);
                     }
                     else if (opt_key == "compatible_prints_condition") {
                         ConfigOption *opt = m_print_config.option("compatible_process_expression_group", true);
-                        ConfigOptionStrings* opt_vec_dst = static_cast<ConfigOptionStrings*>(opt);
+                        ConfigOptionStrings* opt_vec_dst = dynamic_cast<ConfigOptionStrings*>(opt);
                         if (opt_vec_dst->size() == 0)
                             opt_vec_dst->resize(filament_count, new ConfigOptionString());
                         opt_vec_dst->set_at(source_opt, filament_index-1, 0);
@@ -2717,8 +2717,8 @@ int CLI::run(int argc, char **argv)
                         record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
                         flush_and_exit(CLI_CONFIG_FILE_ERROR);
                     }
-                    ConfigOptionVectorBase* opt_vec_dst = static_cast<ConfigOptionVectorBase*>(opt);
-                    const ConfigOptionVectorBase* opt_vec_src = static_cast<const ConfigOptionVectorBase*>(source_opt);
+                    ConfigOptionVectorBase* opt_vec_dst = dynamic_cast<ConfigOptionVectorBase*>(opt);
+                    const ConfigOptionVectorBase* opt_vec_src = dynamic_cast<const ConfigOptionVectorBase*>(source_opt);
                     opt_vec_dst->set_at(opt_vec_src, filament_index-1, 0);
                 }
             }
