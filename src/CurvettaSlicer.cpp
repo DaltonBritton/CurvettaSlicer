@@ -140,15 +140,15 @@ std::map<int, std::string> cli_errors = {
     {CLI_GCODE_PATH_CONFLICTS, " G-code conflicts detected after slicing. Please make sure the 3mf file can be successfully sliced in the latest Curvetta Slicer."}
 };
 
-typedef struct  _sliced_plate_info{
+typedef struct  sliced_plate_info{
     int plate_id{0};
     size_t sliced_time {0};
     size_t sliced_time_with_cache {0};
     size_t triangle_count{0};
     std::string warning_message;
-}sliced_plate_info_t;
+} sliced_plate_info_t;
 
-typedef struct _sliced_info {
+typedef struct sliced_info {
     int                 plate_count {0};
     int                 plate_to_slice {0};
 
