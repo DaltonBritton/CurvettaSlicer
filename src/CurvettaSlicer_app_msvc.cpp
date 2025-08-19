@@ -90,7 +90,7 @@ public:
 
         unsigned int gl_major = 0;
         unsigned int gl_minor = 0;
-        if (numbers.size() > 0)
+        if (!numbers.empty())
             gl_major = ::atoi(numbers[0].c_str());
         if (numbers.size() > 1)
             gl_minor = ::atoi(numbers[1].c_str());
