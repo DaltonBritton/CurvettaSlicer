@@ -119,10 +119,10 @@ protected:
         typedef BOOL     	(WINAPI *Func_wglDeleteContext)(HGLRC);
         typedef GLubyte* 	(WINAPI *Func_glGetString     )(GLenum);
 
-        Func_wglCreateContext 	wglCreateContext = (Func_wglCreateContext)GetProcAddress(hOpenGL, "wglCreateContext");
-        Func_wglMakeCurrent 	wglMakeCurrent 	 = (Func_wglMakeCurrent)  GetProcAddress(hOpenGL, "wglMakeCurrent");
-        Func_wglDeleteContext 	wglDeleteContext = (Func_wglDeleteContext)GetProcAddress(hOpenGL, "wglDeleteContext");
-        Func_glGetString 		glGetString 	 = (Func_glGetString)	  GetProcAddress(hOpenGL, "glGetString");
+        auto 	wglCreateContext = (Func_wglCreateContext)GetProcAddress(hOpenGL, "wglCreateContext");
+        auto 	wglMakeCurrent 	 = (Func_wglMakeCurrent)  GetProcAddress(hOpenGL, "wglMakeCurrent");
+        auto 	wglDeleteContext = (Func_wglDeleteContext)GetProcAddress(hOpenGL, "wglDeleteContext");
+        auto 		glGetString 	 = (Func_glGetString)	  GetProcAddress(hOpenGL, "glGetString");
 
         if (wglCreateContext == nullptr || wglMakeCurrent == nullptr || wglDeleteContext == nullptr || glGetString == nullptr) {
             printf("Failed loading the system opengl32.dll: The library is invalid.\n");
@@ -183,8 +183,8 @@ protected:
         {
         case WM_CREATE:
         {
-            CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
-            OpenGLVersionCheck *ogl_data = reinterpret_cast<OpenGLVersionCheck*>(pCreate->lpCreateParams);
+            auto *pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+            auto *ogl_data = reinterpret_cast<OpenGLVersionCheck*>(pCreate->lpCreateParams);
             ogl_data->check(hWnd);
             DestroyWindow(hWnd);
             return 0;
