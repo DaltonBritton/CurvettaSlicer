@@ -3925,7 +3925,7 @@ int CLI::run(int argc, char **argv)
                     for (auto item : unselected)
                         BOOST_LOG_TRIVIAL(trace) << item.name << ", bed: " << item.bed_idx << ", trans: " << item.translation.transpose();
                 }
-                arrange_cfg.progressind = [](unsigned st, std::string str = "") {
+                arrange_cfg.progressind = [](unsigned st, const std::string& str = "") {
                     //boost::nowide::cout << "st=" << st << ", " << str << std::endl;
                 };
 
@@ -4328,7 +4328,7 @@ int CLI::run(int argc, char **argv)
                     for (auto item : unselected)
                         BOOST_LOG_TRIVIAL(trace) << item.name << ", bed: " << item.bed_idx << ", trans: " << item.translation.transpose();
                 }
-                arrange_cfg.progressind= [](unsigned st, std::string str = "") {
+                arrange_cfg.progressind= [](unsigned st, const std::string& str = "") {
                     //boost::nowide::cout << "st=" << st << ", " << str << std::endl;
                 };
 
@@ -6081,7 +6081,7 @@ void CLI::print_help(bool include_print_options, PrinterTechnology printer_techn
     boost::nowide::cerr.flush();
 }
 
-bool CLI::export_models(IO::ExportFormat format, std::string path_dir)
+bool CLI::export_models(IO::ExportFormat format, const std::string& path_dir)
 {
     for (Model &model : m_models) {
         const std::string path = this->output_filepath(model, format);
