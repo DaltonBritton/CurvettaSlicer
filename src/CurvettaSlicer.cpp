@@ -5326,7 +5326,7 @@ int CLI::run(int argc, char **argv)
                 colors= filament_color->vserialize();
             }
             else
-                colors.push_back("#FFFFFFFF");
+                colors.emplace_back("#FFFFFFFF");
 
             std::vector<ColorRGBA> colors_out(colors.size());
             unsigned char rgb_color[4] = {};
