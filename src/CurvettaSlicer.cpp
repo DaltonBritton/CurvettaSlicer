@@ -788,7 +788,7 @@ static int construct_assemble_list(std::vector<assemble_plate_info_t> &assemble_
         int object_count = assemble_plate_info.assemble_obj_list.size();
 
         BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": Plate %1%, name %2%, obj count %3%, plate params count %4%") % (index + 1) %assemble_plate_info.plate_name %object_count %assemble_plate_info.plate_params.size();
-        PlateData* plate_data = new PlateData();
+        auto* plate_data = new PlateData();
         plate_list[index] = plate_data;
         plate_data->plate_name = assemble_plate_info.plate_name;
         plate_data->plate_index = index;
@@ -2624,7 +2624,7 @@ int CLI::run(int argc, char **argv)
             if (load_filament_count > 0) {
                 ConfigOptionStrings *opt_filament_settings = dynamic_cast<ConfigOptionStrings *> (m_print_config.option("filament_settings_id", true));
                 std::string& filament_name = load_filaments_name[index];
-                ConfigOptionString* filament_name_setting = new ConfigOptionString(filament_name);
+                auto* filament_name_setting = new ConfigOptionString(filament_name);
                 if (opt_filament_settings->size() < filament_count)
                     opt_filament_settings->resize(filament_count, filament_name_setting);
                 opt_filament_settings->set_at(filament_name_setting, filament_index-1, 0);
@@ -2632,7 +2632,7 @@ int CLI::run(int argc, char **argv)
 
                 std::string& filament_id = load_filaments_id[index];
                 ConfigOptionStrings *opt_filament_ids = dynamic_cast<ConfigOptionStrings *> (m_print_config.option("filament_ids", true));
-                ConfigOptionString* filament_id_setting = new ConfigOptionString(filament_id);
+                auto* filament_id_setting = new ConfigOptionString(filament_id);
                 if (opt_filament_ids->size() < filament_count)
                     opt_filament_ids->resize(filament_count, filament_id_setting);
                 opt_filament_ids->set_at(filament_id_setting,  filament_index-1, 0);
@@ -5739,7 +5739,7 @@ int CLI::run(int argc, char **argv)
 
             auto *print = dynamic_cast<Print *>(print_base);
 
-            PlateBBoxData* plate_bbox = new PlateBBoxData();
+            auto* plate_bbox = new PlateBBoxData();
             std::vector<BBoxData>& id_bboxes = plate_bbox->bbox_objs;
             BoundingBoxf bbox_all;
             PrintSequence curr_plate_seq = part_plate->get_print_seq();
