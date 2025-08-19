@@ -521,7 +521,7 @@ static std::set<std::string> gcodes_key_set =  {"filament_end_gcode", "filament_
 
 static void load_default_gcodes_to_config(DynamicPrintConfig& config, Preset::Type type)
 {
-    if (config.size() == 0) {
+    if (config.empty()) {
         BOOST_LOG_TRIVIAL(info) << __FUNCTION__<< ", empty config, return directly";
         return;
     }
@@ -634,7 +634,7 @@ static int load_assemble_plate_list(std::string config_file, std::vector<assembl
                 }
 
                 assemble_object.filaments = object_json.at(JSON_ASSEMPLE_OBJECT_FILAMENTS).get<std::vector<int>>();
-                if ((assemble_object.filaments.size() > 0) && (assemble_object.filaments.size() != assemble_object.count) && (assemble_object.filaments.size() != 1))
+                if ((!assemble_object.filaments.empty()) && (assemble_object.filaments.size() != assemble_object.count) && (assemble_object.filaments.size() != 1))
                 {
                     BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": object %1%'s filaments count %2% not equal to clone count %3%, also not equal to 1") % assemble_object.path % assemble_object.filaments.size() % assemble_object.count;
                     return CLI_CONFIG_FILE_ERROR;
@@ -642,7 +642,7 @@ static int load_assemble_plate_list(std::string config_file, std::vector<assembl
 
                 if (object_json.contains(JSON_ASSEMPLE_OBJECT_ASSEMBLE_INDEX)) {
                     assemble_object.assemble_index = object_json[JSON_ASSEMPLE_OBJECT_ASSEMBLE_INDEX].get<std::vector<int>>();
-                    if ((assemble_object.assemble_index.size() > 0) && (assemble_object.assemble_index.size() != assemble_object.count) && (assemble_object.assemble_index.size() != 1))
+                    if ((!assemble_object.assemble_index.empty()) && (assemble_object.assemble_index.size() != assemble_object.count) && (assemble_object.assemble_index.size() != 1))
                     {
                         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": object %1%'s assemble_index count %2% not equal to clone count %3%, also not equal to 1") % assemble_object.path % assemble_object.assemble_index.size() % assemble_object.count;
                         return CLI_CONFIG_FILE_ERROR;
@@ -651,7 +651,7 @@ static int load_assemble_plate_list(std::string config_file, std::vector<assembl
 
                 if (object_json.contains(JSON_ASSEMPLE_OBJECT_POS_X)) {
                     assemble_object.pos_x = object_json[JSON_ASSEMPLE_OBJECT_POS_X].get<std::vector<float>>();
-                    if ((assemble_object.pos_x.size() > 0) && (assemble_object.pos_x.size() != assemble_object.count) && (assemble_object.pos_x.size() != 1))
+                    if ((!assemble_object.pos_x.empty()) && (assemble_object.pos_x.size() != assemble_object.count) && (assemble_object.pos_x.size() != 1))
                     {
                         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": object %1%'s pos_x count %2% not equal to clone count %3%, also not equal to 1") % assemble_object.path % assemble_object.pos_x.size() % assemble_object.count;
                         return CLI_CONFIG_FILE_ERROR;
@@ -659,7 +659,7 @@ static int load_assemble_plate_list(std::string config_file, std::vector<assembl
                 }
                 if (object_json.contains(JSON_ASSEMPLE_OBJECT_POS_Y)) {
                     assemble_object.pos_y = object_json[JSON_ASSEMPLE_OBJECT_POS_Y].get<std::vector<float>>();
-                    if ((assemble_object.pos_y.size() > 0) && (assemble_object.pos_y.size() != assemble_object.count) && (assemble_object.pos_y.size() != 1))
+                    if ((!assemble_object.pos_y.empty()) && (assemble_object.pos_y.size() != assemble_object.count) && (assemble_object.pos_y.size() != 1))
                     {
                         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": object %1%'s pos_y count %2% not equal to clone count %3%, also not equal to 1") % assemble_object.path % assemble_object.pos_y.size() % assemble_object.count;
                         return CLI_CONFIG_FILE_ERROR;
@@ -667,7 +667,7 @@ static int load_assemble_plate_list(std::string config_file, std::vector<assembl
                 }
                 if (object_json.contains(JSON_ASSEMPLE_OBJECT_POS_Z)) {
                     assemble_object.pos_z = object_json[JSON_ASSEMPLE_OBJECT_POS_Z].get<std::vector<float>>();
-                    if ((assemble_object.pos_z.size() > 0) && (assemble_object.pos_z.size() != assemble_object.count) && (assemble_object.pos_z.size() != 1))
+                    if ((!assemble_object.pos_z.empty()) && (assemble_object.pos_z.size() != assemble_object.count) && (assemble_object.pos_z.size() != 1))
                     {
                         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(": object %1%'s pos_z count %2% not equal to clone count %3%, also not equal to 1") % assemble_object.path % assemble_object.pos_z.size() % assemble_object.count;
                         return CLI_CONFIG_FILE_ERROR;
@@ -923,7 +923,7 @@ static int construct_assemble_list(std::vector<assemble_plate_info_t> &assemble_
         }
 
         size_t assemble_count = merged_objects.size();
-        if ((assemble_count > 0) && (assemble_plate_info.assembled_param_list.size() > 0))
+        if ((assemble_count > 0) && (!assemble_plate_info.assembled_param_list.empty()))
         {
             for (auto& iter : merged_objects)
             {
@@ -1103,7 +1103,7 @@ int CLI::run(int argc, char **argv)
     //skip model object logic
     const std::vector<int>                      &skip_objects             = m_config.option<ConfigOptionInts>("skip_objects", true)->values;
     std::map<int, bool>     skip_maps;
-    bool   need_skip      = (skip_objects.size() > 0)?true:false;
+    bool   need_skip      = !skip_objects.empty();
     long long global_begin_time = 0, global_current_time;
     sliced_info_t sliced_info;
     std::map<std::string, std::string> record_key_values;
@@ -1298,7 +1298,7 @@ int CLI::run(int argc, char **argv)
     std::set<int> used_filament_set;
     BOOST_LOG_TRIVIAL(info) << boost::format("allow_multicolor_oneplate %1%, allow_rotations %2% skip_modified_gcodes %3% avoid_extrusion_cali_region %4% loaded_filament_ids size %5%, clone_objects size %6%, skip_useless_pick %7%, allow_newer_file %8%")
         %allow_multicolor_oneplate %allow_rotations %skip_modified_gcodes %avoid_extrusion_cali_region %loaded_filament_ids.size() %clone_objects.size() %skip_useless_pick %allow_newer_file;
-    if (clone_objects.size() > 0)
+    if (!clone_objects.empty())
     {
         if (clone_objects.size() != m_input_files.size())
         {
@@ -1306,14 +1306,14 @@ int CLI::run(int argc, char **argv)
             record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
             flush_and_exit(CLI_INVALID_PARAMS);
         }
-        else if (load_filaments.size() == 0)
+        else if (load_filaments.empty())
         {
             BOOST_LOG_TRIVIAL(error) << boost::format("clone_objects should be used with load_filaments together");
             record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
             flush_and_exit(CLI_INVALID_PARAMS);
         }
     }
-    if (loaded_filament_ids.size() > 0)
+    if (!loaded_filament_ids.empty())
     {
         if (loaded_filament_ids.size() != m_input_files.size())
         {
@@ -1321,7 +1321,7 @@ int CLI::run(int argc, char **argv)
             record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
             flush_and_exit(CLI_INVALID_PARAMS);
         }
-        else if (load_filaments.size() == 0)
+        else if (load_filaments.empty())
         {
             BOOST_LOG_TRIVIAL(error) << boost::format("loaded_filament_ids should be used with load_filaments together");
             record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
@@ -1337,7 +1337,7 @@ int CLI::run(int argc, char **argv)
         }*/
     BOOST_LOG_TRIVIAL(info) << boost::format("plate_to_slice=%1%, normative_check=%2%, use_first_fila_as_default=%3%")%plate_to_slice %normative_check %use_first_fila_as_default;
     unsigned int input_index = 0;
-    if (!load_assemble_list.empty() && ((m_input_files.size() > 0) || (m_transforms.size() > 0)))
+    if (!load_assemble_list.empty() && ((!m_input_files.empty()) || (!m_transforms.empty())))
     {
         BOOST_LOG_TRIVIAL(error) << boost::format("load_assemble_list should not be used with input model files to load and should not be sued with transforms");
         record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
@@ -1363,7 +1363,7 @@ int CLI::run(int argc, char **argv)
                 is_bbl_3mf = false;
                 LoadStrategy strategy;
                 if (boost::algorithm::iends_with(file, ".3mf") && first_file) {
-                    if ((clone_objects.size() > 0) || (loaded_filament_ids.size() > 0))
+                    if ((!clone_objects.empty()) || (!loaded_filament_ids.empty()))
                     {
                         BOOST_LOG_TRIVIAL(error) << boost::format("can not load 3mf when set loaded_filament_ids or clone_objects");
                         record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
@@ -1415,7 +1415,7 @@ int CLI::run(int argc, char **argv)
                         ConfigOptionStrings* postprocess_scripts = config.option<ConfigOptionStrings>("post_process");
                         if (postprocess_scripts) {
                             std::vector<std::string> postprocess_values = postprocess_scripts->values;
-                            if (postprocess_values.size() > 0) {
+                            if (!postprocess_values.empty()) {
                                 BOOST_LOG_TRIVIAL(error) << boost::format("normative_check: postprocess not supported, array size %1%")%postprocess_values.size();
                                 record_exit_reson(outfile_dir, CLI_POSTPROCESS_NOT_SUPPORTED, 0, cli_errors[CLI_POSTPROCESS_NOT_SUPPORTED], sliced_info);
                                 flush_and_exit(CLI_POSTPROCESS_NOT_SUPPORTED);
@@ -1932,7 +1932,7 @@ int CLI::run(int argc, char **argv)
     //load system config if needed
     bool fetch_compatible_values = false, fetch_upward_values = false;
     if (is_bbl_3mf && up_config_to_date) {
-        if (uptodate_configs.size() > 0)
+        if (!uptodate_configs.empty())
         {
             for (auto const &file : uptodate_configs) {
                 DynamicPrintConfig  config;
@@ -2085,7 +2085,7 @@ int CLI::run(int argc, char **argv)
         //filament processes
         if (load_filament_count == 0)
         {
-            if (uptodate_filaments.size() > 0)
+            if (!uptodate_filaments.empty())
             {
                 if (uptodate_filaments.size() != filament_count)
                 {
@@ -2276,7 +2276,7 @@ int CLI::run(int argc, char **argv)
         process_compatible = true;
         machine_switch = true;
         BOOST_LOG_TRIVIAL(info) << boost::format("switch to new printers, set to compatible");
-        if (upward_compatible_printers.size() > 0) {
+        if (!upward_compatible_printers.empty()) {
             for (int index = 0; index < upward_compatible_printers.size(); index++) {
                 if (upward_compatible_printers[index] == new_printer_system_name) {
                     process_compatible = true;
@@ -2688,14 +2688,14 @@ int CLI::run(int argc, char **argv)
                     if (opt_key == "compatible_printers_condition") {
                         ConfigOption *opt = m_print_config.option("compatible_machine_expression_group", true);
                         ConfigOptionStrings* opt_vec_dst = dynamic_cast<ConfigOptionStrings*>(opt);
-                        if (opt_vec_dst->size() == 0)
+                        if (opt_vec_dst->empty())
                             opt_vec_dst->resize(filament_count+2, new ConfigOptionString());
                         opt_vec_dst->set_at(source_opt, filament_index, 0);
                     }
                     else if (opt_key == "compatible_prints_condition") {
                         ConfigOption *opt = m_print_config.option("compatible_process_expression_group", true);
                         ConfigOptionStrings* opt_vec_dst = dynamic_cast<ConfigOptionStrings*>(opt);
-                        if (opt_vec_dst->size() == 0)
+                        if (opt_vec_dst->empty())
                             opt_vec_dst->resize(filament_count, new ConfigOptionString());
                         opt_vec_dst->set_at(source_opt, filament_index-1, 0);
                     }
@@ -2738,7 +2738,7 @@ int CLI::run(int argc, char **argv)
     //compute the flush volume
     ConfigOptionStrings *selected_filament_colors_option = m_extra_config.option<ConfigOptionStrings>("filament_colour");
     ConfigOptionStrings *project_filament_colors_option = m_print_config.option<ConfigOptionStrings>("filament_colour");
-    if ((!project_filament_colors_option || (project_filament_colors_option->values.size() == 0)) && selected_filament_colors_option)
+    if ((!project_filament_colors_option || (project_filament_colors_option->values.empty())) && selected_filament_colors_option)
     {
         BOOST_LOG_TRIVIAL(info) << boost::format("initial project_filament_colors is null, create it due to filament_colour set in cli");
         project_filament_colors_option = m_print_config.option<ConfigOptionStrings>("filament_colour", true);
@@ -2901,7 +2901,7 @@ int CLI::run(int argc, char **argv)
     }
 
     //load custom gcodes into model if needed
-    if ((custom_gcodes_map.size() > 0)&&(m_models.size() > 0))
+    if ((!custom_gcodes_map.empty())&&(!m_models.empty()))
     {
         m_models[0].plates_custom_gcodes = custom_gcodes_map;
         /*m_models[0].plates_custom_gcodes.clear();
@@ -3051,7 +3051,7 @@ int CLI::run(int argc, char **argv)
             shrink_to_new_bed = 1;
         }
         else {
-            if ((current_exclude_area.size() > 0)&&(current_exclude_area != old_exclude_area)) {
+            if ((!current_exclude_area.empty())&&(current_exclude_area != old_exclude_area)) {
                 BOOST_LOG_TRIVIAL(info) << boost::format("old printable size {%1%, %2%, %3%}, new printable size {%4%, %5%, %6%}, exclude_area different, need to shrink")
                    %old_printable_width %old_printable_depth %old_printable_height %current_printable_width %current_printable_depth %current_printable_height;
                 shrink_to_new_bed = 2;
@@ -3063,7 +3063,7 @@ int CLI::run(int argc, char **argv)
         }
     }
 
-    if (m_models.size() > 0)
+    if (!m_models.empty())
     {
         BOOST_LOG_TRIVIAL(info) << boost::format("translate_old %1%, shrink_to_new_bed %2%, old bed size {%3%, %4%, %5%}")%translate_old%shrink_to_new_bed %old_printable_width %old_printable_depth %old_printable_height;
         if (translate_old) {
@@ -3242,7 +3242,7 @@ int CLI::run(int argc, char **argv)
             plate_list.reset_size(current_printable_width, current_printable_depth, current_printable_height, true, true);
         }
     };
-    if (plate_data_src.size() > 0)
+    if (!plate_data_src.empty())
     {
         partplate_list.load_from_3mf_structure(plate_data_src);
 
@@ -3272,7 +3272,7 @@ int CLI::run(int argc, char **argv)
     if (downward_check) {
         bool use_default = false;
         std::string default_path;
-        if (downward_settings.size() == 0) {
+        if (downward_settings.empty()) {
             //parse from internal
             std::string cli_config_file = resources_dir() + "/profiles/BBL/cli_config.json";
             load_downward_settings_list_from_config(cli_config_file, current_printer_name, current_printer_model, downward_settings);
@@ -3398,7 +3398,7 @@ int CLI::run(int argc, char **argv)
     for (auto const &opt_key : m_transforms) {
         BOOST_LOG_TRIVIAL(info) << "process transform " << opt_key << "\n";
         if (opt_key == "assemble") {
-            if (clone_objects.size() > 0) {
+            if (!clone_objects.empty()) {
                 BOOST_LOG_TRIVIAL(error) << "Invalid params: can not set assemble and clone_objects together." << std::endl;
                 record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
                 flush_and_exit(CLI_INVALID_PARAMS);
@@ -3987,7 +3987,7 @@ int CLI::run(int argc, char **argv)
         ArrangePolygons selected, unselected, unprintable, locked_aps;
 
         //for (Model &model : m_models)
-        if (m_models.size() > 0)
+        if (!m_models.empty())
         {
             Model &model = m_models[0];
             Model original_model;
@@ -4092,7 +4092,7 @@ int CLI::run(int argc, char **argv)
                     //add the virtual object into unselect list if has
                     partplate_list.preprocess_exclude_areas(unselected);
 
-                    if (used_filament_set.size() > 0)
+                    if (!used_filament_set.empty())
                     {
                         //prepare the wipe tower
                         int plate_count = partplate_list.get_plate_count();
@@ -5869,7 +5869,7 @@ int CLI::run(int argc, char **argv)
             delete plate_bboxes[i];
     }
 
-    if (plate_data_src.size() > 0)
+    if (!plate_data_src.empty())
     {
         release_PlateData_list(plate_data_src);
     }
