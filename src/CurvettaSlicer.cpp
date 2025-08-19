@@ -4710,7 +4710,7 @@ int CLI::run(int argc, char **argv)
             //BBS: slice 0 means all plates, i means plate i;
             plate_to_slice = m_config.option<ConfigOptionInt>("slice")->value;
             sliced_plate = plate_to_slice;
-            bool pre_check = (plate_to_slice == 0)?true:false;
+            bool pre_check = (plate_to_slice == 0);
             bool finished = false;
 
             /*if (opt_key == "export_gcode" && printer_technology == ptSLA) {
@@ -5086,7 +5086,7 @@ int CLI::run(int argc, char **argv)
                                 if (export_slicedata) {
                                     BOOST_LOG_TRIVIAL(info) << "plate "<< index+1<< ":will export Slicing data to " << export_slice_data_dir;
                                     std::string plate_dir = export_slice_data_dir+"/"+std::to_string(index+1);
-                                    bool with_space = (get_logging_level() >= 4)?true:false;
+                                    bool with_space = (get_logging_level() >= 4);
                                     int ret = print->export_cached_data(plate_dir, with_space);
                                     if (ret) {
                                         BOOST_LOG_TRIVIAL(error) << "plate "<< index+1<< ": export Slicing data error, ret=" << ret;
@@ -5228,7 +5228,7 @@ int CLI::run(int argc, char **argv)
 
         for (int i = 0; i < plate_data_list.size(); i++) {
             PlateData *plate_data = plate_data_list[i];
-            bool skip_this_plate = ((plate_to_slice != 0) && (plate_to_slice != (i + 1)))?true:false;
+            bool skip_this_plate = ((plate_to_slice != 0) && (plate_to_slice != (i + 1)));
 
             plate_data->skipped_objects = plate_skipped_objects[i];
             if (!printer_model_id.empty())
@@ -5663,7 +5663,7 @@ int CLI::run(int argc, char **argv)
             BOOST_LOG_TRIVIAL(info) << boost::format("Line %1%: use previous thumbnails, no need to regenerate")%__LINE__;
             for (int i = 0; i < partplate_list.get_plate_count(); i++) {
                 PlateData *plate_data = plate_data_list[i];
-                bool skip_this_plate = ((plate_to_slice != 0) && (plate_to_slice != (i + 1)))?true:false;
+                bool skip_this_plate = ((plate_to_slice != 0) && (plate_to_slice != (i + 1)));
                 Slic3r::GUI::PartPlate *part_plate      = partplate_list.get_plate(i);
 
                 if (skip_this_plate) {
