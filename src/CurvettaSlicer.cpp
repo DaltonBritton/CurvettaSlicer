@@ -1658,7 +1658,7 @@ int CLI::run(int argc, char **argv)
         }
     }
 
-    auto load_config_file = [](const std::string& file, DynamicPrintConfig& config, std::string& config_type,
+    auto load_config_file = [=](const std::string& file, DynamicPrintConfig& config, std::string& config_type,
                                 std::string& config_name, std::string& filament_id, std::string& config_from) {
         if (! boost::filesystem::exists(file)) {
             boost::nowide::cerr << __FUNCTION__<< ": can not find setting file: " << file << std::endl;
@@ -1690,13 +1690,9 @@ int CLI::run(int argc, char **argv)
             if (type_iter != key_values.end()) {
                 config_type = type_iter->second;
             }
-            if (config_type == "machine") {
-                //config.set("printer_settings_id", config_name, true);
-                //printer_inherits = config.option<ConfigOptionString>("inherits", true)->value;
-            }
-            else if (config_type == "process") {
-                //config.set("print_settings_id", config_name, true);
-                //print_inherits = config.option<ConfigOptionString>("inherits", true)->value;
+
+            if (config_type == "machine" || config_type == "process") {
+
             }
             else if (config_type == "filament") {
                 auto filament_id_iter = key_values.find(BBL_JSON_KEY_FILAMENT_ID);
@@ -3548,8 +3544,6 @@ int CLI::run(int argc, char **argv)
             {
                 //auto arrange, keep the original logic
             }
-        } else if (opt_key == "ensure_on_bed") {
-            // do nothing, the value is used later
         } else if (opt_key == "rotate") {
             for (auto &model : m_models)
                 for (auto &o : model.objects)
@@ -3669,7 +3663,8 @@ int CLI::run(int argc, char **argv)
                     model.delete_object(size_t(0));
                 }
             }
-        } else if (opt_key == "repair") {
+        } else if (opt_key == "ensure_on_bed" || opt_key == "repair") {
+            // Ensure on bed will be used later.
             // Models are repaired by default.
             //for (auto &model : m_models)
             //    model.repair();
@@ -4623,8 +4618,6 @@ int CLI::run(int argc, char **argv)
             this->print_help(true, ptFFF);
         } else if (opt_key == "help_sla") {
             this->print_help(true, ptSLA);
-        } else if (opt_key == "pipe") {
-            //already processed before
         } else if (opt_key == "load_slicedata") {
             load_slicedata = true;
             load_slice_data_dir = m_config.opt_string(opt_key);
@@ -4656,13 +4649,8 @@ int CLI::run(int argc, char **argv)
                 model.add_default_instances();
                 model.print_info();
             }
-        } else if (opt_key == "uptodate") {
-            //already processed before
-        } else if (opt_key == "min_save") {
-            //already processed before
-        } else if (opt_key == "load_defaultfila") {
-            //already processed before
-        } else if (opt_key == "mtcpp") {
+        }
+        else if (opt_key == "mtcpp") {
             max_triangle_count_per_plate = m_config.option<ConfigOptionInt>("mtcpp")->value;
         } else if (opt_key == "mstpp") {
             max_slicing_time_per_plate = m_config.option<ConfigOptionInt>("mstpp")->value;
@@ -4694,8 +4682,6 @@ int CLI::run(int argc, char **argv)
         }else if(opt_key=="no_check"){
             no_check = m_config.opt_bool(opt_key);
         //} else if (opt_key == "export_gcode" || opt_key == "export_sla" || opt_key == "slice") {
-        } else if (opt_key == "normative_check") {
-            //already processed before
         } else if (opt_key == "export_slicedata") {
             export_slicedata = true;
             export_slice_data_dir = m_config.opt_string(opt_key);
@@ -4704,7 +4690,13 @@ int CLI::run(int argc, char **argv)
                 record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
                 flush_and_exit(CLI_INVALID_PARAMS)
             }
-        } else if (opt_key == "slice") {
+        } else if (opt_key == "pipe" ||
+                   opt_key == "uptodate" ||
+                   opt_key == "min_save" ||
+                   opt_key == "load_defaultfila" ||
+                   opt_key == "normative_check") {
+            //already processed before
+        }  else if (opt_key == "slice") {
             //BBS: slice 0 means all plates, i means plate i;
             plate_to_slice = m_config.option<ConfigOptionInt>("slice")->value;
             sliced_plate = plate_to_slice;
@@ -6004,10 +5996,8 @@ void attach_console_on_demand(){
 
     if (!console_attached) {
         // Try attaching to the parent console first
-        if (AttachConsole(ATTACH_PARENT_PROCESS)) {
-            console_attached = true;
-        } else if (GetLastError() == ERROR_ACCESS_DENIED) {
-            // Already has a console (maybe attached by debugger)
+        if (AttachConsole(ATTACH_PARENT_PROCESS) ||
+            GetLastError() == ERROR_ACCESS_DENIED) {
             console_attached = true;
         } else {
             // No parent console found, try allocating a new one
