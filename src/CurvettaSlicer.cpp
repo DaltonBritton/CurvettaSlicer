@@ -2687,14 +2687,14 @@ int CLI::run(int argc, char **argv)
                 if (source_opt->is_scalar()) {
                     if (opt_key == "compatible_printers_condition") {
                         ConfigOption *opt = m_print_config.option("compatible_machine_expression_group", true);
-                        ConfigOptionStrings* opt_vec_dst = dynamic_cast<ConfigOptionStrings*>(opt);
+                        auto* opt_vec_dst = dynamic_cast<ConfigOptionStrings*>(opt);
                         if (opt_vec_dst->empty())
                             opt_vec_dst->resize(filament_count+2, new ConfigOptionString());
                         opt_vec_dst->set_at(source_opt, filament_index, 0);
                     }
                     else if (opt_key == "compatible_prints_condition") {
                         ConfigOption *opt = m_print_config.option("compatible_process_expression_group", true);
-                        ConfigOptionStrings* opt_vec_dst = dynamic_cast<ConfigOptionStrings*>(opt);
+                        auto* opt_vec_dst = dynamic_cast<ConfigOptionStrings*>(opt);
                         if (opt_vec_dst->empty())
                             opt_vec_dst->resize(filament_count, new ConfigOptionString());
                         opt_vec_dst->set_at(source_opt, filament_index-1, 0);
@@ -2717,8 +2717,8 @@ int CLI::run(int argc, char **argv)
                         record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
                         flush_and_exit(CLI_CONFIG_FILE_ERROR);
                     }
-                    ConfigOptionVectorBase* opt_vec_dst = dynamic_cast<ConfigOptionVectorBase*>(opt);
-                    const ConfigOptionVectorBase* opt_vec_src = dynamic_cast<const ConfigOptionVectorBase*>(source_opt);
+                    auto* opt_vec_dst = dynamic_cast<ConfigOptionVectorBase*>(opt);
+                    const auto* opt_vec_src = dynamic_cast<const ConfigOptionVectorBase*>(source_opt);
                     opt_vec_dst->set_at(opt_vec_src, filament_index-1, 0);
                 }
             }
@@ -3159,7 +3159,7 @@ int CLI::run(int argc, char **argv)
             //translate the objects
             int plate_count = plate_list.get_plate_count();
             for (int index = 1; index < plate_count; index ++) {
-                Slic3r::GUI::PartPlate* cur_plate = (Slic3r::GUI::PartPlate *)plate_list.get_plate(index);
+                auto* cur_plate = (Slic3r::GUI::PartPlate *)plate_list.get_plate(index);
 
                 Vec3d cur_origin = cur_plate->get_origin();
                 Vec3d new_origin = plate_list.compute_origin_using_new_size(index, old_printable_width, old_printable_depth);
@@ -3186,7 +3186,7 @@ int CLI::run(int argc, char **argv)
                 exclude_depth = current_exclude_area[2].y() - current_exclude_area[0].y();
             }
             for (int index = 0; index < plate_count; index ++) {
-                Slic3r::GUI::PartPlate* cur_plate = (Slic3r::GUI::PartPlate *)plate_list.get_plate(index);
+                auto* cur_plate = (Slic3r::GUI::PartPlate *)plate_list.get_plate(index);
                 Vec3d cur_origin = cur_plate->get_origin();
                 Vec3d new_origin = plate_list.compute_origin_using_new_size(index, current_printable_width, current_printable_depth);
                 Vec3d offset;
@@ -3249,7 +3249,7 @@ int CLI::run(int argc, char **argv)
         int plate_count = partplate_list.get_plate_count();
         plate_obj_size_infos.resize(plate_count, plate_obj_size_info_t());
         for (int index = 0; index < plate_count; index ++) {
-            Slic3r::GUI::PartPlate* cur_plate = (Slic3r::GUI::PartPlate *)partplate_list.get_plate(index);
+            auto* cur_plate = (Slic3r::GUI::PartPlate *)partplate_list.get_plate(index);
 
             check_plate_wipe_tower(cur_plate, index, m_print_config, plate_obj_size_infos[index]);
             BOOST_LOG_TRIVIAL(info) << boost::format("plate %1%,  has_wipe_tower %2%, wipe_x %3%, wipe_y %4%, width %5%, depth %6%")
@@ -3333,7 +3333,7 @@ int CLI::run(int argc, char **argv)
                 BOOST_LOG_TRIVIAL(info) << boost::format("downward_check: all failed, size %1%")%downward_check_size;
                 break;
             }
-            Slic3r::GUI::PartPlate* cur_plate = (Slic3r::GUI::PartPlate *)partplate_list.get_plate(index);
+            auto* cur_plate = (Slic3r::GUI::PartPlate *)partplate_list.get_plate(index);
             Vec3d size = plate_obj_size_infos[index].obj_bbox.size();
 
             for (int index2 = 0; index2 < downward_check_size; index2 ++)
@@ -3710,7 +3710,7 @@ int CLI::run(int argc, char **argv)
         flush_and_exit(CLI_INVALID_PARAMS);
     }
     else if (plate_to_slice > 0){
-        Slic3r::GUI::PartPlate* cur_plate = (Slic3r::GUI::PartPlate *)partplate_list.get_plate(plate_to_slice-1);
+        auto* cur_plate = (Slic3r::GUI::PartPlate *)partplate_list.get_plate(plate_to_slice-1);
         PrintSequence curr_plate_seq = cur_plate->get_print_seq();
 
         if (curr_plate_seq == PrintSequence::ByDefault) {
@@ -3800,7 +3800,7 @@ int CLI::run(int argc, char **argv)
 
         for (size_t i = 0; i < plate_count; i++)
         {
-            Slic3r::GUI::PartPlate* cur_plate = (Slic3r::GUI::PartPlate*)partplate_list.get_plate(i);
+            auto* cur_plate = (Slic3r::GUI::PartPlate*)partplate_list.get_plate(i);
             //lock those plates no need to arrange
             if (!assemble_plate_info_list[i].need_arrange)
                 cur_plate->lock(true);
@@ -3809,7 +3809,7 @@ int CLI::run(int argc, char **argv)
         for (size_t i = 0; i < plate_count; i++)
         {
             assemble_plate_info_t& assemble_plate = assemble_plate_info_list[i];
-            Slic3r::GUI::PartPlate* cur_plate = (Slic3r::GUI::PartPlate*)partplate_list.get_plate(i);
+            auto* cur_plate = (Slic3r::GUI::PartPlate*)partplate_list.get_plate(i);
             BOOST_LOG_TRIVIAL(info) << boost::format("plate %1%, need arrange %2%, filaments_count %3%") % (i+1) % assemble_plate.need_arrange % assemble_plate.filaments_count;
             if (assemble_plate.need_arrange)
             {
@@ -3976,7 +3976,7 @@ int CLI::run(int argc, char **argv)
         for (size_t i = 0; i < plate_count; i++)
         {
             //unlock all the plates
-            Slic3r::GUI::PartPlate* cur_plate = (Slic3r::GUI::PartPlate*)partplate_list.get_plate(i);
+            auto* cur_plate = (Slic3r::GUI::PartPlate*)partplate_list.get_plate(i);
             cur_plate->lock(false);
         }
 
@@ -5737,7 +5737,7 @@ int CLI::run(int argc, char **argv)
             int print_index;
             part_plate->get_print(&print_base, &gcode_result, &print_index);
 
-            Print *print = dynamic_cast<Print *>(print_base);
+            auto *print = dynamic_cast<Print *>(print_base);
 
             PlateBBoxData* plate_bbox = new PlateBBoxData();
             std::vector<BBoxData>& id_bboxes = plate_bbox->bbox_objs;
