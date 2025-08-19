@@ -1200,7 +1200,7 @@ int CLI::run(int argc, char **argv)
     {
         BOOST_LOG_TRIVIAL(error) << boost::format("metadata_name should be the same size with metadata_value");
         record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-        flush_and_exit(CLI_INVALID_PARAMS);
+        flush_and_exit(CLI_INVALID_PARAMS)
     }
 
     // Read input file(s) if any.
@@ -1304,13 +1304,13 @@ int CLI::run(int argc, char **argv)
         {
             BOOST_LOG_TRIVIAL(error) << boost::format("clone_objects size %1% should be the same with input files size %2%")%clone_objects.size() %m_input_files.size();
             record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-            flush_and_exit(CLI_INVALID_PARAMS);
+            flush_and_exit(CLI_INVALID_PARAMS)
         }
         else if (load_filaments.empty())
         {
             BOOST_LOG_TRIVIAL(error) << boost::format("clone_objects should be used with load_filaments together");
             record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-            flush_and_exit(CLI_INVALID_PARAMS);
+            flush_and_exit(CLI_INVALID_PARAMS)
         }
     }
     if (!loaded_filament_ids.empty())
@@ -1319,13 +1319,13 @@ int CLI::run(int argc, char **argv)
         {
             BOOST_LOG_TRIVIAL(error) << boost::format("loaded_filament_ids size %1% should be the same with input files size %2%")%loaded_filament_ids.size() %m_input_files.size();
             record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-            flush_and_exit(CLI_INVALID_PARAMS);
+            flush_and_exit(CLI_INVALID_PARAMS)
         }
         else if (load_filaments.empty())
         {
             BOOST_LOG_TRIVIAL(error) << boost::format("loaded_filament_ids should be used with load_filaments together");
             record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-            flush_and_exit(CLI_INVALID_PARAMS);
+            flush_and_exit(CLI_INVALID_PARAMS)
         }
     }
 
@@ -1341,14 +1341,14 @@ int CLI::run(int argc, char **argv)
     {
         BOOST_LOG_TRIVIAL(error) << boost::format("load_assemble_list should not be used with input model files to load and should not be sued with transforms");
         record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-        flush_and_exit(CLI_INVALID_PARAMS);
+        flush_and_exit(CLI_INVALID_PARAMS)
     }
     if (load_assemble_list.empty()) {
         for (const std::string& file : m_input_files) {
             if (!boost::filesystem::exists(file)) {
                 boost::nowide::cerr << "No such file: " << file << std::endl;
                 record_exit_reson(outfile_dir, CLI_FILE_NOTFOUND, 0, cli_errors[CLI_FILE_NOTFOUND], sliced_info);
-                flush_and_exit(CLI_FILE_NOTFOUND);
+                flush_and_exit(CLI_FILE_NOTFOUND)
             }
             Model model;
             //BBS: add plate related logic
@@ -1367,7 +1367,7 @@ int CLI::run(int argc, char **argv)
                     {
                         BOOST_LOG_TRIVIAL(error) << boost::format("can not load 3mf when set loaded_filament_ids or clone_objects");
                         record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-                        flush_and_exit(CLI_INVALID_PARAMS);
+                        flush_and_exit(CLI_INVALID_PARAMS)
                     }
                     strategy = LoadStrategy::LoadModel | LoadStrategy::LoadConfig|LoadStrategy::AddDefaultInstances | LoadStrategy::LoadAuxiliary;
                     //load_aux = true;
@@ -1385,7 +1385,7 @@ int CLI::run(int argc, char **argv)
                     {
                         BOOST_LOG_TRIVIAL(info) << "The BBL 3mf file should be placed at the first position, filename=" << file << "\n";
                         record_exit_reson(outfile_dir, CLI_FILELIST_INVALID_ORDER, 0, cli_errors[CLI_FILELIST_INVALID_ORDER], sliced_info);
-                        flush_and_exit(CLI_FILELIST_INVALID_ORDER);
+                        flush_and_exit(CLI_FILELIST_INVALID_ORDER)
                     }
                     BOOST_LOG_TRIVIAL(info) << boost::format("the first file is a 3mf, version %1%, got plate count %2%") %file_version.to_string() %plate_data_src.size();
                     need_arrange = false;
@@ -1399,7 +1399,7 @@ int CLI::run(int argc, char **argv)
                     if (!allow_newer_file && ((cli_ver.maj() != file_version.maj()) || (cli_ver.min() < file_version.min()))){
                         BOOST_LOG_TRIVIAL(error) << boost::format("Version Check: File Version %1% not supported by current cli version %2%")%file_version.to_string() %SoftFever_VERSION;
                         record_exit_reson(outfile_dir, CLI_FILE_VERSION_NOT_SUPPORTED, 0, cli_errors[CLI_FILE_VERSION_NOT_SUPPORTED], sliced_info);
-                        flush_and_exit(CLI_FILE_VERSION_NOT_SUPPORTED);
+                        flush_and_exit(CLI_FILE_VERSION_NOT_SUPPORTED)
                     }
                     Semver old_version(1, 5, 9), old_version2(1, 5, 9);
                     if ((file_version < old_version) && !config.empty()) {
@@ -1418,7 +1418,7 @@ int CLI::run(int argc, char **argv)
                             if (!postprocess_values.empty()) {
                                 BOOST_LOG_TRIVIAL(error) << boost::format("normative_check: postprocess not supported, array size %1%")%postprocess_values.size();
                                 record_exit_reson(outfile_dir, CLI_POSTPROCESS_NOT_SUPPORTED, 0, cli_errors[CLI_POSTPROCESS_NOT_SUPPORTED], sliced_info);
-                                flush_and_exit(CLI_POSTPROCESS_NOT_SUPPORTED);
+                                flush_and_exit(CLI_POSTPROCESS_NOT_SUPPORTED)
                             }
                         }
                     }
@@ -1509,7 +1509,7 @@ int CLI::run(int argc, char **argv)
                             if (loaded_filament_ids[input_index] > load_filaments.size()) {
                                 BOOST_LOG_TRIVIAL(error) << boost::format("invalid filament_id %1% at index %2%, max %3%")%loaded_filament_ids[input_index] % (input_index + 1) %load_filaments.size();
                                 record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-                                flush_and_exit(CLI_INVALID_PARAMS);
+                                flush_and_exit(CLI_INVALID_PARAMS)
                             }
                             object_extruder_id = loaded_filament_ids[input_index];
                             used_filament_set.emplace(object_extruder_id);
@@ -1521,7 +1521,7 @@ int CLI::run(int argc, char **argv)
                             if (clone_objects[input_index] > MAX_CLONEABLE_SIZE) {
                                 BOOST_LOG_TRIVIAL(error) << boost::format("invalid clone count %1% at index %2%, max %3%")%clone_objects[input_index] % (input_index + 1) %MAX_CLONEABLE_SIZE;
                                 record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-                                flush_and_exit(CLI_INVALID_PARAMS);
+                                flush_and_exit(CLI_INVALID_PARAMS)
                             }
                             clone_count = clone_objects[input_index];
                         }
@@ -1566,7 +1566,7 @@ int CLI::run(int argc, char **argv)
                 if ((printer_technology != other_printer_technology) && (other_printer_technology != ptUnknown)) {
                     boost::nowide::cerr << "invalid printer_technology " <<printer_technology<<", from source file "<< file <<std::endl;
                     record_exit_reson(outfile_dir, CLI_INVALID_PRINTER_TECH, 0, cli_errors[CLI_INVALID_PRINTER_TECH], sliced_info);
-                    flush_and_exit(CLI_INVALID_PRINTER_TECH);
+                    flush_and_exit(CLI_INVALID_PRINTER_TECH)
                 }
                 if (!config_substitutions.substitutions.empty()) {
                     BOOST_LOG_TRIVIAL(info) << "Found legacy configuration values, substituted when loading " << file << ":\n";
@@ -1582,7 +1582,7 @@ int CLI::run(int argc, char **argv)
             catch (std::exception& e) {
                 boost::nowide::cerr << file << ": " << e.what() << std::endl;
                 record_exit_reson(outfile_dir, CLI_DATA_FILE_ERROR, 0, cli_errors[CLI_DATA_FILE_ERROR], sliced_info);
-                flush_and_exit(CLI_DATA_FILE_ERROR);
+                flush_and_exit(CLI_DATA_FILE_ERROR)
             }
             if (model.objects.empty()) {
                 boost::nowide::cerr << "Error: file is empty: " << file << std::endl;
@@ -1598,20 +1598,20 @@ int CLI::run(int argc, char **argv)
         int ret = load_assemble_plate_list(load_assemble_list, assemble_plate_info_list);
         if (ret) {
             record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-            flush_and_exit(ret);
+            flush_and_exit(ret)
         }
 
         try {
             ret = construct_assemble_list(assemble_plate_info_list, model, plate_data_src);
             if (ret) {
                 record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-                flush_and_exit(ret);
+                flush_and_exit(ret)
             }
         }
         catch (std::exception& e) {
             boost::nowide::cerr << construct_assemble_list << ": " << e.what() << std::endl;
             record_exit_reson(outfile_dir, CLI_DATA_FILE_ERROR, 0, cli_errors[CLI_DATA_FILE_ERROR], sliced_info);
-            flush_and_exit(CLI_DATA_FILE_ERROR);
+            flush_and_exit(CLI_DATA_FILE_ERROR)
         }
         model.add_default_instances();
         m_models.push_back(std::move(model));
@@ -1631,7 +1631,7 @@ int CLI::run(int argc, char **argv)
         if(!boost::filesystem::exists(file)) {
             boost::nowide::cerr << __FUNCTION__ << ": can not find custom_gcode file: " << file << std::endl;
             record_exit_reson(outfile_dir, CLI_FILE_NOTFOUND, 0, cli_errors[CLI_FILE_NOTFOUND], sliced_info);
-            flush_and_exit(CLI_FILE_NOTFOUND);
+            flush_and_exit(CLI_FILE_NOTFOUND)
         }
         try {
             nlohmann::json jj;
@@ -1654,7 +1654,7 @@ int CLI::run(int argc, char **argv)
         catch (std::exception &ex) {
             boost::nowide::cerr << __FUNCTION__<< ":Loading custom-gcode file \"" << file << "\" failed: " << ex.what() << std::endl;
             record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-            flush_and_exit(CLI_CONFIG_FILE_ERROR);
+            flush_and_exit(CLI_CONFIG_FILE_ERROR)
         }
     }
 
@@ -1735,14 +1735,14 @@ int CLI::run(int argc, char **argv)
         int ret = load_config_file(file, config, config_type, config_name, filament_id, config_from);
         if (ret) {
             record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-            flush_and_exit(ret);
+            flush_and_exit(ret)
         }
 
         if (config_type == "machine") {
             if (!new_printer_name.empty()) {
                 boost::nowide::cerr << "duplicate machine config file: " << file << std::endl;
                 record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                flush_and_exit(CLI_CONFIG_FILE_ERROR);
+                flush_and_exit(CLI_CONFIG_FILE_ERROR)
             }
             new_printer_name = config_name;
             if (config_from == "system") {
@@ -1779,7 +1779,7 @@ int CLI::run(int argc, char **argv)
             if (!new_process_name.empty()) {
                 boost::nowide::cerr << "duplicate process config file: " << file << std::endl;
                 record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                flush_and_exit(CLI_CONFIG_FILE_ERROR);
+                flush_and_exit(CLI_CONFIG_FILE_ERROR)
             }
             new_process_name = config_name;
             if (config_from == "system") {
@@ -1810,7 +1810,7 @@ int CLI::run(int argc, char **argv)
         if ((printer_technology != other_printer_technology)&&(other_printer_technology != ptUnknown)){
             boost::nowide::cerr << "invalid printer_technology " <<printer_technology<<", from config "<< file <<std::endl;
             record_exit_reson(outfile_dir, CLI_INVALID_PRINTER_TECH, 0, cli_errors[CLI_INVALID_PRINTER_TECH], sliced_info);
-            flush_and_exit(CLI_INVALID_PRINTER_TECH);
+            flush_and_exit(CLI_INVALID_PRINTER_TECH)
         }
     }
 
@@ -1835,13 +1835,13 @@ int CLI::run(int argc, char **argv)
                 int ret = load_config_file(file, config, config_type, config_name, filament_id, config_from);
                 if (ret) {
                     record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-                    flush_and_exit(ret);
+                    flush_and_exit(ret)
                 }
 
                 if (config_type != "filament") {
                     BOOST_LOG_TRIVIAL(error) <<__FUNCTION__ << boost::format(": unknown config type %1% of file %2% in load-filaments") % config_type % file;
                     record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                    flush_and_exit(CLI_CONFIG_FILE_ERROR);
+                    flush_and_exit(CLI_CONFIG_FILE_ERROR)
                 }
 
                 if ((config_from == "User")||(config_from == "user")) {
@@ -1861,7 +1861,7 @@ int CLI::run(int argc, char **argv)
         {
             BOOST_LOG_TRIVIAL(error) <<__FUNCTION__ << boost::format(": load_filament_count is %1%, but can not load a default filament") % load_filament_count;
             record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-            flush_and_exit(CLI_CONFIG_FILE_ERROR);
+            flush_and_exit(CLI_CONFIG_FILE_ERROR)
         }
     }
     for (int index = 0; index < load_filament_count; index++) {
@@ -1873,13 +1873,13 @@ int CLI::run(int argc, char **argv)
             int ret = load_config_file(file, config, config_type, config_name, filament_id, config_from);
             if (ret) {
                 record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-                flush_and_exit(ret);
+                flush_and_exit(ret)
             }
 
             if (config_type != "filament") {
                 BOOST_LOG_TRIVIAL(error) <<__FUNCTION__ << boost::format(": unknown config type %1% of file %2% in load-filaments") % config_type % file;
                 record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                flush_and_exit(CLI_CONFIG_FILE_ERROR);
+                flush_and_exit(CLI_CONFIG_FILE_ERROR)
             }
 
             PrinterTechnology other_printer_technology = get_printer_technology(config);
@@ -1889,7 +1889,7 @@ int CLI::run(int argc, char **argv)
             if ((printer_technology != other_printer_technology) && (other_printer_technology != ptUnknown)) {
                 BOOST_LOG_TRIVIAL(error) << "invalid printer_technology " <<printer_technology<<", from filament file "<< file;
                 record_exit_reson(outfile_dir, CLI_INVALID_PRINTER_TECH, 0, cli_errors[CLI_INVALID_PRINTER_TECH], sliced_info);
-                flush_and_exit(CLI_INVALID_PRINTER_TECH);
+                flush_and_exit(CLI_INVALID_PRINTER_TECH)
             }
             std::string inherits;
             if ((config_from == "User")||(config_from == "user")) {
@@ -1940,14 +1940,14 @@ int CLI::run(int argc, char **argv)
                 int ret = load_config_file(file, config, config_type, config_name, filament_id, config_from);
                 if (ret) {
                     record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-                    flush_and_exit(ret);
+                    flush_and_exit(ret)
                 }
 
                 if (config_type == "machine") {
                     if ( config_name != current_printer_system_name ) {
                         BOOST_LOG_TRIVIAL(error) << boost::format("wrong machine config file %1% loaded, current machine config name %2% ")%config_name %current_printer_system_name;
                         record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                        flush_and_exit(CLI_CONFIG_FILE_ERROR);
+                        flush_and_exit(CLI_CONFIG_FILE_ERROR)
                     }
                     upward_compatible_printers = config.option<ConfigOptionStrings>("upward_compatible_machine", true)->values;
                     BOOST_LOG_TRIVIAL(info) << boost::format("load a machine config %1% from file %2%, upward_compatible_printers size is %3% ")%config_name %file %upward_compatible_printers.size();
@@ -1988,7 +1988,7 @@ int CLI::run(int argc, char **argv)
                                 std::string error_str = (boost::format("Printer Settings: the printable size {%1%, %2%, %3%} exceeds the default size.")%old_printable_width %old_printable_depth %old_printable_height).str();
                                 BOOST_LOG_TRIVIAL(error) << error_str;
                                 record_exit_reson(outfile_dir, CLI_MODIFIED_PARAMS_TO_PRINTER, 0, error_str, sliced_info);
-                                flush_and_exit(CLI_MODIFIED_PARAMS_TO_PRINTER);
+                                flush_and_exit(CLI_MODIFIED_PARAMS_TO_PRINTER)
                             }
                         }
 
@@ -1999,7 +1999,7 @@ int CLI::run(int argc, char **argv)
                     if ( config_name != current_process_system_name ) {
                         BOOST_LOG_TRIVIAL(error) << boost::format("wrong process config file %1% loaded, current process config name %2% ")%config_name %current_process_system_name;
                         record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                        flush_and_exit(CLI_CONFIG_FILE_ERROR);
+                        flush_and_exit(CLI_CONFIG_FILE_ERROR)
                     }
                     current_print_compatible_printers  = config.option<ConfigOptionStrings>("compatible_printers", true)->values;
                     BOOST_LOG_TRIVIAL(info) << boost::format("load a process config %1% from file %2%, current_print_compatible_printers size is %3% ")%config_name %file %current_print_compatible_printers.size();
@@ -2012,7 +2012,7 @@ int CLI::run(int argc, char **argv)
                 else {
                     BOOST_LOG_TRIVIAL(error) << boost::format("found invalid config type %1% from config %2% ")%config_type %file;
                     record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                    flush_and_exit(CLI_CONFIG_FILE_ERROR);
+                    flush_and_exit(CLI_CONFIG_FILE_ERROR)
                 }
             }
         }
@@ -2030,7 +2030,7 @@ int CLI::run(int argc, char **argv)
                     int ret = load_config_file(system_printer_path, config, config_type, config_name, filament_id, config_from);
                     if (ret) {
                         record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-                        flush_and_exit(ret);
+                        flush_and_exit(ret)
                     }
 
                     upward_compatible_printers = config.option<ConfigOptionStrings>("upward_compatible_machine", true)->values;
@@ -2071,7 +2071,7 @@ int CLI::run(int argc, char **argv)
                     int ret = load_config_file(system_process_path, config, config_type, config_name, filament_id, config_from);
                     if (ret) {
                         record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-                        flush_and_exit(ret);
+                        flush_and_exit(ret)
                     }
                     current_print_compatible_printers  = config.option<ConfigOptionStrings>("compatible_printers", true)->values;
                     config.set("print_settings_id", config_name, true);
@@ -2091,7 +2091,7 @@ int CLI::run(int argc, char **argv)
                 {
                     BOOST_LOG_TRIVIAL(error) << boost::format("uptodate_filaments size %1% not equal to filament_count %2% ")%uptodate_filaments.size() %filament_count;
                     record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-                    flush_and_exit(CLI_INVALID_PARAMS);
+                    flush_and_exit(CLI_INVALID_PARAMS)
                 }
                 for (unsigned int index = 0; index < filament_count; index ++)
                 {
@@ -2102,19 +2102,19 @@ int CLI::run(int argc, char **argv)
                     if (ret) {
                         BOOST_LOG_TRIVIAL(error) << boost::format("load uptodate_filaments %1% fail, index %2%!")%file %index;
                         record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-                        flush_and_exit(ret);
+                        flush_and_exit(ret)
                     }
 
                     if (config_type != "filament") {
                         BOOST_LOG_TRIVIAL(error) <<__FUNCTION__ << boost::format(": unknown config type %1% of file %2% in load-filaments") % config_type % file;
                         record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                        flush_and_exit(CLI_CONFIG_FILE_ERROR);
+                        flush_and_exit(CLI_CONFIG_FILE_ERROR)
                     }
 
                     if (config_name != current_filaments_system_name[index]) {
                         BOOST_LOG_TRIVIAL(error) << boost::format("wrong filament config file %1% loaded, current filament config name %2%, index %3%")%config_name %current_filaments_system_name[index] %index;
                         record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                        flush_and_exit(CLI_CONFIG_FILE_ERROR);
+                        flush_and_exit(CLI_CONFIG_FILE_ERROR)
                     }
 
                     load_filaments_id.push_back(filament_id);
@@ -2141,13 +2141,13 @@ int CLI::run(int argc, char **argv)
                     int ret = load_config_file(system_filament_path, config, config_type, config_name, filament_id, config_from);
                     if (ret) {
                         record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-                        flush_and_exit(ret);
+                        flush_and_exit(ret)
                     }
 
                     if (config_type != "filament") {
                         BOOST_LOG_TRIVIAL(error) <<__FUNCTION__ << boost::format(": unknown config type %1% of file %2% in load-filaments") % config_type % system_filament_path;
                         record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                        flush_and_exit(CLI_CONFIG_FILE_ERROR);
+                        flush_and_exit(CLI_CONFIG_FILE_ERROR)
                     }
 
                     load_filaments_id.push_back(filament_id);
@@ -2180,7 +2180,7 @@ int CLI::run(int argc, char **argv)
                 int ret = load_config_file(system_printer_path, config, config_type, config_name, filament_id, config_from);
                 if (ret) {
                     record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-                    flush_and_exit(ret);
+                    flush_and_exit(ret)
                 }
                 upward_compatible_printers = config.option<ConfigOptionStrings>("upward_compatible_machine", true)->values;
             }
@@ -2202,7 +2202,7 @@ int CLI::run(int argc, char **argv)
                 int ret = load_config_file(system_process_path, config, config_type, config_name, filament_id, config_from);
                 if (ret) {
                     record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-                    flush_and_exit(ret);
+                    flush_and_exit(ret)
                 }
                 current_print_compatible_printers  = config.option<ConfigOptionStrings>("compatible_printers", true)->values;
             }
@@ -2288,7 +2288,7 @@ int CLI::run(int argc, char **argv)
             if (!process_compatible) {
                 BOOST_LOG_TRIVIAL(error) <<__FUNCTION__ << boost::format(" %1% : current 3mf file not support the new printer %2%, new_printer_system_name %3%")%__LINE__%new_printer_name %new_printer_system_name;
                 record_exit_reson(outfile_dir, CLI_3MF_NEW_MACHINE_NOT_SUPPORTED, 0, cli_errors[CLI_3MF_NEW_MACHINE_NOT_SUPPORTED], sliced_info);
-                flush_and_exit(CLI_3MF_NEW_MACHINE_NOT_SUPPORTED);
+                flush_and_exit(CLI_3MF_NEW_MACHINE_NOT_SUPPORTED)
             }
         }
         /*else {
@@ -2301,7 +2301,7 @@ int CLI::run(int argc, char **argv)
     if (!process_compatible) {
         BOOST_LOG_TRIVIAL(error) <<__FUNCTION__ << boost::format(" %1%: process not compatible with printer.")%__LINE__;
         record_exit_reson(outfile_dir, CLI_PROCESS_NOT_COMPATIBLE, 0, cli_errors[CLI_PROCESS_NOT_COMPATIBLE], sliced_info);
-        flush_and_exit(CLI_PROCESS_NOT_COMPATIBLE);
+        flush_and_exit(CLI_PROCESS_NOT_COMPATIBLE)
     }
     sliced_info.upward_machines = upward_compatible_printers;
 
@@ -2520,7 +2520,7 @@ int CLI::run(int argc, char **argv)
 
         if (ret) {
             record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-            flush_and_exit(ret);
+            flush_and_exit(ret)
         }
     }
 
@@ -2586,7 +2586,7 @@ int CLI::run(int argc, char **argv)
 
         if (ret) {
             record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-            flush_and_exit(ret);
+            flush_and_exit(ret)
         }
     }
 
@@ -2682,7 +2682,7 @@ int CLI::run(int argc, char **argv)
                     // The key was not found in the source config, therefore it will not be initialized!
                     BOOST_LOG_TRIVIAL(error) << boost::format("can not find %1% from filament %2%: %3%")%opt_key%filament_index%load_filaments_name[index];
                     record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                    flush_and_exit(CLI_CONFIG_FILE_ERROR);
+                    flush_and_exit(CLI_CONFIG_FILE_ERROR)
                 }
                 if (source_opt->is_scalar()) {
                     if (opt_key == "compatible_printers_condition") {
@@ -2701,7 +2701,7 @@ int CLI::run(int argc, char **argv)
                     }
                     else {
                         //skip the scalar values
-                        BOOST_LOG_TRIVIAL(info) << boost::format("skip scalar option %1% from filament %2%: %3%")%opt_key%filament_index%load_filaments_name[index];;
+                        BOOST_LOG_TRIVIAL(info) << boost::format("skip scalar option %1% from filament %2%: %3%")%opt_key%filament_index%load_filaments_name[index];
                         continue;
                     }
                 }
@@ -2715,7 +2715,7 @@ int CLI::run(int argc, char **argv)
                         // This is only possible if other is of DynamicConfig type.
                         BOOST_LOG_TRIVIAL(error) << boost::format("can not create option %1% to config, from filament %2%: %3%")%opt_key%filament_index%load_filaments_name[index];
                         record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                        flush_and_exit(CLI_CONFIG_FILE_ERROR);
+                        flush_and_exit(CLI_CONFIG_FILE_ERROR)
                     }
                     auto* opt_vec_dst = dynamic_cast<ConfigOptionVectorBase*>(opt);
                     const auto* opt_vec_src = dynamic_cast<const ConfigOptionVectorBase*>(source_opt);
@@ -2818,7 +2818,7 @@ int CLI::run(int argc, char **argv)
             {
                 BOOST_LOG_TRIVIAL(error) << boost::format("filament_is_support's count %1% not equal to filament_colour's size %2%")%filament_is_support->size() %project_filament_count;
                 record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                flush_and_exit(CLI_CONFIG_FILE_ERROR);
+                flush_and_exit(CLI_CONFIG_FILE_ERROR)
             }
 
             {
@@ -2952,7 +2952,7 @@ int CLI::run(int argc, char **argv)
     } else {
         boost::nowide::cerr << "invalid printer_technology " << std::endl;
         record_exit_reson(outfile_dir, CLI_INVALID_PRINTER_TECH, 0, cli_errors[CLI_INVALID_PRINTER_TECH], sliced_info);
-        flush_and_exit(CLI_INVALID_PRINTER_TECH);
+        flush_and_exit(CLI_INVALID_PRINTER_TECH)
         /*assert(printer_technology == ptSLA);
         sla_print_config.filename_format.value = "[input_filename_base].sl1";
 
@@ -2972,7 +2972,7 @@ int CLI::run(int argc, char **argv)
         for (auto & it : validity)
             boost::nowide::cerr << it.first <<": "<< it.second << std::endl;
         record_exit_reson(outfile_dir, CLI_INVALID_VALUES_IN_3MF, 0, cli_errors[CLI_INVALID_VALUES_IN_3MF], sliced_info);
-        flush_and_exit(CLI_INVALID_VALUES_IN_3MF);
+        flush_and_exit(CLI_INVALID_VALUES_IN_3MF)
     }
 
     auto timelapse_type_opt = m_print_config.option("timelapse_type");
@@ -3286,12 +3286,12 @@ int CLI::run(int argc, char **argv)
             int ret = load_config_file(file_path, config, config_type, config_name, filament_id, config_from);
             if (ret) {
                 record_exit_reson(outfile_dir, ret, 0, cli_errors[ret], sliced_info);
-                flush_and_exit(ret);
+                flush_and_exit(ret)
             }
             if ((config_type != "machine") || (config_from != "system")) {
                 BOOST_LOG_TRIVIAL(info) << boost::format("found invalid config type %1% or from %2% in file %3% when downward_check")%config_type %config_from %file_path;
                 record_exit_reson(outfile_dir, ret, 0, cli_errors[CLI_CONFIG_FILE_ERROR], sliced_info);
-                flush_and_exit(ret);
+                flush_and_exit(ret)
 
             }
             BOOST_LOG_TRIVIAL(info) << boost::format("downward_check: loaded machine config %1%, from %2%")%config_name %file_path ;
@@ -3401,7 +3401,7 @@ int CLI::run(int argc, char **argv)
             if (!clone_objects.empty()) {
                 BOOST_LOG_TRIVIAL(error) << "Invalid params: can not set assemble and clone_objects together." << std::endl;
                 record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-                flush_and_exit(CLI_INVALID_PARAMS);
+                flush_and_exit(CLI_INVALID_PARAMS)
             }
             Model m;
             ModelObject* new_object = m.add_object();
@@ -3429,12 +3429,12 @@ int CLI::run(int argc, char **argv)
                 if (plate_to_slice == 0) {
                     BOOST_LOG_TRIVIAL(error) << "Invalid params: can not set repetitions when slice all." << std::endl;
                     record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-                    flush_and_exit(CLI_INVALID_PARAMS);
+                    flush_and_exit(CLI_INVALID_PARAMS)
                 }
                 else if (plate_to_slice > partplate_list.get_plate_count()) {
                     BOOST_LOG_TRIVIAL(error) << boost::format("Invalid params:invalid plate %1% to slice, total %2%")%plate_to_slice %partplate_list.get_plate_count();
                     record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-                    flush_and_exit(CLI_INVALID_PARAMS);
+                    flush_and_exit(CLI_INVALID_PARAMS)
                 }
 
                 BOOST_LOG_TRIVIAL(info) << "repetitions value " << repetitions_count << std::endl;
@@ -3505,7 +3505,7 @@ int CLI::run(int argc, char **argv)
                 } catch (std::exception &ex) {
                     boost::nowide::cerr << "error: " << ex.what() << std::endl;
                     record_exit_reson(outfile_dir, CLI_COPY_OBJECTS_ERROR, 0, cli_errors[CLI_COPY_OBJECTS_ERROR], sliced_info);
-                    flush_and_exit(CLI_COPY_OBJECTS_ERROR);
+                    flush_and_exit(CLI_COPY_OBJECTS_ERROR)
                 }
             }
         } else if (opt_key == "center") {
@@ -3570,7 +3570,7 @@ int CLI::run(int argc, char **argv)
             if (ratio <= 0.f) {
                 BOOST_LOG_TRIVIAL(error) << boost::format("Invalid params:invalid scale ratio %1%")%ratio;
                 record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-                flush_and_exit(CLI_INVALID_PARAMS);
+                flush_and_exit(CLI_INVALID_PARAMS)
             }
             for (auto &model : m_models)
                 for (auto &o : model.objects)
@@ -3581,7 +3581,7 @@ int CLI::run(int argc, char **argv)
             if (opt.x() <= 0 || opt.y() <= 0 || opt.z() <= 0) {
                 boost::nowide::cerr << "--scale-to-fit requires a positive volume" << std::endl;
                 record_exit_reson(outfile_dir, CLI_SCALE_TO_FIT_ERROR, 0, cli_errors[CLI_SCALE_TO_FIT_ERROR], sliced_info);
-                flush_and_exit(CLI_SCALE_TO_FIT_ERROR);
+                flush_and_exit(CLI_SCALE_TO_FIT_ERROR)
             }
             for (auto &model : m_models)
                 for (auto &o : model.objects)
@@ -3676,7 +3676,7 @@ int CLI::run(int argc, char **argv)
         } else {
             boost::nowide::cerr << "error: option not implemented yet: " << opt_key << std::endl;
             record_exit_reson(outfile_dir, CLI_UNSUPPORTED_OPERATION, 0, cli_errors[CLI_UNSUPPORTED_OPERATION], sliced_info);
-            flush_and_exit(CLI_UNSUPPORTED_OPERATION);
+            flush_and_exit(CLI_UNSUPPORTED_OPERATION)
         }
     }
 
@@ -3707,7 +3707,7 @@ int CLI::run(int argc, char **argv)
     {
         BOOST_LOG_TRIVIAL(error) << boost::format("invalid plate id %1%, total %2%")%plate_to_slice %partplate_list.get_plate_count();
         record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-        flush_and_exit(CLI_INVALID_PARAMS);
+        flush_and_exit(CLI_INVALID_PARAMS)
     }
     else if (plate_to_slice > 0){
         auto* cur_plate = (Slic3r::GUI::PartPlate *)partplate_list.get_plate(plate_to_slice-1);
@@ -3795,7 +3795,7 @@ int CLI::run(int argc, char **argv)
         {
             BOOST_LOG_TRIVIAL(error) << boost::format("mismatch plate count, to_assemble %1%, generated %2%") % plate_count % partplate_list.get_plate_count();
             record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-            flush_and_exit(CLI_INVALID_PARAMS);
+            flush_and_exit(CLI_INVALID_PARAMS)
         }
 
         for (size_t i = 0; i < plate_count; i++)
@@ -3943,7 +3943,7 @@ int CLI::run(int argc, char **argv)
                     {
                         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(":arrange failed: ap.name %1% ap.bed_idx %2%, plate index %3%") % ap.name % ap.bed_idx % i;
                         record_exit_reson(outfile_dir, CLI_OBJECT_ARRANGE_FAILED, 0, cli_errors[CLI_OBJECT_ARRANGE_FAILED], sliced_info);
-                        flush_and_exit(CLI_OBJECT_ARRANGE_FAILED);
+                        flush_and_exit(CLI_OBJECT_ARRANGE_FAILED)
                     }
                 }
 
@@ -4352,7 +4352,7 @@ int CLI::run(int argc, char **argv)
                             {
                                 BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << boost::format(":arrange failed: ap.name %1% ap.bed_idx %2%, plate index %3%")% ap.name % ap.bed_idx % (plate_to_slice-1);
                                 record_exit_reson(outfile_dir, CLI_OBJECT_ARRANGE_FAILED, 0, cli_errors[CLI_OBJECT_ARRANGE_FAILED], sliced_info);
-                                flush_and_exit(CLI_OBJECT_ARRANGE_FAILED);
+                                flush_and_exit(CLI_OBJECT_ARRANGE_FAILED)
                             }
                             bed_idx_max = std::max(ap.bed_idx, bed_idx_max);
                         }
@@ -4633,13 +4633,13 @@ int CLI::run(int argc, char **argv)
             if (export_slicedata) {
                 BOOST_LOG_TRIVIAL(error) << "should not set load_slicedata and export_slicedata together." << std::endl;
                 record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-                flush_and_exit(CLI_INVALID_PARAMS);
+                flush_and_exit(CLI_INVALID_PARAMS)
             }
             else if (duplicate_count > 0)
             {
                 BOOST_LOG_TRIVIAL(error) << "should not set load_slicedata when set repetitions." << std::endl;
                 record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-                flush_and_exit(CLI_INVALID_PARAMS);
+                flush_and_exit(CLI_INVALID_PARAMS)
             }
             else if (shrink_to_new_bed > 0)
             {
@@ -4673,7 +4673,7 @@ int CLI::run(int argc, char **argv)
                 model.add_default_instances();
             if (! this->export_models(IO::STL)) {
                 record_exit_reson(outfile_dir, CLI_EXPORT_STL_ERROR, 0, cli_errors[CLI_EXPORT_STL_ERROR], sliced_info);
-                flush_and_exit(CLI_EXPORT_STL_ERROR);
+                flush_and_exit(CLI_EXPORT_STL_ERROR)
             }
         } else if (opt_key == "export_stls") {
             export_stls_dir = m_config.opt_string(opt_key);
@@ -4681,14 +4681,14 @@ int CLI::run(int argc, char **argv)
                 model.add_default_instances();
             if (! this->export_models(IO::STL, export_stls_dir)) {
                 record_exit_reson(outfile_dir, CLI_EXPORT_STL_ERROR, 0, cli_errors[CLI_EXPORT_STL_ERROR], sliced_info);
-                flush_and_exit(CLI_EXPORT_STL_ERROR);
+                flush_and_exit(CLI_EXPORT_STL_ERROR)
             }
         } else if (opt_key == "export_obj") {
             for (auto &model : m_models)
                 model.add_default_instances();
             if (! this->export_models(IO::OBJ)) {
                 record_exit_reson(outfile_dir, CLI_EXPORT_OBJ_ERROR, 0, cli_errors[CLI_EXPORT_OBJ_ERROR], sliced_info);
-                flush_and_exit(CLI_EXPORT_OBJ_ERROR);
+                flush_and_exit(CLI_EXPORT_OBJ_ERROR)
             }
         }else if (opt_key == "export_3mf") {
             export_to_3mf = true;
@@ -4704,7 +4704,7 @@ int CLI::run(int argc, char **argv)
             if (load_slicedata) {
                 BOOST_LOG_TRIVIAL(error) << "should not set load_slicedata and export_slicedata together." << std::endl;
                 record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
-                flush_and_exit(CLI_INVALID_PARAMS);
+                flush_and_exit(CLI_INVALID_PARAMS)
             }
         } else if (opt_key == "slice") {
             //BBS: slice 0 means all plates, i means plate i;
@@ -4796,7 +4796,7 @@ int CLI::run(int argc, char **argv)
                         if (count == 0) {
                             BOOST_LOG_TRIVIAL(error) << "plate "<< index+1<< ": Nothing to be sliced, Either the print is empty or no object is fully inside the print volume before apply." << std::endl;
                             record_exit_reson(outfile_dir, CLI_NO_SUITABLE_OBJECTS, index+1, cli_errors[CLI_NO_SUITABLE_OBJECTS], sliced_info);
-                            flush_and_exit(CLI_NO_SUITABLE_OBJECTS);
+                            flush_and_exit(CLI_NO_SUITABLE_OBJECTS)
                         }
                         else if ((plate_to_slice != 0) || pre_check) {
                             long long triangle_count = 0;
@@ -4841,7 +4841,7 @@ int CLI::run(int argc, char **argv)
                                     {
                                         BOOST_LOG_TRIVIAL(error) << "plate "<< index+1<< ": Found Object " << model_object->name <<" partly inside, can not be sliced." << std::endl;
                                         record_exit_reson(outfile_dir, CLI_OBJECTS_PARTLY_INSIDE, index+1, cli_errors[CLI_OBJECTS_PARTLY_INSIDE], sliced_info);
-                                        flush_and_exit(CLI_OBJECTS_PARTLY_INSIDE);
+                                        flush_and_exit(CLI_OBJECTS_PARTLY_INSIDE)
                                     }
                                     else if (i->print_volume_state == ModelInstancePVS_Inside)
                                     {
@@ -4855,7 +4855,7 @@ int CLI::run(int argc, char **argv)
                                                 {
                                                     BOOST_LOG_TRIVIAL(error) << "plate "<< index+1<< ": triangle count " << triangle_count <<" exceeds the limit:" << max_triangle_count_per_plate;
                                                     record_exit_reson(outfile_dir, CLI_TRIANGLE_COUNT_EXCEEDS_LIMIT, index+1, cli_errors[CLI_TRIANGLE_COUNT_EXCEEDS_LIMIT], sliced_info);
-                                                    flush_and_exit(CLI_TRIANGLE_COUNT_EXCEEDS_LIMIT);
+                                                    flush_and_exit(CLI_TRIANGLE_COUNT_EXCEEDS_LIMIT)
                                                 }
                                             }
                                         }
@@ -4868,7 +4868,7 @@ int CLI::run(int argc, char **argv)
                             if (printable_instances == 0) {
                                 BOOST_LOG_TRIVIAL(error) << "plate "<< index+1<< ": Nothing to be sliced, after skipping "<<skipped_count<<" objects."<< std::endl;
                                 record_exit_reson(outfile_dir, CLI_NO_SUITABLE_OBJECTS_AFTER_SKIP, index+1, cli_errors[CLI_NO_SUITABLE_OBJECTS_AFTER_SKIP], sliced_info);
-                                flush_and_exit(CLI_NO_SUITABLE_OBJECTS_AFTER_SKIP);
+                                flush_and_exit(CLI_NO_SUITABLE_OBJECTS_AFTER_SKIP)
                             }
 
                             plate_triangle_counts[index] = triangle_count;
@@ -4917,7 +4917,7 @@ int CLI::run(int argc, char **argv)
                                     record_exit_reson(outfile_dir, validate_error, index+1, err.string, sliced_info);
                                 else
                                     record_exit_reson(outfile_dir, validate_error, index+1, cli_errors[validate_error], sliced_info);
-                                flush_and_exit(validate_error);
+                                flush_and_exit(validate_error)
                             }
                         }
                         else if (!warning.string.empty()) {
@@ -4927,7 +4927,7 @@ int CLI::run(int argc, char **argv)
                         if (print->empty()) {
                             BOOST_LOG_TRIVIAL(error) << "plate "<< index+1<< ": Nothing to be sliced, Either the print is empty or no object is fully inside the print volume after apply." << std::endl;
                             record_exit_reson(outfile_dir, CLI_NO_SUITABLE_OBJECTS, index+1, cli_errors[CLI_NO_SUITABLE_OBJECTS], sliced_info);
-                            flush_and_exit(CLI_NO_SUITABLE_OBJECTS);
+                            flush_and_exit(CLI_NO_SUITABLE_OBJECTS)
                         }
                         else {
                             if (pre_check && (partplate_list.get_plate_count() > 1)) //continue to next plate directly
@@ -5008,7 +5008,7 @@ int CLI::run(int argc, char **argv)
                                     if (!conflict_result.empty()) {
                                        BOOST_LOG_TRIVIAL(error) << "plate "<< index+1<< ": found slicing result conflict!"<< std::endl;
                                        record_exit_reson(outfile_dir, CLI_GCODE_PATH_CONFLICTS, index+1, cli_errors[CLI_GCODE_PATH_CONFLICTS], sliced_info);
-                                       flush_and_exit(CLI_GCODE_PATH_CONFLICTS);
+                                       flush_and_exit(CLI_GCODE_PATH_CONFLICTS)
                                     }
 
                                     //check the warnings
@@ -5032,7 +5032,7 @@ int CLI::run(int argc, char **argv)
                                                         {
                                                             sliced_info.sliced_plates.push_back(sliced_plate_info);
                                                             record_exit_reson(outfile_dir, CLI_SLICING_ERROR, index+1, cli_errors[CLI_SLICING_ERROR], sliced_info);
-                                                            flush_and_exit(CLI_SLICING_ERROR);
+                                                            flush_and_exit(CLI_SLICING_ERROR)
                                                         }
                                                     }
                                                 }
@@ -5094,7 +5094,7 @@ int CLI::run(int argc, char **argv)
                                         if (fs::exists(plate_dir))
                                             fs::remove_all(plate_dir);
                                         record_exit_reson(outfile_dir, ret, index+1, cli_errors[ret], sliced_info);
-                                        flush_and_exit(ret);
+                                        flush_and_exit(ret)
                                     }
                                 }
                                 end_time = (long long)Slic3r::Utils::get_current_time_utc();
@@ -5108,7 +5108,7 @@ int CLI::run(int argc, char **argv)
                                         BOOST_LOG_TRIVIAL(error) << sliced_plate_info.warning_message;
                                         sliced_info.sliced_plates.push_back(sliced_plate_info);
                                         record_exit_reson(outfile_dir, CLI_SLICING_TIME_EXCEEDS_LIMIT, index+1, cli_errors[CLI_SLICING_TIME_EXCEEDS_LIMIT], sliced_info);
-                                        flush_and_exit(CLI_SLICING_TIME_EXCEEDS_LIMIT);
+                                        flush_and_exit(CLI_SLICING_TIME_EXCEEDS_LIMIT)
                                     }
                                 }
                                 sliced_info.sliced_plates.push_back(sliced_plate_info);
@@ -5117,7 +5117,7 @@ int CLI::run(int argc, char **argv)
                                 boost::nowide::cerr << ex.what() << std::endl;
                                 //continue;
                                 record_exit_reson(outfile_dir, CLI_SLICING_ERROR, index+1, cli_errors[CLI_SLICING_ERROR], sliced_info);
-                                flush_and_exit(CLI_SLICING_ERROR);
+                                flush_and_exit(CLI_SLICING_ERROR)
                             }
                         }
                     }
@@ -5167,7 +5167,7 @@ int CLI::run(int argc, char **argv)
         } else {
             boost::nowide::cerr << "error: option not supported yet: " << opt_key << std::endl;
             record_exit_reson(outfile_dir, CLI_UNSUPPORTED_OPERATION, 0, cli_errors[CLI_UNSUPPORTED_OPERATION], sliced_info);
-            flush_and_exit(CLI_UNSUPPORTED_OPERATION);
+            flush_and_exit(CLI_UNSUPPORTED_OPERATION)
         }
     }
 
@@ -5846,7 +5846,7 @@ int CLI::run(int argc, char **argv)
         {
             release_PlateData_list(plate_data_list);
             record_exit_reson(outfile_dir, CLI_EXPORT_3MF_ERROR, 0, cli_errors[CLI_EXPORT_3MF_ERROR], sliced_info);
-            flush_and_exit(CLI_EXPORT_3MF_ERROR);
+            flush_and_exit(CLI_EXPORT_3MF_ERROR)
         }
 
         for (auto & thumbnail : thumbnails)
@@ -6168,7 +6168,7 @@ std::string CLI::output_filepath(const Model &model, IO::ExportFormat format) co
         case IO::STL: ext = ".stl"; break;
         case IO::TMF: ext = ".3mf"; break;
         default: assert(false); break;
-    };
+    }
     auto proposed_path = boost::filesystem::path(model.propose_export_file_name_and_path(ext));
     // use --output when available
     std::string cmdline_param = m_config.opt_string("outputdir");
@@ -6204,7 +6204,7 @@ std::string CLI::output_filepath(const ModelObject &object, unsigned int index, 
             subdir = "3mf";
             break;
         default: assert(false); break;
-    };
+    }
     // use --outputdir when available
     file_name = object.name.empty()?object.input_file:object.name;
     file_name = "obj_"+std::to_string(index)+"_"+file_name;
