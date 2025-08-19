@@ -1055,7 +1055,7 @@ int CLI::run(int argc, char **argv)
     #if defined(_WIN32) && defined(SLIC3R_GUI)
         if (m_actions.empty())
         	// Empty actions means Slicer is executed in the GUI mode. Show a GUI message.
-            MessageBoxA(NULL, text.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
+            MessageBoxA(nullptr, text.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
     #endif
         boost::nowide::cerr << text.c_str() << std::endl;
         return CLI_ENVIRONMENT_ERROR;
@@ -2306,10 +2306,10 @@ int CLI::run(int argc, char **argv)
     sliced_info.upward_machines = upward_compatible_printers;
 
     //create project embedded preset if needed
-    Preset *new_preset = NULL;
+    Preset *new_preset = nullptr;
     if (is_bbl_3mf && machine_switch) {
         //we need to update the compatible printer and create a new process here, or if we load the 3mf in studio, the process preset can not be loaded as not compatible
-        Preset *current_preset = NULL;
+        Preset *current_preset = nullptr;
         size_t project_presets_count = project_presets.size();
         for (int index = 0; index < project_presets_count; index++)
         {
@@ -3011,7 +3011,7 @@ int CLI::run(int argc, char **argv)
     }
 
     //BBS: partplate list
-    Slic3r::GUI::PartPlateList partplate_list(NULL, m_models.data(), printer_technology);
+    Slic3r::GUI::PartPlateList partplate_list(nullptr, m_models.data(), printer_technology);
     //use Pointfs insteadof Points
     Pointfs current_printable_area = m_print_config.opt<ConfigOptionPoints>("printable_area")->values;
     Pointfs current_exclude_area = m_print_config.opt<ConfigOptionPoints>("bed_exclude_area")->values;
@@ -4270,7 +4270,7 @@ int CLI::run(int argc, char **argv)
                                 {scaled(x - wp_brim_width), scaled(y + depth + wp_brim_width)}
                                 });
                             wipe_tower_ap.bed_idx = 0;
-                            wipe_tower_ap.setter = NULL; // do not move wipe tower
+                            wipe_tower_ap.setter = nullptr; // do not move wipe tower
 
                             wipe_tower_ap.poly.contour = std::move(ap);
                             wipe_tower_ap.translation  = {scaled(0.f), scaled(0.f)};
@@ -4746,10 +4746,10 @@ int CLI::run(int argc, char **argv)
                 while(!finished)
                 {
                     //BBS: slice every partplate one by one
-                    PrintBase  *print=NULL;
-                    Print *print_fff = NULL;
+                    PrintBase  *print = nullptr;
+                    Print *print_fff = nullptr;
 
-                    Slic3r::GUI::GCodeResult *gcode_result = NULL;
+                    Slic3r::GUI::GCodeResult *gcode_result = nullptr;
                     int print_index;
                     for (int index = 0; index < partplate_list.get_plate_count(); index ++)
                     {
@@ -5339,7 +5339,7 @@ int CLI::run(int argc, char **argv)
             glfwSetErrorCallback(glfw_callback);
             int ret = glfwInit();
             if (ret == GLFW_FALSE) {
-                int code = glfwGetError(NULL);
+                int code = glfwGetError(nullptr);
                 BOOST_LOG_TRIVIAL(error) << "glfwInit return error, code " <<code<< std::endl;
             }
             else {
@@ -5364,8 +5364,8 @@ int CLI::run(int argc, char **argv)
                 glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_OSMESA_CONTEXT_API);
 #endif
 
-                GLFWwindow* window = glfwCreateWindow(640, 480, "base_window", NULL, NULL);
-                if (window == NULL)
+                GLFWwindow* window = glfwCreateWindow(640, 480, "base_window", nullptr, nullptr);
+                if (window == nullptr)
                 {
                     BOOST_LOG_TRIVIAL(error) << "Failed to create GLFW window" << std::endl;
                 }
@@ -5727,8 +5727,8 @@ int CLI::run(int argc, char **argv)
                 plate_bboxes.push_back(new PlateBBoxData());
                 continue;
             }
-            PrintBase  *print_base=NULL;
-            Slic3r::GUI::GCodeResult *gcode_result = NULL;
+            PrintBase  *print_base = nullptr;
+            Slic3r::GUI::GCodeResult *gcode_result = nullptr;
             int print_index;
             part_plate->get_print(&print_base, &gcode_result, &print_index);
 
@@ -5920,7 +5920,7 @@ bool CLI::setup(int argc, char **argv)
                 L"crashes or unexpected behaviour while using OrcaSlicer.\n"
                 L"For example, ASUS Sonic Studio injects a Nahimic driver, which makes OrcaSlicer "
                 L"to crash on a secondary monitor";
-        MessageBoxW(NULL, text.c_str(), L"Warning"/*L"Incopatible library found"*/, MB_OK);
+        MessageBoxW(nullptr, text.c_str(), L"Warning"/*L"Incopatible library found"*/, MB_OK);
     }
 #endif
 
@@ -6020,10 +6020,10 @@ void attach_console_on_demand(){
             FILE* fp = nullptr;
             // Redirect standard C streams to the console
             if (freopen_s(&fp, "CONOUT$", "w", stdout) == 0) {
-                setvbuf(stdout, NULL, _IONBF, 0); // Optional: Disable buffering
+                setvbuf(stdout, nullptr, _IONBF, 0); // Optional: Disable buffering
             }
             if (freopen_s(&fp, "CONOUT$", "w", stderr) == 0) {
-                setvbuf(stderr, NULL, _IONBF, 0); // Optional: Disable buffering
+                setvbuf(stderr, nullptr, _IONBF, 0); // Optional: Disable buffering
             }
             if (freopen_s(&fp, "CONIN$", "r", stdin) == 0) {
                 // Input redirection successful
