@@ -77,7 +77,7 @@ public:
         }
     }
 
-    bool is_version_greater_or_equal_to(unsigned int major, unsigned int minor) const
+    [[nodiscard]] bool is_version_greater_or_equal_to(unsigned int major, unsigned int minor) const
     {
         // printf("is_version_greater_or_equal_to, version: %s\n", version.c_str());
         std::vector<std::string> tokens;
