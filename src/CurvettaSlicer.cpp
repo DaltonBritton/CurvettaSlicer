@@ -2359,7 +2359,7 @@ int CLI::run(int argc, char **argv)
         BOOST_LOG_TRIVIAL(info) << boost::format("update_full_config: config keys count %1%")%config_keys.size();
         for (const t_config_option_key &opt_key : config_keys) {
             if (!update_all && !diff_key_sets.empty()) {
-                std::set<std::string>::iterator iter = diff_key_sets.find(opt_key);
+                auto iter = diff_key_sets.find(opt_key);
                 if ( iter != diff_key_sets.end()) {
                     if (skip_gcodes && (gcodes_key_set.find(opt_key) != gcodes_key_set.end()))
                     {
@@ -2436,7 +2436,7 @@ int CLI::run(int argc, char **argv)
                 BOOST_LOG_TRIVIAL(info) << boost::format("new different key size %1%")%different_keys_set.size();
                 different_keys.clear();
 
-                for (std::set<std::string>::iterator iter=different_keys_set.begin(); iter !=different_keys_set.end(); ++iter)
+                for (auto iter=different_keys_set.begin(); iter !=different_keys_set.end(); ++iter)
                     different_keys.emplace_back(*iter);
                 different_settings[filament_count+1] = Slic3r::escape_strings_cstyle(different_keys);
             }
@@ -2573,7 +2573,7 @@ int CLI::run(int argc, char **argv)
                 BOOST_LOG_TRIVIAL(info) << boost::format("new different key size %1%")%different_keys_set.size();
                 different_keys.clear();
 
-                for (std::set<std::string>::iterator iter=different_keys_set.begin(); iter !=different_keys_set.end(); ++iter)
+                for (auto iter=different_keys_set.begin(); iter !=different_keys_set.end(); ++iter)
                     different_keys.emplace_back(*iter);
                 different_settings[0] = Slic3r::escape_strings_cstyle(different_keys);
             }
@@ -2659,7 +2659,7 @@ int CLI::run(int argc, char **argv)
             for (const t_config_option_key &opt_key : config.keys()) {
                 if ((load_filament_count == 0) && !different_keys_set.empty())
                 {
-                    std::set<std::string>::iterator iter = different_keys_set.find(opt_key);
+                    auto iter = different_keys_set.find(opt_key);
                     if ( iter != different_keys_set.end()) {
                         if (skip_modified_gcodes && (gcodes_key_set.find(opt_key) != gcodes_key_set.end()))
                         {
@@ -2727,7 +2727,7 @@ int CLI::run(int argc, char **argv)
                 //changed
                 different_keys.clear();
 
-                for (std::set<std::string>::iterator iter=different_keys_set.begin(); iter !=different_keys_set.end(); ++iter)
+                for (auto iter=different_keys_set.begin(); iter !=different_keys_set.end(); ++iter)
                     different_keys.emplace_back(*iter);
                 different_settings[filament_index] = Slic3r::escape_strings_cstyle(different_keys);
                 BOOST_LOG_TRIVIAL(info) << boost::format("filament %1% new different key size %2%, different_settings %3%")%filament_index %different_keys_set.size() %different_settings[filament_index];
@@ -2919,7 +2919,7 @@ int CLI::run(int argc, char **argv)
         for (gcodes_iter = m_models[0].plates_custom_gcodes.begin(); gcodes_iter != m_models[0].plates_custom_gcodes.end(); gcodes_iter++)
         {
             CustomGCode::Info &gcode_info = gcodes_iter->second;
-            std::vector<CustomGCode::Item>::iterator item_iter = gcode_info.gcodes.begin();
+            auto item_iter = gcode_info.gcodes.begin();
 
             while ( item_iter != gcode_info.gcodes.end() )
             {
@@ -2969,7 +2969,7 @@ int CLI::run(int argc, char **argv)
     std::map<std::string, std::string> validity = m_print_config.validate(true);
     if (!validity.empty()) {
         boost::nowide::cerr << "Param values in 3mf/config error: "<< std::endl;
-        for (std::map<std::string, std::string>::iterator it=validity.begin(); it!=validity.end(); ++it)
+        for (auto it=validity.begin(); it!=validity.end(); ++it)
             boost::nowide::cerr << it->first <<": "<< it->second << std::endl;
         record_exit_reson(outfile_dir, CLI_INVALID_VALUES_IN_3MF, 0, cli_errors[CLI_INVALID_VALUES_IN_3MF], sliced_info);
         flush_and_exit(CLI_INVALID_VALUES_IN_3MF);
@@ -5995,7 +5995,7 @@ bool CLI::setup(int argc, char **argv)
     //FIXME Validating at this stage most likely does not make sense, as the config is not fully initialized yet.
     if (!validity.empty()) {
         boost::nowide::cerr << "Params in command line error: "<< std::endl;
-        for (std::map<std::string, std::string>::iterator it=validity.begin(); it!=validity.end(); ++it)
+        for (auto it=validity.begin(); it!=validity.end(); ++it)
             boost::nowide::cerr << it->first <<": "<< it->second << std::endl;
         return false;
     }
