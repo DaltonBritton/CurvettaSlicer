@@ -384,8 +384,8 @@ static PrinterTechnology get_printer_technology(const DynamicConfig &config)
 #define flush_and_exit(ret)     { boost::nowide::cout << __FUNCTION__ << " found error, exit" << std::endl;\
     boost::nowide::cout.flush();\
     boost::nowide::cerr.flush();\
-    for (Model &model : m_models) {\
-       model.remove_backup_path_if_exist();\
+    for (Model &_model : m_models) {\
+       _model.remove_backup_path_if_exist();\
     }\
     return(ret);}
 #endif
@@ -1609,7 +1609,7 @@ int CLI::run(int argc, char **argv)
             }
         }
         catch (std::exception& e) {
-            boost::nowide::cerr << construct_assemble_list << ": " << e.what() << std::endl;
+            boost::nowide::cerr << "construct_assemble_list: " << e.what() << std::endl;
             record_exit_reson(outfile_dir, CLI_DATA_FILE_ERROR, 0, cli_errors[CLI_DATA_FILE_ERROR], sliced_info);
             flush_and_exit(CLI_DATA_FILE_ERROR)
         }
@@ -3840,8 +3840,6 @@ int CLI::run(int argc, char **argv)
                 if (!arrange_cfg.is_seq_print && assemble_plate.filaments_count > 1)
                 {
                     //prepare the wipe tower
-                    int plate_count = partplate_list.get_plate_count();
-
                     auto printer_structure_opt = m_print_config.option<ConfigOptionEnum<PrinterStructure>>("printer_structure");
                     const float tower_brim_width = m_print_config.option<ConfigOptionFloat>("prime_tower_width", true)->value;
                     const float tower_margin = WIPE_TOWER_MARGIN + tower_brim_width;
@@ -5413,14 +5411,14 @@ int CLI::run(int argc, char **argv)
 
                                 BOOST_LOG_TRIVIAL(debug) << boost::format("volume %1%'s color %2%")%volume_idx %color;
 
-                                unsigned char  rgb_color[4] = {};
-                                Slic3r::GUI::BitmapCache::parse_color4(color, rgb_color);
+                                unsigned char  rgb_color_temp[4] = {};
+                                Slic3r::GUI::BitmapCache::parse_color4(color, rgb_color_temp);
 
                                 ColorRGBA new_color;
-                                new_color.r(float(rgb_color[0]) / 255.f);
-                                new_color.g(float(rgb_color[1]) / 255.f);
-                                new_color.b(float(rgb_color[2]) / 255.f);
-                                new_color.a(float(rgb_color[3]) / 255.f);
+                                new_color.r(float(rgb_color_temp[0]) / 255.f);
+                                new_color.g(float(rgb_color_temp[1]) / 255.f);
+                                new_color.b(float(rgb_color_temp[2]) / 255.f);
+                                new_color.a(float(rgb_color_temp[3]) / 255.f);
 
                                 glvolume_collection.volumes.back()->set_render_color(new_color);
                                 glvolume_collection.volumes.back()->set_color(new_color);
@@ -5429,7 +5427,6 @@ int CLI::run(int argc, char **argv)
                         }
                     }
 
-                    ThumbnailsParams thumbnail_params;
                     GLShaderProgram* shader = opengl_mgr.get_shader("thumbnail");
                     if (!shader) {
                         BOOST_LOG_TRIVIAL(error) << boost::format("can not get shader for rendering thumbnail");
@@ -6100,12 +6097,12 @@ bool CLI::export_models(IO::ExportFormat format, const std::string& path_dir)
                 unsigned int index = 1;
                 for (ModelObject* model_object : model.objects)
                 {
-                    const std::string path = this->output_filepath(*model_object, index++, format, path_dir);
-                    success = Slic3r::store_stl(path.c_str(), model_object, true);
+                    const std::string export_path = this->output_filepath(*model_object, index++, format, path_dir);
+                    success = Slic3r::store_stl(export_path.c_str(), model_object, true);
                     if (success)
-                        BOOST_LOG_TRIVIAL(info) << "Model successfully exported to " << path << std::endl;
+                        BOOST_LOG_TRIVIAL(info) << "Model successfully exported to " << export_path << std::endl;
                     else {
-                        boost::nowide::cerr << "Model export to " << path << " failed" << std::endl;
+                        boost::nowide::cerr << "Model export to " << export_path << " failed" << std::endl;
                         return false;
                     }
                 }
