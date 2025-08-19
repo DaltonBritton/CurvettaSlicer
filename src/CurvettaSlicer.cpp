@@ -1108,7 +1108,7 @@ int CLI::run(int argc, char **argv)
     sliced_info_t sliced_info;
     std::map<std::string, std::string> record_key_values;
 
-    ConfigOptionBool* downward_check_option = m_config.option<ConfigOptionBool>("downward_check");
+    auto* downward_check_option = m_config.option<ConfigOptionBool>("downward_check");
     if (downward_check_option)
         downward_check = downward_check_option->value;
 
@@ -1205,51 +1205,51 @@ int CLI::run(int argc, char **argv)
 
     // Read input file(s) if any.
     BOOST_LOG_TRIVIAL(info) << "Will start to read model file now, file count :" << m_input_files.size() << "\n";
-    ConfigOptionInt* slice_option = m_config.option<ConfigOptionInt>("slice");
+    auto* slice_option = m_config.option<ConfigOptionInt>("slice");
     if (slice_option)
         plate_to_slice = slice_option->value;
 
-    ConfigOptionBool* normative_check_option = m_config.option<ConfigOptionBool>("normative_check");
+    auto* normative_check_option = m_config.option<ConfigOptionBool>("normative_check");
     if (normative_check_option)
         normative_check = normative_check_option->value;
 
-    ConfigOptionBool* uptodate_option = m_config.option<ConfigOptionBool>("uptodate");
+    auto* uptodate_option = m_config.option<ConfigOptionBool>("uptodate");
     if (uptodate_option)
         up_config_to_date = uptodate_option->value;
 
-    ConfigOptionBool* load_defaultfila_option = m_config.option<ConfigOptionBool>("load_defaultfila");
+    auto* load_defaultfila_option = m_config.option<ConfigOptionBool>("load_defaultfila");
     if (load_defaultfila_option)
         use_first_fila_as_default = load_defaultfila_option->value;
 
-    ConfigOptionBool* min_save_option = m_config.option<ConfigOptionBool>("min_save");
+    auto* min_save_option = m_config.option<ConfigOptionBool>("min_save");
     if (min_save_option)
         minimum_save = min_save_option->value;
 
-    ConfigOptionBool* enable_timelapse_option = m_config.option<ConfigOptionBool>("enable_timelapse");
+    auto* enable_timelapse_option = m_config.option<ConfigOptionBool>("enable_timelapse");
     if (enable_timelapse_option)
         enable_timelapse = enable_timelapse_option->value;
 
-    ConfigOptionBool* allow_rotations_option = m_config.option<ConfigOptionBool>("allow_rotations");
+    auto* allow_rotations_option = m_config.option<ConfigOptionBool>("allow_rotations");
     if (allow_rotations_option)
         allow_rotations = allow_rotations_option->value;
 
-    ConfigOptionBool* skip_modified_gcodes_option = m_config.option<ConfigOptionBool>("skip_modified_gcodes");
+    auto* skip_modified_gcodes_option = m_config.option<ConfigOptionBool>("skip_modified_gcodes");
     if (skip_modified_gcodes_option)
         skip_modified_gcodes = skip_modified_gcodes_option->value;
 
-    ConfigOptionBool* skip_useless_picks_option = m_config.option<ConfigOptionBool>("skip_useless_pick");
+    auto* skip_useless_picks_option = m_config.option<ConfigOptionBool>("skip_useless_pick");
     if (skip_useless_picks_option)
         skip_useless_pick = skip_useless_picks_option->value;
 
-    ConfigOptionBool* allow_newer_file_option = m_config.option<ConfigOptionBool>("allow_newer_file");
+    auto* allow_newer_file_option = m_config.option<ConfigOptionBool>("allow_newer_file");
     if (allow_newer_file_option)
         allow_newer_file = allow_newer_file_option->value;
 
-    ConfigOptionBool* avoid_extrusion_cali_region_option = m_config.option<ConfigOptionBool>("avoid_extrusion_cali_region");
+    auto* avoid_extrusion_cali_region_option = m_config.option<ConfigOptionBool>("avoid_extrusion_cali_region");
     if (avoid_extrusion_cali_region_option)
         avoid_extrusion_cali_region = avoid_extrusion_cali_region_option->value;
 
-    ConfigOptionString* pipe_option = m_config.option<ConfigOptionString>("pipe");
+    auto* pipe_option = m_config.option<ConfigOptionString>("pipe");
     if (pipe_option) {
         pipe_name = pipe_option->value;
         if (!pipe_name.empty()) {
@@ -1262,11 +1262,11 @@ int CLI::run(int argc, char **argv)
         }
     }
 
-    ConfigOptionString* makerlab_name_option = m_config.option<ConfigOptionString>("makerlab_name");
+    auto* makerlab_name_option = m_config.option<ConfigOptionString>("makerlab_name");
     if (makerlab_name_option)
         makerlab_name = makerlab_name_option->value;
 
-    ConfigOptionString* makerlab_version_option = m_config.option<ConfigOptionString>("makerlab_version");
+    auto* makerlab_version_option = m_config.option<ConfigOptionString>("makerlab_version");
     if (makerlab_version_option)
         makerlab_version = makerlab_version_option->value;
 
@@ -1281,13 +1281,13 @@ int CLI::run(int argc, char **argv)
     }
 
     std::string custom_gcode_file;
-    ConfigOptionString* custom_gcode_option = m_config.option<ConfigOptionString>("load_custom_gcodes");
+    auto* custom_gcode_option = m_config.option<ConfigOptionString>("load_custom_gcodes");
     if (custom_gcode_option)
         custom_gcode_file = custom_gcode_option->value;
 
     std::string load_assemble_list;
     std::vector<assemble_plate_info_t> assemble_plate_info_list;
-    ConfigOptionString* load_assemble_list_option = m_config.option<ConfigOptionString>("load_assemble_list");
+    auto* load_assemble_list_option = m_config.option<ConfigOptionString>("load_assemble_list");
     if (load_assemble_list_option)
         load_assemble_list = load_assemble_list_option->value;
 
@@ -1412,7 +1412,7 @@ int CLI::run(int argc, char **argv)
                     }
 
                     if (normative_check) {
-                        ConfigOptionStrings* postprocess_scripts = config.option<ConfigOptionStrings>("post_process");
+                        auto* postprocess_scripts = config.option<ConfigOptionStrings>("post_process");
                         if (postprocess_scripts) {
                             std::vector<std::string> postprocess_values = postprocess_scripts->values;
                             if (!postprocess_values.empty()) {
@@ -1435,7 +1435,7 @@ int CLI::run(int argc, char **argv)
                     current_filaments_name = config.option<ConfigOptionStrings>("filament_settings_id")->values;
 
                     BOOST_LOG_TRIVIAL(info) << boost::format("current_printer_name %1%, current_process_name %2%")%current_printer_name %current_process_name;
-                    ConfigOptionStrings* option_strings = config.option<ConfigOptionStrings>("inherits_group");
+                    auto* option_strings = config.option<ConfigOptionStrings>("inherits_group");
                     if (option_strings) {
                         current_inherits_group = option_strings->values;
                         size_t size = current_inherits_group.size();
@@ -2479,7 +2479,7 @@ int CLI::run(int argc, char **argv)
                                         //replace "cli_safe" with "machine_max"
                                         key.replace(0, 8, "machine_max");
 
-                                        ConfigOptionFloats* option = m_print_config.option<ConfigOptionFloats>(key);
+                                        auto* option = m_print_config.option<ConfigOptionFloats>(key);
                                         if (option) {
                                             //de-serialize the values from param_iter->second, and do the compare here
                                             unsigned int array_count = option->size();
@@ -2736,8 +2736,8 @@ int CLI::run(int argc, char **argv)
     }
 
     //compute the flush volume
-    ConfigOptionStrings *selected_filament_colors_option = m_extra_config.option<ConfigOptionStrings>("filament_colour");
-    ConfigOptionStrings *project_filament_colors_option = m_print_config.option<ConfigOptionStrings>("filament_colour");
+    auto *selected_filament_colors_option = m_extra_config.option<ConfigOptionStrings>("filament_colour");
+    auto *project_filament_colors_option = m_print_config.option<ConfigOptionStrings>("filament_colour");
     if ((!project_filament_colors_option || (project_filament_colors_option->values.empty())) && selected_filament_colors_option)
     {
         BOOST_LOG_TRIVIAL(info) << boost::format("initial project_filament_colors is null, create it due to filament_colour set in cli");
@@ -2804,7 +2804,7 @@ int CLI::run(int argc, char **argv)
             }
 
             //computing
-            ConfigOptionBools* filament_is_support = m_print_config.option<ConfigOptionBools>("filament_is_support", true);
+            auto* filament_is_support = m_print_config.option<ConfigOptionBools>("filament_is_support", true);
             std::vector<double>& flush_vol_matrix = m_print_config.option<ConfigOptionFloats>("flush_volumes_matrix", true)->values;
             //std::vector<float>& flush_vol_vector = m_print_config.option<ConfigOptionFloats>("flush_volumes_vector", true)->values;
             flush_vol_matrix.resize(project_filament_count*project_filament_count, 0.f);
@@ -2986,7 +2986,7 @@ int CLI::run(int argc, char **argv)
             BOOST_LOG_TRIVIAL(warning) << boost::format("%1%: disable_wipe_tower_after_mapping: set back to false due to smooth timelapse!")%__LINE__;
         }
         else {
-            ConfigOptionBool* enable_wipe_op = m_print_config.option<ConfigOptionBool>("enable_prime_tower", true);
+            auto* enable_wipe_op = m_print_config.option<ConfigOptionBool>("enable_prime_tower", true);
             enable_wipe_op->value = false;
             BOOST_LOG_TRIVIAL(warning) << boost::format("%1%: disable_wipe_tower_after_mapping: disable prime tower for only one filament!")%__LINE__;
 
@@ -3131,13 +3131,13 @@ int CLI::run(int argc, char **argv)
         plate_obj_size_info.wipe_x = wipe_x_option->get_at(plate_index);
         plate_obj_size_info.wipe_y = wipe_y_option->get_at(plate_index);
 
-        ConfigOptionFloat* width_option = print_config.option<ConfigOptionFloat>("prime_tower_width", true);
+        auto* width_option = print_config.option<ConfigOptionFloat>("prime_tower_width", true);
         plate_obj_size_info.wipe_width = width_option->value;
 
-        ConfigOptionFloat* brim_width_option = print_config.option<ConfigOptionFloat>("prime_tower_brim_width", true);
+        auto* brim_width_option = print_config.option<ConfigOptionFloat>("prime_tower_brim_width", true);
         float brim_width = brim_width_option->value;
 
-        ConfigOptionFloat* volume_option = print_config.option<ConfigOptionFloat>("prime_volume", true);
+        auto* volume_option = print_config.option<ConfigOptionFloat>("prime_volume", true);
         float wipe_volume = volume_option->value;
 
         Vec3d wipe_tower_size = plate->estimate_wipe_tower_size(print_config, plate_obj_size_info.wipe_width, wipe_volume, filaments_cnt);
@@ -3865,11 +3865,11 @@ int CLI::run(int argc, char **argv)
                     ConfigOptionFloat wt_y_opt(y);
 
                     //create the options using default if neccessary
-                    ConfigOptionFloats* wipe_x_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_x", true);
-                    ConfigOptionFloats* wipe_y_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_y", true);
-                    ConfigOptionFloat* width_option = m_print_config.option<ConfigOptionFloat>("prime_tower_width", true);
-                    ConfigOptionFloat* rotation_angle_option = m_print_config.option<ConfigOptionFloat>("wipe_tower_rotation_angle", true);
-                    ConfigOptionFloat* volume_option = m_print_config.option<ConfigOptionFloat>("prime_volume", true);
+                    auto* wipe_x_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_x", true);
+                    auto* wipe_y_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_y", true);
+                    auto* width_option = m_print_config.option<ConfigOptionFloat>("prime_tower_width", true);
+                    auto* rotation_angle_option = m_print_config.option<ConfigOptionFloat>("wipe_tower_rotation_angle", true);
+                    auto* volume_option = m_print_config.option<ConfigOptionFloat>("prime_volume", true);
 
                     BOOST_LOG_TRIVIAL(info) << boost::format("prime_tower_width %1% wipe_tower_rotation_angle %2% prime_volume %3%") % width_option->value % rotation_angle_option->value % volume_option->value;
 
@@ -4025,8 +4025,8 @@ int CLI::run(int argc, char **argv)
                     else {
                         first_run = false;
                         if (plate_to_slice > 0) {
-                            ConfigOptionFloats* wipe_x_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_x");
-                            ConfigOptionFloats* wipe_y_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_y");
+                            auto* wipe_x_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_x");
+                            auto* wipe_y_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_y");
 
                             if (wipe_x_option && (wipe_x_option->size() > (plate_to_slice-1))) {
                                 orig_wipe_x = wipe_x_option->get_at(plate_to_slice-1);
@@ -4119,11 +4119,11 @@ int CLI::run(int argc, char **argv)
                         ConfigOptionFloat wt_y_opt(y);
 
                         //create the options using default if neccessary
-                        ConfigOptionFloats* wipe_x_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_x", true);
-                        ConfigOptionFloats* wipe_y_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_y", true);
-                        ConfigOptionFloat* width_option = m_print_config.option<ConfigOptionFloat>("prime_tower_width", true);
-                        ConfigOptionFloat* rotation_angle_option = m_print_config.option<ConfigOptionFloat>("wipe_tower_rotation_angle", true);
-                        ConfigOptionFloat* volume_option = m_print_config.option<ConfigOptionFloat>("prime_volume", true);
+                        auto* wipe_x_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_x", true);
+                        auto* wipe_y_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_y", true);
+                        auto* width_option = m_print_config.option<ConfigOptionFloat>("prime_tower_width", true);
+                        auto* rotation_angle_option = m_print_config.option<ConfigOptionFloat>("wipe_tower_rotation_angle", true);
+                        auto* volume_option = m_print_config.option<ConfigOptionFloat>("prime_volume", true);
 
                         BOOST_LOG_TRIVIAL(info) << boost::format("prime_tower_width %1% wipe_tower_rotation_angle %2% prime_volume %3%")%width_option->value %rotation_angle_option->value %volume_option->value ;
 
@@ -4258,8 +4258,8 @@ int CLI::run(int argc, char **argv)
                             //update wipe_tower_x and wipe_tower_y
                             ConfigOptionFloat wt_x_opt(x);
                             ConfigOptionFloat wt_y_opt(y);
-                            ConfigOptionFloats* wipe_x_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_x", true);
-                            ConfigOptionFloats* wipe_y_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_y", true);
+                            auto* wipe_x_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_x", true);
+                            auto* wipe_y_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_y", true);
 
                             wipe_x_option->set_at(&wt_x_opt, plate_to_slice-1, 0);
                             wipe_y_option->set_at(&wt_y_opt, plate_to_slice-1, 0);
@@ -4481,8 +4481,8 @@ int CLI::run(int argc, char **argv)
                             {
                                 ConfigOptionFloat wt_x_opt(orig_wipe_x);
                                 ConfigOptionFloat wt_y_opt(orig_wipe_y);
-                                ConfigOptionFloats* wipe_x_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_x", true);
-                                ConfigOptionFloats* wipe_y_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_y", true);
+                                auto* wipe_x_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_x", true);
+                                auto* wipe_y_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_y", true);
 
                                 wipe_x_option->set_at(&wt_x_opt, plate_to_slice-1, 0);
                                 wipe_y_option->set_at(&wt_y_opt, plate_to_slice-1, 0);
@@ -4508,8 +4508,8 @@ int CLI::run(int argc, char **argv)
                             {
                                 ConfigOptionFloat wt_x_opt(orig_wipe_x);
                                 ConfigOptionFloat wt_y_opt(orig_wipe_y);
-                                ConfigOptionFloats* wipe_x_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_x", true);
-                                ConfigOptionFloats* wipe_y_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_y", true);
+                                auto* wipe_x_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_x", true);
+                                auto* wipe_y_option = m_print_config.option<ConfigOptionFloats>("wipe_tower_y", true);
 
                                 wipe_x_option->set_at(&wt_x_opt, plate_to_slice-1, 0);
                                 wipe_y_option->set_at(&wt_y_opt, plate_to_slice-1, 0);
