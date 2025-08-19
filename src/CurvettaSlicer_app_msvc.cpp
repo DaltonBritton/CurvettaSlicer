@@ -19,6 +19,7 @@ extern "C"
 }
 #endif /* SLIC3R_GUI */
 
+#include <cerrno>
 #include <cstdlib>
 #include <cstdio>
 
@@ -90,11 +91,27 @@ public:
 
         unsigned int gl_major = 0;
         unsigned int gl_minor = 0;
-        if (!numbers.empty())
-            gl_major = ::atoi(numbers[0].c_str());
-        if (numbers.size() > 1)
-            gl_minor = ::atoi(numbers[1].c_str());
-        // printf("Major: %d, minor: %d\n", gl_major, gl_minor);
+
+        if(!numbers.empty()){
+            errno = 0;
+            gl_major = strtol(numbers[0].c_str(), nullptr, 10);
+            if(errno == ERANGE)
+            {
+                printf("Overflow or underflow occurred when parsing gl_minor..\n");
+                return false;
+            }
+        }
+
+        if(numbers.size() > 1){
+            errno = 0;
+            gl_minor = strtol(numbers[0].c_str(), nullptr, 10);
+            if(errno == ERANGE)
+            {
+                printf("Overflow or underflow occurred when parsing gl_minor.\n");
+                return false;
+            }
+        }
+
         if (gl_major < major)
             return false;
         else if (gl_major > major)
