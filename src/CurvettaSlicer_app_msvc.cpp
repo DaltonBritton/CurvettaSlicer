@@ -5,7 +5,7 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <shellapi.h>
-#include <wchar.h>
+#include <cwchar>
 
 
 
@@ -19,8 +19,8 @@ extern "C"
 }
 #endif /* SLIC3R_GUI */
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 
 #ifdef SLIC3R_GUI
     #include <GL/GL.h>
@@ -32,7 +32,6 @@ extern "C"
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
-#include <stdio.h>
 
 #ifdef SLIC3R_GUI
 class OpenGLVersionCheck
