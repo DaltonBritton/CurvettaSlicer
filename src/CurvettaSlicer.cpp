@@ -795,10 +795,10 @@ static int construct_assemble_list(std::vector<assemble_plate_info_t> &assemble_
 
         if (!assemble_plate_info.plate_params.empty())
         {
-            for (auto plate_iter = assemble_plate_info.plate_params.begin(); plate_iter != assemble_plate_info.plate_params.end(); plate_iter++)
+            for (auto & plate_param : assemble_plate_info.plate_params)
             {
-                plate_data->config.set_deserialize(plate_iter->first, plate_iter->second, config_substitutions);
-                BOOST_LOG_TRIVIAL(debug) << __FUNCTION__ << boost::format(": Plate %1%, key %2%, value %3%") % (index + 1) % plate_iter->first % plate_iter->second;
+                plate_data->config.set_deserialize(plate_param.first, plate_param.second, config_substitutions);
+                BOOST_LOG_TRIVIAL(debug) << __FUNCTION__ << boost::format(": Plate %1%, key %2%, value %3%") % (index + 1) % plate_param.first % plate_param.second;
             }
         }
 
@@ -856,10 +856,10 @@ static int construct_assemble_list(std::vector<assemble_plate_info_t> &assemble_
             object->config.set_key_value("extruder", new ConfigOptionInt(assemble_object.filaments[0]));
             if (!assemble_object.print_params.empty())
             {
-                for (auto param_iter = assemble_object.print_params.begin(); param_iter != assemble_object.print_params.end(); param_iter++)
+                for (auto & print_param : assemble_object.print_params)
                 {
-                    object->config.set_deserialize(param_iter->first, param_iter->second, config_substitutions);
-                    BOOST_LOG_TRIVIAL(debug) << boost::format("Plate %1%, object %2% key %3%, value %4%") % (index + 1) % object_1_name % param_iter->first % param_iter->second;
+                    object->config.set_deserialize(print_param.first, print_param.second, config_substitutions);
+                    BOOST_LOG_TRIVIAL(debug) << boost::format("Plate %1%, object %2% key %3%, value %4%") % (index + 1) % object_1_name % print_param.first % print_param.second;
                 }
             }
 
@@ -869,10 +869,10 @@ static int construct_assemble_list(std::vector<assemble_plate_info_t> &assemble_
                 {
                     height_range_info_t& range = assemble_object.height_ranges[range_index];
                     DynamicPrintConfig range_config;
-                    for (auto range_config_iter = range.range_params.begin(); range_config_iter != range.range_params.end(); range_config_iter++)
+                    for (auto & range_param : range.range_params)
                     {
-                        range_config.set_deserialize(range_config_iter->first, range_config_iter->second, config_substitutions);
-                        BOOST_LOG_TRIVIAL(debug) << boost::format("object %1%, height range %2% key %3%, value %4%") % object_1_name % range_index % range_config_iter->first % range_config_iter->second;
+                        range_config.set_deserialize(range_param.first, range_param.second, config_substitutions);
+                        BOOST_LOG_TRIVIAL(debug) << boost::format("object %1%, height range %2% key %3%, value %4%") % object_1_name % range_index % range_param.first % range_param.second;
                     }
                     object->layer_config_ranges[{ range.min_z, range.max_z }].assign_config(std::move(range_config));
                 }
@@ -937,10 +937,10 @@ static int construct_assemble_list(std::vector<assemble_plate_info_t> &assemble_
                     assembled_param_info_t& assembled_param = assemble_iter->second;
                     if (!assembled_param.print_params.empty())
                     {
-                        for (auto param_iter = assembled_param.print_params.begin(); param_iter != assembled_param.print_params.end(); param_iter++)
+                        for (auto & print_param : assembled_param.print_params)
                         {
-                            assemble_obj->config.set_deserialize(param_iter->first, param_iter->second, config_substitutions);
-                            BOOST_LOG_TRIVIAL(debug) << boost::format("Plate %1%, assemble object %2% key %3%, value %4%") % (index + 1) % assemble_obj->name % param_iter->first % param_iter->second;
+                            assemble_obj->config.set_deserialize(print_param.first, print_param.second, config_substitutions);
+                            BOOST_LOG_TRIVIAL(debug) << boost::format("Plate %1%, assemble object %2% key %3%, value %4%") % (index + 1) % assemble_obj->name % print_param.first % print_param.second;
                         }
                     }
 
@@ -950,10 +950,10 @@ static int construct_assemble_list(std::vector<assemble_plate_info_t> &assemble_
                         {
                             height_range_info_t& range = assembled_param.height_ranges[range_index];
                             DynamicPrintConfig range_config;
-                            for (auto range_config_iter = range.range_params.begin(); range_config_iter != range.range_params.end(); range_config_iter++)
+                            for (auto & range_param : range.range_params)
                             {
-                                range_config.set_deserialize(range_config_iter->first, range_config_iter->second, config_substitutions);
-                                BOOST_LOG_TRIVIAL(debug) << boost::format("assenble object %1%, height range %2% key %3%, value %4%") % assemble_obj->name % range_index % range_config_iter->first % range_config_iter->second;
+                                range_config.set_deserialize(range_param.first, range_param.second, config_substitutions);
+                                BOOST_LOG_TRIVIAL(debug) << boost::format("assenble object %1%, height range %2% key %3%, value %4%") % assemble_obj->name % range_index % range_param.first % range_param.second;
                             }
                             assemble_obj->layer_config_ranges[{ range.min_z, range.max_z }].assign_config(std::move(range_config));
                         }
@@ -2225,8 +2225,8 @@ int CLI::run(int argc, char **argv)
     }
     if (!new_printer_name.empty()) {
         if (!new_process_name.empty()) {
-            for (int index = 0; index < new_print_compatible_printers.size(); index++) {
-                if (new_print_compatible_printers[index] == new_printer_system_name) {
+            for (const auto & new_print_compatible_printer : new_print_compatible_printers) {
+                if (new_print_compatible_printer == new_printer_system_name) {
                     process_compatible = true;
                     break;
                 }
@@ -2235,8 +2235,8 @@ int CLI::run(int argc, char **argv)
                 %new_printer_name %new_printer_system_name %new_process_name %new_process_system_name %process_compatible;
         }
         else {
-            for (int index = 0; index < current_print_compatible_printers.size(); index++) {
-                if (current_print_compatible_printers[index] == new_printer_system_name) {
+            for (const auto & current_print_compatible_printer : current_print_compatible_printers) {
+                if (current_print_compatible_printer == new_printer_system_name) {
                     process_compatible = true;
                     break;
                 }
@@ -2246,8 +2246,8 @@ int CLI::run(int argc, char **argv)
         }
     }
     else if (!new_process_name.empty()) {
-        for (int index = 0; index < new_print_compatible_printers.size(); index++) {
-            if (new_print_compatible_printers[index] == current_printer_system_name) {
+        for (const auto & new_print_compatible_printer : new_print_compatible_printers) {
+            if (new_print_compatible_printer == current_printer_system_name) {
                 process_compatible = true;
                 break;
             }
@@ -2257,8 +2257,8 @@ int CLI::run(int argc, char **argv)
     }
     else {
         //check the compatible of old printer&&process
-        for (int index = 0; index < current_print_compatible_printers.size(); index++) {
-            if (current_print_compatible_printers[index] == current_printer_system_name) {
+        for (const auto & current_print_compatible_printer : current_print_compatible_printers) {
+            if (current_print_compatible_printer == current_printer_system_name) {
                 process_compatible = true;
                 break;
             }
@@ -2277,8 +2277,8 @@ int CLI::run(int argc, char **argv)
         machine_switch = true;
         BOOST_LOG_TRIVIAL(info) << boost::format("switch to new printers, set to compatible");
         if (!upward_compatible_printers.empty()) {
-            for (int index = 0; index < upward_compatible_printers.size(); index++) {
-                if (upward_compatible_printers[index] == new_printer_system_name) {
+            for (const auto & upward_compatible_printer : upward_compatible_printers) {
+                if (upward_compatible_printer == new_printer_system_name) {
                     process_compatible = true;
                     machine_upwards = true;
                     BOOST_LOG_TRIVIAL(info) << boost::format("new printer is upward_compatible");
@@ -2323,8 +2323,8 @@ int CLI::run(int argc, char **argv)
             *new_preset = *current_preset;
             std::vector<std::string>& compatible_printers = new_preset->config.option<ConfigOptionStrings>("compatible_printers", true)->values;
             bool need_insert = true;
-            for (int index = 0; index < compatible_printers.size(); index++) {
-                if (compatible_printers[index] == new_printer_system_name) {
+            for (const auto & compatible_printer : compatible_printers) {
+                if (compatible_printer == new_printer_system_name) {
                     need_insert = false;
                     break;
                 }
@@ -2436,8 +2436,8 @@ int CLI::run(int argc, char **argv)
                 BOOST_LOG_TRIVIAL(info) << boost::format("new different key size %1%")%different_keys_set.size();
                 different_keys.clear();
 
-                for (auto iter=different_keys_set.begin(); iter !=different_keys_set.end(); ++iter)
-                    different_keys.emplace_back(*iter);
+                for (const auto & iter : different_keys_set)
+                    different_keys.emplace_back(iter);
                 different_settings[filament_count+1] = Slic3r::escape_strings_cstyle(different_keys);
             }
             BOOST_LOG_TRIVIAL(info) << boost::format("no new printer, only update the different key, new different_settings: %1%")%different_settings[filament_count+1];
@@ -2473,9 +2473,9 @@ int CLI::run(int argc, char **argv)
                                     json machine_limits_json = printer_model_json["machine_limits"];
                                     printer_params = machine_limits_json.get<std::map<std::string, std::string>>();
 
-                                    for (auto param_iter = printer_params.begin(); param_iter != printer_params.end(); param_iter++)
+                                    for (auto & printer_param : printer_params)
                                     {
-                                        std::string key = param_iter->first;
+                                        std::string key = printer_param.first;
                                         //replace "cli_safe" with "machine_max"
                                         key.replace(0, 8, "machine_max");
 
@@ -2484,7 +2484,7 @@ int CLI::run(int argc, char **argv)
                                             //de-serialize the values from param_iter->second, and do the compare here
                                             unsigned int array_count = option->size();
                                             ConfigOptionFloats new_option;
-                                            new_option.deserialize(param_iter->second);
+                                            new_option.deserialize(printer_param.second);
                                             unsigned int new_array_count = new_option.size();
                                             for (unsigned int index = 0; index < array_count; index++)
                                             {
@@ -2573,8 +2573,8 @@ int CLI::run(int argc, char **argv)
                 BOOST_LOG_TRIVIAL(info) << boost::format("new different key size %1%")%different_keys_set.size();
                 different_keys.clear();
 
-                for (auto iter=different_keys_set.begin(); iter !=different_keys_set.end(); ++iter)
-                    different_keys.emplace_back(*iter);
+                for (const auto & iter : different_keys_set)
+                    different_keys.emplace_back(iter);
                 different_settings[0] = Slic3r::escape_strings_cstyle(different_keys);
             }
             BOOST_LOG_TRIVIAL(info) << boost::format("no new process, only update the different key, new different_settings: %1%")%different_settings[0];
@@ -2600,8 +2600,8 @@ int CLI::run(int argc, char **argv)
             std::vector<std::string> different_keys;
             Slic3r::unescape_strings_cstyle(old_setting, different_keys);
             bool need_insert = true;
-            for (int index = 0; index < different_keys.size(); index++) {
-                if (different_keys[index] == "compatible_printers") {
+            for (const auto & different_key : different_keys) {
+                if (different_key == "compatible_printers") {
                     need_insert = false;
                     break;
                 }
@@ -2727,8 +2727,8 @@ int CLI::run(int argc, char **argv)
                 //changed
                 different_keys.clear();
 
-                for (auto iter=different_keys_set.begin(); iter !=different_keys_set.end(); ++iter)
-                    different_keys.emplace_back(*iter);
+                for (const auto & iter : different_keys_set)
+                    different_keys.emplace_back(iter);
                 different_settings[filament_index] = Slic3r::escape_strings_cstyle(different_keys);
                 BOOST_LOG_TRIVIAL(info) << boost::format("filament %1% new different key size %2%, different_settings %3%")%filament_index %different_keys_set.size() %different_settings[filament_index];
             }
@@ -2969,8 +2969,8 @@ int CLI::run(int argc, char **argv)
     std::map<std::string, std::string> validity = m_print_config.validate(true);
     if (!validity.empty()) {
         boost::nowide::cerr << "Param values in 3mf/config error: "<< std::endl;
-        for (auto it=validity.begin(); it!=validity.end(); ++it)
-            boost::nowide::cerr << it->first <<": "<< it->second << std::endl;
+        for (auto & it : validity)
+            boost::nowide::cerr << it.first <<": "<< it.second << std::endl;
         record_exit_reson(outfile_dir, CLI_INVALID_VALUES_IN_3MF, 0, cli_errors[CLI_INVALID_VALUES_IN_3MF], sliced_info);
         flush_and_exit(CLI_INVALID_VALUES_IN_3MF);
     }
@@ -2998,8 +2998,8 @@ int CLI::run(int argc, char **argv)
                 std::vector<std::string> different_keys;
                 Slic3r::unescape_strings_cstyle(diff_settings, different_keys);
                 bool need_insert = true;
-                for (int index = 0; index < different_keys.size(); index++) {
-                    if (different_keys[index] == "enable_prime_tower") {
+                for (const auto & different_key : different_keys) {
+                    if (different_key == "enable_prime_tower") {
                         need_insert = false;
                         break;
                     }
@@ -3828,9 +3828,8 @@ int CLI::run(int argc, char **argv)
                 {
                     ModelObject* mo = assemble_plate.loaded_obj_list[oidx];
 
-                    for (size_t inst_idx = 0; inst_idx < mo->instances.size(); ++inst_idx)
+                    for (auto minst : mo->instances)
                     {
-                        ModelInstance* minst = mo->instances[inst_idx];
                         ArrangePolygon   ap = get_instance_arrange_poly(minst, m_print_config);
                         ap.itemid = selected.size();
                         selected.emplace_back(std::move(ap));
@@ -5015,9 +5014,8 @@ int CLI::run(int argc, char **argv)
                                     //check the warnings
                                     if (!g_slicing_warnings.empty())
                                     {
-                                        for (unsigned int i = 0; i < g_slicing_warnings.size(); i++)
+                                        for (auto & status : g_slicing_warnings)
                                         {
-                                            PrintBase::SlicingStatus& status = g_slicing_warnings[i];
                                             if ((status.warning_step != -1) && (status.message_type != PrintStateBase::SlicingDefaultNotification))
                                             {
                                                 sliced_plate_info.warning_message = status.text;
@@ -5238,11 +5236,11 @@ int CLI::run(int argc, char **argv)
             if (!nozzle_diameter_str.empty())
                 plate_data->nozzle_diameters = nozzle_diameter_str;
 
-            for (auto it = plate_data->slice_filaments_info.begin(); it != plate_data->slice_filaments_info.end(); it++) {
+            for (auto & it : plate_data->slice_filaments_info) {
                 std::string display_filament_type;
-                it->type  = m_print_config.get_filament_type(display_filament_type, it->id);
-                it->color = filament_color ? filament_color->get_at(it->id) : "#FFFFFF";
-                it->filament_id = filament_id?filament_id->get_at(it->id):"";
+                it.type  = m_print_config.get_filament_type(display_filament_type, it.id);
+                it.color = filament_color ? filament_color->get_at(it.id) : "#FFFFFF";
+                it.filament_id = filament_id?filament_id->get_at(it.id):"";
             }
 
             if (!plate_data->plate_thumbnail.is_valid()) {
@@ -5808,9 +5806,9 @@ int CLI::run(int argc, char **argv)
             plate_bbox->bbox_all = { bbox_all.min.x(),bbox_all.min.y(),bbox_all.max.x(),bbox_all.max.y() };
 
             PlateData *plate_data = plate_data_list[i];
-            for (auto it = plate_data->slice_filaments_info.begin(); it != plate_data->slice_filaments_info.end(); it++) {
-                plate_bbox->filament_ids.push_back(it->id);
-                plate_bbox->filament_colors.push_back(it->color);
+            for (auto & it : plate_data->slice_filaments_info) {
+                plate_bbox->filament_ids.push_back(it.id);
+                plate_bbox->filament_colors.push_back(it.color);
             }
             plate_bboxes.push_back(plate_bbox);
         }
@@ -5851,22 +5849,22 @@ int CLI::run(int argc, char **argv)
             flush_and_exit(CLI_EXPORT_3MF_ERROR);
         }
 
-        for (unsigned int i = 0; i < thumbnails.size(); i++)
-            thumbnails[i]->reset();
-        for (unsigned int i = 0; i < no_light_thumbnails.size(); i++)
-            no_light_thumbnails[i]->reset();
-        for (unsigned int i = 0; i < top_thumbnails.size(); i++)
-            top_thumbnails[i]->reset();
-        for (unsigned int i = 0; i < pick_thumbnails.size(); i++)
-            pick_thumbnails[i]->reset();
+        for (auto & thumbnail : thumbnails)
+            thumbnail->reset();
+        for (auto & no_light_thumbnail : no_light_thumbnails)
+            no_light_thumbnail->reset();
+        for (auto & top_thumbnail : top_thumbnails)
+            top_thumbnail->reset();
+        for (auto & pick_thumbnail : pick_thumbnails)
+            pick_thumbnail->reset();
 
         release_PlateData_list(plate_data_list);
 
-        for (unsigned int i = 0; i < calibration_thumbnails.size(); i++)
-            delete calibration_thumbnails[i];
+        for (auto & calibration_thumbnail : calibration_thumbnails)
+            delete calibration_thumbnail;
 
-        for (int i = 0; i < plate_bboxes.size(); i++)
-            delete plate_bboxes[i];
+        for (auto & plate_bboxe : plate_bboxes)
+            delete plate_bboxe;
     }
 
     if (!plate_data_src.empty())
@@ -5995,8 +5993,8 @@ bool CLI::setup(int argc, char **argv)
     //FIXME Validating at this stage most likely does not make sense, as the config is not fully initialized yet.
     if (!validity.empty()) {
         boost::nowide::cerr << "Params in command line error: "<< std::endl;
-        for (auto it=validity.begin(); it!=validity.end(); ++it)
-            boost::nowide::cerr << it->first <<": "<< it->second << std::endl;
+        for (auto & it : validity)
+            boost::nowide::cerr << it.first <<": "<< it.second << std::endl;
         return false;
     }
 
