@@ -5,9 +5,6 @@
 #include <iostream>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
-#include <boost/log/trivial.hpp>
-#include <boost/format.hpp>
-#include <mutex>
 
 static std::string g_log_folder;
 static std::atomic<int> g_crash_log_count = 0;
