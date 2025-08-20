@@ -118,14 +118,14 @@ jobs:
       #   uses: actions/upload-artifact@v4
       #   with:
       #     name: OrcaSlicer_dep_mac_${{ env.date }}
-      #     path: ${{ github.workspace }}/deps/build/OrcaSlicer_dep*.tar.gz
+      #     path: ${{ github.workspace }}/deps/build/CurvettaSlicer_dep*.tar.gz
 
       - name: Upload Windows artifacts
         if: inputs.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: OrcaSlicer_dep_win64_${{ env.date }}
-          path: ${{ github.workspace }}/deps/build/OrcaSlicer_dep*.zip
+          name: CurvettaSlicer_dep_win64_${{ env.date }}
+          path: ${{ github.workspace }}/deps/build/CurvettaSlicer_dep*.zip
 
       - name: Upload Ubuntu artifacts
         if: ${{ ! env.ACT && inputs.os == 'ubuntu-20.04' || inputs.os == 'ubuntu-24.04' }}
