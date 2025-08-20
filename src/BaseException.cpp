@@ -64,7 +64,7 @@ void CBaseException::OutputString(LPCTSTR lpszFormat, ...)
 	//WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), szBuf, _tcslen(szBuf), NULL, NULL);
 
 	//output it to the current directory of binary
-	std::string output_str = textconv_helper::T2A_(szBuf);
+	std::string output_str = static_cast<const char* const>(textconv_helper::T2A_(szBuf));
 	*output_file << output_str;
 	output_file->flush();
 }
@@ -386,6 +386,7 @@ void CBaseException::ShowExceptionInformation()
 
 	ShowCallstack(GetCurrentThread(), m_pEp->ContextRecord);
 }
+
 [[maybe_unused]] void CBaseException::ShowCallstack() {
     this->ShowCallstack(GetCurrentThread());
 }
