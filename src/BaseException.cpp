@@ -5,6 +5,7 @@
 #include <iostream>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <utility>
 
 static std::string g_log_folder;
 static std::atomic<int> g_crash_log_count = 0;
@@ -35,7 +36,7 @@ CBaseException::CBaseException(HANDLE hProcess, WORD wPID, LPCTSTR lpSymbolPath,
 	}
 }
 
-CBaseException::~CBaseException(void)
+CBaseException::~CBaseException()
 {
 	if (output_file) {
 		output_file->close();
@@ -47,7 +48,7 @@ CBaseException::~CBaseException(void)
 //BBS set crash log folder
 void CBaseException::set_log_folder(std::string log_folder)
 {
-	g_log_folder = log_folder;
+	g_log_folder = std::move(log_folder);
 }
 
 void CBaseException::OutputString(LPCTSTR lpszFormat, ...)
