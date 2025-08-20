@@ -386,3 +386,12 @@ void CBaseException::ShowExceptionInformation()
 
 	ShowCallstack(GetCurrentThread(), m_pEp->ContextRecord);
 }
+[[maybe_unused]] void CBaseException::ShowCallstack() {
+    this->ShowCallstack(GetCurrentThread());
+}
+void CBaseException::ShowCallstack(HANDLE hThread) {
+    this->ShowCallstack(hThread, nullptr);
+}
+[[maybe_unused]] void CBaseException::ShowCallstack(const CONTEXT* context) {
+    this->ShowCallstack(GetCurrentThread(), context);
+}

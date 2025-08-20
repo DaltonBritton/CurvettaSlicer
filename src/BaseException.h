@@ -11,7 +11,12 @@ public:
 	~CBaseException();
 	void OutputString(LPCTSTR lpszFormat, ...) override;
     [[maybe_unused]] virtual void ShowLoadModules();
-	virtual void ShowCallstack(HANDLE hThread = GetCurrentThread(), const CONTEXT* context = nullptr);
+
+    [[maybe_unused]] void ShowCallstack();
+    void ShowCallstack(HANDLE hThread = GetCurrentThread());
+    [[maybe_unused]] void ShowCallstack(const CONTEXT* context = nullptr);
+
+	void ShowCallstack(HANDLE hThread, const CONTEXT* context);
 	virtual void ShowExceptionResoult(DWORD dwExceptionCode);
 	virtual BOOL GetLogicalAddress(PVOID addr, PTSTR szModule, DWORD len, DWORD& section, DWORD& offset );
 	virtual void ShowRegistorInformation(PCONTEXT pCtx);
