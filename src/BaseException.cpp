@@ -69,7 +69,7 @@ void CBaseException::OutputString(LPCTSTR lpszFormat, ...)
 	output_file->flush();
 }
 
-void CBaseException::ShowLoadModules()
+[[maybe_unused]] void CBaseException::ShowLoadModules()
 {
 	LoadSymbol();
 	LPMODULE_INFO pHead = GetLoadModules();
