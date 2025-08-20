@@ -20,10 +20,8 @@
  *           https://github.com/admesh/admesh/issues
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include <cstring>
+#include <cmath>
 
 #include <algorithm>
 #include <vector>
