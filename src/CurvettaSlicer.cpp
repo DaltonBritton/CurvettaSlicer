@@ -2351,7 +2351,7 @@ int CLI::run(int argc, char **argv)
     }
 
     //update seperate configs into full config
-    auto update_full_config = [](DynamicPrintConfig& full_config, const DynamicPrintConfig& config, std::set<std::string>& diff_key_sets, bool update_all = false, bool skip_gcodes = false) {
+    auto update_full_config = [function_name](DynamicPrintConfig& full_config, const DynamicPrintConfig& config, std::set<std::string>& diff_key_sets, bool update_all = false, bool skip_gcodes = false) {
         const t_config_option_keys& config_keys = config.keys();
         BOOST_LOG_TRIVIAL(info) << boost::format("update_full_config: config keys count %1%")%config_keys.size();
         for (const t_config_option_key &opt_key : config_keys) {
