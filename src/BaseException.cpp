@@ -294,7 +294,7 @@ BOOL CBaseException::GetLogicalAddress(
 	if ( !VirtualQuery( addr, &mbi, sizeof(mbi) ) )
 		return FALSE;
 
-	DWORD_PTR hMod = (DWORD_PTR)mbi.AllocationBase;
+	auto hMod = (DWORD_PTR)mbi.AllocationBase;
 
 	if ( !GetModuleFileName( (HMODULE)hMod, szModule, len ) )
 		return FALSE;
@@ -302,8 +302,8 @@ BOOL CBaseException::GetLogicalAddress(
 	if (!hMod)
 		return FALSE;
 
-	PIMAGE_DOS_HEADER pDosHdr = (PIMAGE_DOS_HEADER)hMod;
-	PIMAGE_NT_HEADERS pNtHdr = (PIMAGE_NT_HEADERS)(hMod + pDosHdr->e_lfanew);
+	auto pDosHdr = (PIMAGE_DOS_HEADER)hMod;
+	auto pNtHdr = (PIMAGE_NT_HEADERS)(hMod + pDosHdr->e_lfanew);
 	PIMAGE_SECTION_HEADER pSection = IMAGE_FIRST_SECTION( pNtHdr );
 
 	DWORD_PTR rva = (DWORD_PTR)addr - hMod;
