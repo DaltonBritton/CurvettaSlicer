@@ -1658,21 +1658,22 @@ int CLI::run(int argc, char **argv)
         }
     }
 
+    const char* function_name = __FUNCTION__;
     auto load_config_file = [=](const std::string& file, DynamicPrintConfig& config, std::string& config_type,
                                 std::string& config_name, std::string& filament_id, std::string& config_from) {
         if (! boost::filesystem::exists(file)) {
-            boost::nowide::cerr << __FUNCTION__<< ": can not find setting file: " << file << std::endl;
+            boost::nowide::cerr << function_name << ": can not find setting file: " << file << std::endl;
             return CLI_FILE_NOTFOUND;
         }
         ConfigSubstitutions config_substitutions;
         try {
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__<< ":load setting file "<< file << ", with rule "<< config_substitution_rule << std::endl;
+            BOOST_LOG_TRIVIAL(info) << function_name<< ":load setting file "<< file << ", with rule "<< config_substitution_rule << std::endl;
             std::map<std::string, std::string> key_values;
             std::string reason;
 
             config_substitutions = config.load_from_json(file, config_substitution_rule, key_values, reason);
             if (!reason.empty()) {
-                BOOST_LOG_TRIVIAL(error) <<__FUNCTION__<<  ":Can not load config from file "<<file<<"\n";
+                BOOST_LOG_TRIVIAL(error) <<function_name<<  ":Can not load config from file "<<file<<"\n";
                 return CLI_CONFIG_FILE_ERROR;
             }
 
@@ -1682,7 +1683,7 @@ int CLI::run(int argc, char **argv)
                 config_from = from_iter->second;
             }
             if ((config_from != "system")&&(config_from != "User")&&(config_from != "user")) {
-                boost::nowide::cerr <<__FUNCTION__ << boost::format(":file %1%'s from %2% unsupported") % file % config_from;
+                boost::nowide::cerr <<function_name << boost::format(":file %1%'s from %2% unsupported") % file % config_from;
                 return CLI_CONFIG_FILE_ERROR;
             }
 
@@ -1700,7 +1701,7 @@ int CLI::run(int argc, char **argv)
                     filament_id = filament_id_iter->second;
             }
             else {
-                boost::nowide::cerr <<__FUNCTION__ << boost::format(": unknown config type %1% of file %2% in load-settings") % config_type % file;
+                boost::nowide::cerr <<function_name << boost::format(": unknown config type %1% of file %2% in load-settings") % config_type % file;
                 return CLI_CONFIG_FILE_ERROR;
             }
             config.normalize_fdm();
@@ -1717,7 +1718,7 @@ int CLI::run(int argc, char **argv)
             //config.erase("compatible_printers");
             //BOOST_LOG_TRIVIAL(info) << "got printable_area "<< config.option("printable_area")->serialize() << std::endl;
         } catch (std::exception &ex) {
-            boost::nowide::cerr << __FUNCTION__<< ":Loading setting file \"" << file << "\" failed: " << ex.what() << std::endl;
+            boost::nowide::cerr << function_name<< ":Loading setting file \"" << file << "\" failed: " << ex.what() << std::endl;
             return CLI_CONFIG_FILE_ERROR;
         }
         return 0;
@@ -2372,7 +2373,7 @@ int CLI::run(int argc, char **argv)
             const ConfigOption *source_opt = config.option(opt_key);
             if (source_opt == nullptr) {
                 // The key was not found in the source config, therefore it will not be initialized!
-                boost::nowide::cerr << __FUNCTION__<<": can not found option " <<opt_key<<"from config." <<std::endl;
+                boost::nowide::cerr << function_name <<": can not found option " <<opt_key<<"from config." <<std::endl;
                 return CLI_CONFIG_FILE_ERROR;
             }
             if (opt_key == "compatible_prints" || opt_key == "compatible_printers" || opt_key == "model_id" || opt_key == "inherits" ||opt_key == "dev_model_name"
@@ -2381,7 +2382,7 @@ int CLI::run(int argc, char **argv)
             else {
                 ConfigOption *dest_opt = full_config.option(opt_key, true);
                 if (dest_opt == nullptr) {
-                    boost::nowide::cerr << __FUNCTION__<<":can not create option " <<opt_key<<" to full_config "<<std::endl;
+                    boost::nowide::cerr << function_name <<":can not create option " <<opt_key<<" to full_config "<<std::endl;
                     return CLI_CONFIG_FILE_ERROR;
                 }
                 dest_opt->set(source_opt);
