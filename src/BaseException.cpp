@@ -14,13 +14,13 @@ static std::mutex g_dump_mutex;
 CBaseException::CBaseException(HANDLE hProcess, WORD wPID, LPCTSTR lpSymbolPath, PEXCEPTION_POINTERS pEp):
 	CStackWalker(hProcess, wPID, lpSymbolPath)
 {
-	if (NULL != pEp)
+	if (nullptr != pEp)
 	{
 		m_pEp = new EXCEPTION_POINTERS;
 		CopyMemory(m_pEp, pEp, sizeof(EXCEPTION_POINTERS));
 	}
 	output_file = new boost::nowide::ofstream();
-	std::time_t t = std::time(0);
+	std::time_t t = std::time(nullptr);
 	std::tm* now_time = std::localtime(&t);
 	std::stringstream buf;
 
@@ -78,7 +78,7 @@ void CBaseException::OutputString(LPCTSTR lpszFormat, ...)
 	GetUserName(szBuf, &dwSize);
 	OutputString(_T("Current User:%s\r\n"), szBuf);
 	OutputString(_T("BaseAddress:\tSize:\tName\tPath\tSymbolPath\tVersion\r\n"));
-	while (NULL != pmi)
+	while (nullptr != pmi)
 	{
 		OutputString(_T("%08x\t%d\t%s\t%s\t%s\t%s\r\n"), (unsigned long)(pmi->ModuleAddress), pmi->dwModSize, pmi->szModuleName, pmi->szModulePath, pmi->szSymbolPath, pmi->szVersion);
 		pmi = pmi->pNext;
@@ -251,7 +251,7 @@ void CBaseException::ShowExceptionResoult(DWORD dwExceptionCode)
 
 	FormatMessage(  FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_HMODULE,
 		GetModuleHandle( _T("NTDLL.DLL") ),
-		dwExceptionCode, 0, szBuffer, sizeof( szBuffer ), 0 );
+		dwExceptionCode, 0, szBuffer, sizeof( szBuffer ), nullptr );
 
 	OutputString(_T("%s"), szBuffer);
 	OutputString(_T("\r\n"));
@@ -271,7 +271,7 @@ LONG WINAPI CBaseException::UnhandledExceptionFilter(PEXCEPTION_POINTERS pExcept
 		return EXCEPTION_CONTINUE_SEARCH;
 	}
     g_dump_mutex.lock();
-	CBaseException base(GetCurrentProcess(), GetCurrentProcessId(), NULL, pExceptionInfo);
+	CBaseException base(GetCurrentProcess(), GetCurrentProcessId(), nullptr, pExceptionInfo);
 	base.ShowExceptionInformation();
     g_dump_mutex.unlock();
 
@@ -280,7 +280,7 @@ LONG WINAPI CBaseException::UnhandledExceptionFilter(PEXCEPTION_POINTERS pExcept
 
 LONG WINAPI CBaseException::UnhandledExceptionFilter2(PEXCEPTION_POINTERS pExceptionInfo )
 {
-	CBaseException base(GetCurrentProcess(), GetCurrentProcessId(), NULL, pExceptionInfo);
+	CBaseException base(GetCurrentProcess(), GetCurrentProcessId(), nullptr, pExceptionInfo);
 	base.ShowExceptionInformation();
 
 	return EXCEPTION_CONTINUE_SEARCH;
@@ -357,7 +357,7 @@ void CBaseException::ShowRegistorInformation(PCONTEXT pCtx)
 
 void CBaseException::STF(unsigned int ui,  PEXCEPTION_POINTERS pEp)
 {
-	CBaseException base(GetCurrentProcess(), GetCurrentProcessId(), NULL, pEp);
+	CBaseException base(GetCurrentProcess(), GetCurrentProcessId(), nullptr, pEp);
 	throw base;
 }
 
