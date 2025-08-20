@@ -9,7 +9,7 @@ class CBaseException : public CStackWalker
 public:
 	explicit CBaseException(HANDLE hProcess = GetCurrentProcess(), WORD wPID = GetCurrentProcessId(), LPCTSTR lpSymbolPath = NULL, PEXCEPTION_POINTERS pEp = NULL);
 	~CBaseException();
-	virtual void OutputString(LPCTSTR lpszFormat, ...);
+	void OutputString(LPCTSTR lpszFormat, ...) override;
 	virtual void ShowLoadModules();
 	virtual void ShowCallstack(HANDLE hThread = GetCurrentThread(), const CONTEXT* context = NULL);
 	virtual void ShowExceptionResoult(DWORD dwExceptionCode);
