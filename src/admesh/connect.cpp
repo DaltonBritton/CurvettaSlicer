@@ -111,7 +111,7 @@ struct HashEdge {
 	}
 
 private:
-	inline bool vertex_lower(const stl_vertex &a, const stl_vertex &b) {
+	static inline bool vertex_lower(const stl_vertex &a, const stl_vertex &b) {
 	  	return (a(0) != b(0)) ? (a(0) < b(0)) :
 	           ((a(1) != b(1)) ? (a(1) < b(1)) : (a(2) < b(2)));
 	}
