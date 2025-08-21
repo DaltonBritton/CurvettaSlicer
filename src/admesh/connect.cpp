@@ -137,12 +137,12 @@ struct HashTableEdges {
 
 	void insert_edge_exact(stl_file *stl, const HashEdge &edge)
 	{
-		this->insert_edge(stl, edge, [stl](const HashEdge& edge1, const HashEdge& edge2) { record_neighbors(stl, edge1, edge2); });
+        this->insert_edge(edge, [stl](const HashEdge& edge1, const HashEdge& edge2) { record_neighbors(stl, edge1, edge2); });
 	}
 
 	void insert_edge_nearby(stl_file *stl, const HashEdge &edge)
 	{
-		this->insert_edge(stl, edge, [stl](const HashEdge& edge1, const HashEdge& edge2) { match_neighbors_nearby(stl, edge1, edge2); });
+        this->insert_edge(edge, [stl](const HashEdge& edge1, const HashEdge& edge2) { match_neighbors_nearby(stl, edge1, edge2); });
 	}
 
 	// Hash table on edges
@@ -170,9 +170,8 @@ private:
 
 
 	// MatchNeighbors(stl_file *stl, const HashEdge &edge_a, const HashEdge &edge_b)
-	template<typename MatchNeighbors>
-	void insert_edge(stl_file *stl, const HashEdge &edge, MatchNeighbors match_neighbors)
-	{
+	template<typename MatchNeighbors> void insert_edge(const HashEdge& edge, MatchNeighbors match_neighbors)
+    {
 		int       chain_number = edge.hash(this->M);
 		HashEdge *link         = this->heads[chain_number];
 		if (link == this->tail) {
