@@ -69,7 +69,7 @@ struct HashEdge {
 	  	memcpy(&this->key[3], b->data(), sizeof(stl_vertex));
 	  	// Switch negative zeros to positive zeros, so memcmp will consider them to be equal.
 	  	for (size_t i = 0; i < 6; ++ i) {
-	    	unsigned char *p = (unsigned char*)(this->key + i);
+	    	auto *p = (unsigned char*)(this->key + i);
 	#if BOOST_ENDIAN_LITTLE_BYTE
 	    	if (p[0] == 0 && p[1] == 0 && p[2] == 0 && p[3] == 0x80)
 	      		// Negative zero, switch to positive zero.
