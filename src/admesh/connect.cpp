@@ -460,9 +460,11 @@ void stl_check_facets_exact(stl_file *stl)
 	for (uint32_t i = 0; i < stl->stats.number_of_facets; ++ i) {
 		const stl_facet &facet = stl->facet_start[i];
 		for (int j = 0; j < 3; ++ j) {
-			HashEdge edge;
-			edge.facet_number = i;
-			edge.which_edge = j;
+			HashEdge edge{
+                .facet_number = static_cast<int>(i),
+                .which_edge = j
+            };
+
 			edge.load_exact(stl, &facet.vertex[j], &facet.vertex[(j + 1) % 3]);
 			hash_table.insert_edge_exact(stl, edge);
 		}
@@ -491,9 +493,10 @@ void stl_check_facets_nearby(stl_file *stl, float tolerance)
     	stl_facet facet = stl->facet_start[i];
     	for (int j = 0; j < 3; j++) {
       		if (stl->neighbors_start[i].neighbor[j] == -1) {
-        		HashEdge edge;
-        		edge.facet_number = i;
-        		edge.which_edge = j;
+                HashEdge edge{
+                    .facet_number = static_cast<int>(i),
+                    .which_edge = j
+                };
         		if (edge.load_nearby(stl, facet.vertex[j], facet.vertex[(j + 1) % 3], tolerance))
           			// Only insert edges that have different keys.
           			hash_table.insert_edge_nearby(stl, edge);
@@ -655,9 +658,10 @@ void stl_fill_holes(stl_file *stl)
 		for (int j = 0; j < 3; ++ j) {
 	  		if(stl->neighbors_start[i].neighbor[j] != -1)
 	  			continue;
-			HashEdge edge;
-	  		edge.facet_number = i;
-	  		edge.which_edge = j;
+            HashEdge edge{
+                .facet_number = static_cast<int>(i),
+                .which_edge = j
+            };
 	  		edge.load_exact(stl, &facet.vertex[j], &facet.vertex[(j + 1) % 3]);
 	  		hash_table.insert_edge_exact(stl, edge);
 		}
@@ -705,9 +709,11 @@ void stl_fill_holes(stl_file *stl)
 	      			new_facet.vertex[2] = stl->facet_start[facet_num].vertex[vnot % 3];
 				    stl_add_facet(stl, &new_facet);
 	      			for (int k = 0; k < 3; ++ k) {
-	      				HashEdge edge;
-	        			edge.facet_number = stl->stats.number_of_facets - 1;
-	        			edge.which_edge = k;
+                        HashEdge edge{
+                            .facet_number = static_cast<int>(stl->stats.number_of_facets - 1),
+                            .which_edge = k
+                        };
+
 	        			edge.load_exact(stl, &new_facet.vertex[k], &new_facet.vertex[(k + 1) % 3]);
 	        			hash_table.insert_edge_exact(stl, edge);
 	      			}
