@@ -118,7 +118,7 @@ private:
 };
 
 struct HashTableEdges {
-	HashTableEdges(size_t number_of_faces) {
+	explicit HashTableEdges(size_t number_of_faces) {
 		this->M = (int)hash_size_from_nr_faces(number_of_faces);
 		this->heads.assign(this->M, nullptr);
 		this->tail = pool.construct();
