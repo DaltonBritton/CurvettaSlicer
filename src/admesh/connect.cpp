@@ -39,7 +39,7 @@ struct HashEdge {
 	// Compare two keys.
 	bool operator==(const HashEdge &rhs) const { return memcmp(key, rhs.key, sizeof(key)) == 0; }
 	bool operator!=(const HashEdge &rhs) const { return ! (*this == rhs); }
-	int  hash(int M) const { return ((key[0] / 11 + key[1] / 7 + key[2] / 3) ^ (key[3] / 11  + key[4] / 7 + key[5] / 3)) % M; }
+	[[nodiscard]] int  hash(int M) const { return ((key[0] / 11 + key[1] / 7 + key[2] / 3) ^ (key[3] / 11  + key[4] / 7 + key[5] / 3)) % M; }
 
 	// Index of a facet owning this edge.
 	int        facet_number;
