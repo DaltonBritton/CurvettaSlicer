@@ -212,9 +212,7 @@ private:
 					// This is a match.  Record result in neighbors list.
 					match_neighbors(edge, *link->next);
 					// Delete the matched edge from the list.
-					HashEdge *temp = link->next;
 					link->next = link->next->next;
-					// pool.destroy(temp);
 #ifndef NDEBUG
 					++ this->freed;
 #endif /* NDEBUG */
@@ -557,7 +555,7 @@ void stl_remove_unconnected_facets(stl_file *stl)
 		  	}
 		};
 
-		int edge_to_collapse = 0;
+		int edge_to_collapse;
 	   	if (stl->facet_start[facet].vertex[0] == stl->facet_start[facet].vertex[1]) {
 			if (stl->facet_start[facet].vertex[1] == stl->facet_start[facet].vertex[2]) {
 				// All 3 vertices are equal. Collapse the edge with no neighbor if it exists.
@@ -682,12 +680,11 @@ void stl_fill_holes(stl_file *stl)
 		  	int vnot = (j + 2) % 3;
 
 	  		for (;;) {
-				int pivot_vertex = 0;
-				int next_edge = 0;
+				int pivot_vertex;
+				int next_edge;
 	    		if (vnot > 2) {
 	      			if (direction) {
-	        			pivot_vertex = (vnot + 1) % 3;
-	        			next_edge = vnot % 3;
+                        next_edge = vnot % 3;
 	      			} else {
 	        			pivot_vertex = (vnot + 2) % 3;
 	        			next_edge = pivot_vertex;
@@ -695,8 +692,7 @@ void stl_fill_holes(stl_file *stl)
 	      			direction = ! direction;
 	    		} else {
 	      			if(direction == 0) {
-	        			pivot_vertex = (vnot + 1) % 3;
-	        			next_edge = vnot;
+                        next_edge = vnot;
 	      			} else {
 	        			pivot_vertex = (vnot + 2) % 3;
 	        			next_edge = pivot_vertex;
