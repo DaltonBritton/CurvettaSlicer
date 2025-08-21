@@ -335,7 +335,7 @@ private:
 			}
 		}
 
-		auto change_vertices = [stl](int facet_num, int vnot, stl_vertex new_vertex)
+		auto change_vertices = [stl](int facet_num, int vnot, const stl_vertex& new_vertex)
 		{
 			int first_facet = facet_num;
 			bool direction = false;
