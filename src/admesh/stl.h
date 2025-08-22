@@ -100,9 +100,9 @@ struct stl_neighbors {
 
 struct stl_stats {
     stl_stats() = default;
-    void  reset_header(int size) {
+    void  reset_header(int new_size) {
         header.clear();
-        header.resize(size +1);
+        header.resize(new_size +1);
     }
     std::vector<char>    header;
     stl_type      type                      = (stl_type)0;
