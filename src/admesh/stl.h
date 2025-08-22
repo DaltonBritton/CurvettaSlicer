@@ -59,7 +59,7 @@ typedef enum {
 struct stl_facet {
 	stl_normal normal;
 	stl_vertex vertex[3];
-	char       extra[2];
+	char       extra[2]{};
 
 	[[nodiscard]] stl_facet  rotated(const Eigen::Quaternion<float, Eigen::DontAlign> &rot) const {
 		stl_facet out;
@@ -93,9 +93,9 @@ struct stl_neighbors {
   	[[nodiscard]] int num_neighbors() const { return 3 - ((this->neighbor[0] == -1) + (this->neighbor[1] == -1) + (this->neighbor[2] == -1)); }
 
   	// Index of a neighbor facet.
-  	int   neighbor[3];
+  	int   neighbor[3]{};
   	// Index of an opposite vertex at the neighbor face.
-  	char  which_vertex_not[3];
+  	char  which_vertex_not[3]{};
 };
 
 struct stl_stats {
@@ -150,7 +150,7 @@ struct stl_stats {
 };
 
 struct stl_file {
-	stl_file() {}
+	stl_file() = default;
 
 	void clear() {
 		this->facet_start.clear();
@@ -162,7 +162,7 @@ struct stl_file {
 		return sizeof(*this) + sizeof(stl_facet) * facet_start.size() + sizeof(stl_neighbors) * neighbors_start.size();
 	}
 
-    char mw_data[256];
+    char mw_data[256]{};
 	std::vector<stl_facet>     		facet_start;
 	std::vector<stl_neighbors> 		neighbors_start;
 	// Statistics
