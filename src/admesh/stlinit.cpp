@@ -21,7 +21,6 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include <assert.h>
@@ -31,7 +30,6 @@
 #include <boost/predef/other/endian.h>
 
 #include "stl.h"
-#include "libslic3r/Format/STL.hpp"
 
 #include "libslic3r/LocalesUtils.hpp"
 
