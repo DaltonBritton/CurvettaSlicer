@@ -197,7 +197,7 @@ struct FaceProperty
             if (this->type <= eNormal || this->type >= eMaxNumFaceTypes)
                 break;
 
-            size_t type_end_pos = str.find(" ");
+            size_t type_end_pos = str.find(' ');
             if (type_end_pos == std::string::npos) {
                 this->area = 0.f;
                 return;
