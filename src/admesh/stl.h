@@ -23,9 +23,9 @@
 #ifndef __admesh_stl__
 #define __admesh_stl__
 
-#include <stdio.h>
-#include <stdint.h>
-#include <stddef.h>
+#include <cstdio>
+#include <cstdint>
+#include <cstddef>
 
 #include <utility>
 #include <vector>
