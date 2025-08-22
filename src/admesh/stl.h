@@ -20,8 +20,7 @@
  *           https://github.com/admesh/admesh/issues
  */
 
-#ifndef __admesh_stl__
-#define __admesh_stl__
+#pragma once
 
 #include <cstdio>
 #include <cstdint>
@@ -413,5 +412,3 @@ extern void stl_add_facet(stl_file *stl, const stl_facet *new_facet);
 // Validate the mesh, assert on error.
 extern bool stl_validate(const stl_file *stl);
 extern bool stl_validate(const stl_file *stl, const indexed_triangle_set &its);
-
-#endif
