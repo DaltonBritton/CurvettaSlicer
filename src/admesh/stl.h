@@ -60,7 +60,7 @@ struct stl_facet {
 	stl_vertex vertex[3];
 	char       extra[2];
 
-	stl_facet  rotated(const Eigen::Quaternion<float, Eigen::DontAlign> &rot) const {
+	[[nodiscard]] stl_facet  rotated(const Eigen::Quaternion<float, Eigen::DontAlign> &rot) const {
 		stl_facet out;
 		out.normal    = rot * this->normal;
 		out.vertex[0] = rot * this->vertex[0];
@@ -89,7 +89,7 @@ struct stl_neighbors {
   		which_vertex_not[1] = -1;
   		which_vertex_not[2] = -1;
   	}
-  	int num_neighbors() const { return 3 - ((this->neighbor[0] == -1) + (this->neighbor[1] == -1) + (this->neighbor[2] == -1)); }
+  	[[nodiscard]] int num_neighbors() const { return 3 - ((this->neighbor[0] == -1) + (this->neighbor[1] == -1) + (this->neighbor[2] == -1)); }
 
   	// Index of a neighbor facet.
   	int   neighbor[3];
@@ -157,7 +157,7 @@ struct stl_file {
         this->stats.clear();
 	}
 
-	size_t memsize() const {
+	[[nodiscard]] size_t memsize() const {
 		return sizeof(*this) + sizeof(stl_facet) * facet_start.size() + sizeof(stl_neighbors) * neighbors_start.size();
 	}
 
@@ -174,7 +174,7 @@ struct FaceProperty
     double area;
     // stl_normal normal;
 
-    std::string to_string() const
+    [[nodiscard]] std::string to_string() const
     {
         std::string str;
         // skip normal type facet to improve performance 
@@ -226,7 +226,7 @@ struct indexed_triangle_set
 
     void clear() { indices.clear(); vertices.clear(); properties.clear(); }
 
-    size_t memsize() const {
+    [[nodiscard]] size_t memsize() const {
         return sizeof(*this) + (sizeof(stl_triangle_vertex_indices) + sizeof(FaceProperty)) * indices.size() + sizeof(stl_vertex) * vertices.size();
     }
 
@@ -234,11 +234,11 @@ struct indexed_triangle_set
     std::vector<stl_vertex>                     vertices;
     std::vector<FaceProperty>                   properties;
 
-    bool empty() const { return indices.empty() || vertices.empty(); }
-    stl_vertex get_vertex(int facet_idx, int vertex_idx) const{
+    [[nodiscard]] bool empty() const { return indices.empty() || vertices.empty(); }
+    [[nodiscard]] stl_vertex get_vertex(int facet_idx, int vertex_idx) const{
         return vertices[indices[facet_idx][vertex_idx]];
     }
-    float facet_area(int facet_idx) const {
+    [[nodiscard]] float facet_area(int facet_idx) const {
         return std::abs((get_vertex(facet_idx, 0) - get_vertex(facet_idx, 1))
             .cross(get_vertex(facet_idx, 0) - get_vertex(facet_idx, 2)).norm()) / 2;
     }
