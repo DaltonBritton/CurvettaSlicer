@@ -60,9 +60,9 @@ void stl_generate_shared_vertices(stl_file *stl, indexed_triangle_set &its)
 			++ fan_traversal_stamp;
 			for (;;) {
 				// Next edge on facet_in_fan_idx to be traversed. The edge is indexed by its starting vertex index.
-				int next_edge    = 0;
+				int next_edge;
 				// Vertex index in facet_in_fan_idx, which is being pivoted around, and which is being assigned a new shared vertex.
-				int pivot_vertex = 0;
+				int pivot_vertex;
 				if (vnot > 2) {
 					// The edge of facet_in_fan_idx opposite to vnot is equally oriented, therefore
 					// the neighboring facet is flipped.
