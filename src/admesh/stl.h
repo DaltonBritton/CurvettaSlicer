@@ -27,6 +27,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include <utility>
 #include <vector>
 #include <Eigen/Geometry> 
 
@@ -218,8 +219,8 @@ struct FaceProperty
 
 struct indexed_triangle_set
 {
-    indexed_triangle_set(std::vector<stl_triangle_vertex_indices>    indices_,
-        std::vector<stl_vertex>                     vertices_) :indices(indices_), vertices(vertices_) {
+    indexed_triangle_set(const std::vector<stl_triangle_vertex_indices>&    indices_,
+        std::vector<stl_vertex>                     vertices_) :indices(indices_), vertices(std::move(vertices_)) {
         properties.resize(indices_.size());
     }
     indexed_triangle_set() {}
