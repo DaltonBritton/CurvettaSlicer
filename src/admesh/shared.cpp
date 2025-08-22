@@ -20,7 +20,6 @@
  *           https://github.com/admesh/admesh/issues
  */
 
-#include <cstring>
 
 #include <vector>
 
@@ -181,7 +180,7 @@ bool its_write_vrml(const indexed_triangle_set &its, const char *file)
 
     for (const auto & index : its.indices)
         fprintf(fp, "\t\t\t\t%d, %d, %d, -1,\n", index[0], index[1], index[2]);
-    
+
 	fprintf(fp, "\t\t\t\t%d, %d, %d, -1]\n", its.indices[i][0], its.indices[i][1], its.indices[i][2]);
 	fprintf(fp, "\t\t}\n");
 	fprintf(fp, "\t}\n");
