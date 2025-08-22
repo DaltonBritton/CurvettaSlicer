@@ -209,7 +209,7 @@ struct FaceProperty
             else
                 this->area = 0.f;
             return;
-        } while (0);
+        } while (false);
 
         this->type = eNormal;
         this->area = 0.f;
