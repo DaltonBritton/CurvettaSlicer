@@ -99,7 +99,7 @@ struct stl_neighbors {
 };
 
 struct stl_stats {
-    stl_stats() {}
+    stl_stats() = default;
     void  reset_header(int size) {
         header.clear();
         header.resize(size +1);
@@ -223,7 +223,7 @@ struct indexed_triangle_set
         std::vector<stl_vertex>                     vertices_) :indices(indices_), vertices(std::move(vertices_)) {
         properties.resize(indices_.size());
     }
-    indexed_triangle_set() {}
+    indexed_triangle_set() = default;
 
     void clear() { indices.clear(); vertices.clear(); properties.clear(); }
 
