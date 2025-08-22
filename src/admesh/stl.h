@@ -319,8 +319,8 @@ inline void stl_transform(stl_file *stl, const Eigen::Transform<T, 3, Eigen::Aff
     const Eigen::Matrix<T, 3, 3, Eigen::DontAlign> r = t.matrix().template block<3, 3>(0, 0).inverse().transpose();
     for (size_t i = 0; i < stl->stats.number_of_facets; ++ i) {
 		stl_facet &f = stl->facet_start[i];
-		for (size_t j = 0; j < 3; ++j)
-			f.vertex[j] = (t * f.vertex[j].template cast<T>()).template cast<float>().eval();
+		for (auto & vertex : f.vertex)
+            vertex = (t * vertex.template cast<T>()).template cast<float>().eval();
 		f.normal = (r * f.normal.template cast<T>()).template cast<float>().eval();
 	}
 
@@ -333,8 +333,8 @@ inline void stl_transform(stl_file *stl, const Eigen::Matrix<T, 3, 3, Eigen::Don
     const Eigen::Matrix<T, 3, 3, Eigen::DontAlign> r = m.inverse().transpose();
     for (size_t i = 0; i < stl->stats.number_of_facets; ++ i) {
 		stl_facet &f = stl->facet_start[i];
-		for (size_t j = 0; j < 3; ++j)
-			f.vertex[j] = (m * f.vertex[j].template cast<T>()).template cast<float>().eval();
+		for (auto & vertex : f.vertex)
+			vertex = (m * vertex.template cast<T>()).template cast<float>().eval();
         f.normal = (r * f.normal.template cast<T>()).template cast<float>().eval();
     }
 
