@@ -3,6 +3,8 @@
 
 #include <boost/container/small_vector.hpp>
 #include <boost/log/trivial.hpp>
+#include <cstddef>
+#include <tbb/parallel_for.h>
 
 #ifndef NDEBUG
 //    #define EXPENSIVE_DEBUG_CHECKS
@@ -1256,6 +1258,22 @@ void TriangleSelector::garbage_collect()
     m_free_vertices_head = -1;
 }
 
+void TriangleSelector::remap_triangle_state(const EnforcerBlockerStateMap& state_map)
+{
+    if (m_triangles.empty())
+        return;
+
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, m_triangles.size()), [this, &state_map](const tbb::blocked_range<size_t>& range) {
+        for (size_t i = range.begin(); i != range.end(); ++i) {
+            Triangle& tr = m_triangles[i];
+            if (tr.valid()) {
+                const auto current_state = static_cast<size_t>(tr.get_state());
+                tr.set_state(state_map[current_state]);
+            }
+        }
+    });
+}
+
 TriangleSelector::TriangleSelector(const TriangleMesh& mesh, float edge_limit)
     : m_mesh{mesh}, m_neighbors(its_face_neighbors(mesh.its)), m_face_normals(its_face_normals(mesh.its)), m_edge_limit(edge_limit)
 {
@@ -1665,7 +1683,7 @@ TriangleSelector::TriangleSplittingData TriangleSelector::serialize() const {
             } else {
                 // In case this is leaf, we better save information about its state.
                 int n = int(tr.get_state());
-                if (n < static_cast<size_t>(EnforcerBlockerType::ExtruderMax))
+                if (n <= static_cast<size_t>(EnforcerBlockerType::ExtruderMax))
                     data.used_states[n] = true;
 
                 if (n >= 3) {

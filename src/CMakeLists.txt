@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.13)
 project(CurvettaSlicer-native)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_subdirectory(build-utils)
 add_subdirectory(admesh)
 # add_subdirectory(avrdude)
-# boost/nowide
-add_subdirectory(boost)
 add_subdirectory(clipper)
-add_subdirectory(clipper2)
 add_subdirectory(miniz)
 add_subdirectory(minilzo)
 add_subdirectory(glu-libtess)
@@ -59,18 +59,11 @@ if (SLIC3R_GUI)
     include(${wxWidgets_USE_FILE})
 
     find_package(JPEG QUIET)
-    find_package(TIFF QUIET)
 
     string(REGEX MATCH "wxpng" WX_PNG_BUILTIN ${wxWidgets_LIBRARIES})
     if (PNG_FOUND AND NOT WX_PNG_BUILTIN)
         list(FILTER wxWidgets_LIBRARIES EXCLUDE REGEX png)
         list(APPEND wxWidgets_LIBRARIES ${PNG_LIBRARIES})
-    endif ()
-
-    string(REGEX MATCH "wxtiff" WX_TIFF_BUILTIN ${wxWidgets_LIBRARIES})
-    if (TIFF_FOUND AND NOT WX_TIFF_BUILTIN)
-        list(FILTER wxWidgets_LIBRARIES EXCLUDE REGEX tiff)
-        list(APPEND wxWidgets_LIBRARIES ${TIFF_LIBRARIES})
     endif ()
 
     string(REGEX MATCH "wxjpeg" WX_JPEG_BUILTIN ${wxWidgets_LIBRARIES})
@@ -103,8 +96,21 @@ if (SLIC3R_GUI)
 endif()
 
 if(ORCA_TOOLS)
-    # CurvettaSlicer_profile_validator
-    add_executable(CurvettaSlicer_profile_validator CurvettaSlicer_profile_validator.cpp)
+    # OrcaSlicer_profile_validator
+    if(APPLE)
+        add_executable(CurvettaSlicer_profile_validator MACOSX_BUNDLE CurvettaSlicer_profile_validator.cpp)
+        set_target_properties(CurvettaSlicer_profile_validator PROPERTIES
+            MACOSX_BUNDLE TRUE
+            MACOSX_BUNDLE_BUNDLE_NAME "CurvettaSlicer Profile Validator"
+            MACOSX_BUNDLE_BUNDLE_VERSION "${SLIC3R_VERSION}"
+            MACOSX_BUNDLE_SHORT_VERSION_STRING "${SLIC3R_VERSION}"
+            MACOSX_BUNDLE_IDENTIFIER "com.softfever.orcaslicer.profile-validator"
+            MACOSX_BUNDLE_COPYRIGHT "© 2024 SoftFever"
+            MACOSX_BUNDLE_GUI_IDENTIFIER "com.softfever.orcaslicer.profile-validator"
+        )
+    else()
+        add_executable(CurvettaSlicer_profile_validator CurvettaSlicer_profile_validator.cpp)
+    endif()
     target_link_libraries(CurvettaSlicer_profile_validator libslic3r boost_headeronly libcurl OpenSSL::SSL OpenSSL::Crypto)
     target_compile_definitions(CurvettaSlicer_profile_validator PRIVATE -DBOOST_ALL_NO_LIB -DBOOST_USE_WINAPI_VERSION=0x602 -DBOOST_SYSTEM_USE_UTF8)
     if(WIN32)
@@ -132,7 +138,8 @@ if (NOT WIN32 AND NOT APPLE)
     # Binary name on unix like systems (Linux, Unix)
     set_target_properties(CurvettaSlicer PROPERTIES OUTPUT_NAME "curvetta-slicer")
     set(SLIC3R_APP_CMD "curvetta-slicer")
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/unix/BuildLinuxImage.sh.in ${CMAKE_CURRENT_BINARY_DIR}/BuildLinuxImage.sh @ONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/unix/build_linux_image.sh.in ${CMAKE_CURRENT_BINARY_DIR}/build_linux_image.sh USE_SOURCE_PERMISSIONS @ONLY)
+
 endif ()
 
 target_link_libraries(CurvettaSlicer libslic3r cereal::cereal)

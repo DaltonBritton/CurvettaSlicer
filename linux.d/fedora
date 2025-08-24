@@ -16,11 +16,12 @@ REQUIRED_DEV_PACKAGES=(
     gstreamermm-devel
     gtk3-devel
     libmspack-devel
+    libquadmath-devel
     libsecret-devel
+    libspnav-devel
     libtool
     m4
     mesa-libGLU-devel
-    mesa-libOSMesa-devel
     ninja-build
     openssl-devel
     perl-FindBin
