@@ -59,7 +59,7 @@ namespace textconv_helper
 				MultiByteToWideChar(codePage, 0, pStr, -1, &m_vWideArray[0], length);
 			}
 		}
-		~CA2W_() {}
+		~CA2W_() = default;
 		explicit operator LPCWSTR() { return m_pStr ? &m_vWideArray[0] : NULL; }
 		//operator LPOLESTR() { return m_pStr ? (LPOLESTR)&m_vWideArray[0] : (LPOLESTR)NULL; }
 
