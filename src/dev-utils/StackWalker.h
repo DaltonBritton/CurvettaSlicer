@@ -220,7 +220,7 @@ class CStackWalker
 {
 public:
 	explicit CStackWalker(HANDLE hProcess = GetCurrentProcess(), WORD wPID = GetCurrentProcessId(), LPCTSTR lpSymbolPath = NULL);
-	~CStackWalker(void);
+	~CStackWalker();
 	BOOL LoadSymbol();
 	LPMODULE_INFO GetLoadModules();
 	void GetModuleInformation(LPMODULE_INFO pmi);
