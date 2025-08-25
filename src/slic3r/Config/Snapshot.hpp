@@ -15,8 +15,8 @@ namespace Slic3r {
 
 class AppConfig;
 
-namespace GUI {
-namespace Config {
+
+namespace GUI::Config {
 
 
 // A snapshot contains:
@@ -134,8 +134,8 @@ const Snapshot* take_config_snapshot_report_error(const AppConfig &app_config, S
 // Return true on success and on "Continue" to continue with the process (for example installation of presets).
 bool take_config_snapshot_cancel_on_error(const AppConfig &app_config, Snapshot::Reason reason, const std::string &comment, const std::string &message);
 
-} // namespace Config
-} // namespace GUI
+} // namespace GUI::Config
+
 } // namespace Slic3r
 
 #endif /* slic3r_GUI_Snapshot_ */
