@@ -24,10 +24,7 @@ CStackWalker::CStackWalker(HANDLE hProcess, WORD wPID, LPCTSTR lpSymbolPath):
 
 CStackWalker::~CStackWalker(void)
 {
-	if (NULL != m_lpszSymbolPath)
-	{
-		delete[] m_lpszSymbolPath;
-	}
+    delete[] m_lpszSymbolPath;
 
 	if (m_bSymbolLoaded)
 	{
@@ -332,12 +329,9 @@ cleanup:
 	{
 		FreeLibrary(hPsapi);
 	}
-	if (hMods != NULL)
-	{
-		delete[] hMods;
-	}
+    delete[] hMods;
 
-	return pHead;
+    return pHead;
 }
 
 void CStackWalker::OutputString(LPCTSTR lpszFormat, ...)
