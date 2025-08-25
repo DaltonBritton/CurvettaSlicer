@@ -24,7 +24,6 @@
 #include "../GUI/GUI_App.hpp"
 #include "../GUI/I18N.hpp"
 #include "../GUI/MainFrame.hpp"
-#include "../GUI/MsgDialog.hpp"
 
 #include <wx/richmsgdlg.h>
 

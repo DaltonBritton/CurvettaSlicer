@@ -9,9 +9,9 @@ CStackWalker::CStackWalker(HANDLE hProcess, WORD wPID, LPCTSTR lpSymbolPath):
 	m_hProcess(hProcess),
 	m_wPID(wPID),
 	m_bSymbolLoaded(FALSE),
-	m_lpszSymbolPath(NULL)
+	m_lpszSymbolPath(nullptr)
 {
-	if (NULL != lpSymbolPath)
+	if (nullptr != lpSymbolPath)
 	{
 		size_t dwLength = 0;
 		StringCchLength(lpSymbolPath, MAX_SYMBOL_PATH, &dwLength);
@@ -22,12 +22,9 @@ CStackWalker::CStackWalker(HANDLE hProcess, WORD wPID, LPCTSTR lpSymbolPath):
 
 }
 
-CStackWalker::~CStackWalker(void)
+CStackWalker::~CStackWalker()
 {
-	if (NULL != m_lpszSymbolPath)
-	{
-		delete[] m_lpszSymbolPath;
-	}
+    delete[] m_lpszSymbolPath;
 
 	if (m_bSymbolLoaded)
 	{
@@ -44,7 +41,7 @@ BOOL CStackWalker::LoadSymbol()
 		return m_bSymbolLoaded;
 	}
 
-	if (NULL != m_lpszSymbolPath)
+	if (nullptr != m_lpszSymbolPath)
 	{
 		
 		m_bSymbolLoaded = SymInitialize(m_hProcess, textconv_helper::T2A_(m_lpszSymbolPath), FALSE);
@@ -65,7 +62,7 @@ BOOL CStackWalker::LoadSymbol()
 
 	//添加程序主模块所在路径
 	ZeroMemory(szTemp, MAX_PATH * sizeof(TCHAR));
-	if (GetModuleFileName(NULL, szTemp, MAX_PATH) > 0)
+	if (GetModuleFileName(nullptr, szTemp, MAX_PATH) > 0)
 	{
 		size_t sLength = 0;
 		StringCchLength(szTemp, MAX_PATH, &sLength);
@@ -129,12 +126,7 @@ BOOL CStackWalker::LoadSymbol()
 		StringCchCopy(m_lpszSymbolPath, sLength, szSymbolPath);
 	}
 
-	if (NULL != m_lpszSymbolPath)
-	{
-		m_bSymbolLoaded = SymInitialize(m_hProcess, textconv_helper::T2A_(m_lpszSymbolPath), TRUE); //这里设置为TRUE，让它在初始化符号表的同时加载符号表
-	}
-
-	DWORD symOptions = SymGetOptions();
+    DWORD symOptions = SymGetOptions();
 	symOptions |= SYMOPT_LOAD_LINES;
 	symOptions |= SYMOPT_FAIL_CRITICAL_ERRORS;
 	symOptions |= SYMOPT_DEBUG;
@@ -146,7 +138,7 @@ BOOL CStackWalker::LoadSymbol()
 LPMODULE_INFO CStackWalker::GetLoadModules()
 {
 	LPMODULE_INFO pHead = GetModulesTH32();
-	if (NULL == pHead)
+	if (nullptr == pHead)
 	{
 		pHead = GetModulesPSAPI();
 	}
@@ -157,7 +149,7 @@ LPMODULE_INFO CStackWalker::GetLoadModules()
 void CStackWalker::FreeModuleInformations(LPMODULE_INFO pmi)
 {
 	LPMODULE_INFO head = pmi;
-	while (NULL != head)
+	while (nullptr != head)
 	{
 		pmi = pmi->pNext;
 		delete head;
@@ -168,7 +160,7 @@ void CStackWalker::FreeModuleInformations(LPMODULE_INFO pmi)
 LPMODULE_INFO CStackWalker::GetModulesTH32()
 {
 	//这里为了防止加载Toolhelp.dll 影响最终结果，所以采用动态加载的方式
-	LPMODULE_INFO pHead = NULL;
+	LPMODULE_INFO pHead = nullptr;
 	LPMODULE_INFO pTail = pHead;
 
 	typedef HANDLE (WINAPI *pfnCreateToolhelp32Snapshot)(DWORD dwFlags, DWORD th32ProcessID);
@@ -176,11 +168,11 @@ LPMODULE_INFO CStackWalker::GetModulesTH32()
 	typedef BOOL (WINAPI *pfnModule32Next)(HANDLE hSnapshot, LPMODULEENTRY32 lpme );
 
 	const TCHAR* dllname[] = {_T("kernel32.dll"), _T("tlhelp32.dll")};
-	HINSTANCE    hToolhelp = NULL;
+	HINSTANCE    hToolhelp = nullptr;
 
-	pfnCreateToolhelp32Snapshot CreateToolhelp32Snapshot = NULL;
-	pfnModule32First Module32First = NULL;
-	pfnModule32Next Module32Next = NULL;
+	pfnCreateToolhelp32Snapshot CreateToolhelp32Snapshot = nullptr;
+	pfnModule32First Module32First = nullptr;
+	pfnModule32Next Module32Next = nullptr;
 
 	HANDLE        hSnap;
 	MODULEENTRY32 me;
@@ -191,7 +183,7 @@ LPMODULE_INFO CStackWalker::GetModulesTH32()
 	for (i = 0; i < (sizeof(dllname) / sizeof(dllname[0])); i++)
 	{
 		hToolhelp = LoadLibrary(dllname[i]);
-		if (hToolhelp == NULL)
+		if (hToolhelp == nullptr)
 			continue;
 		CreateToolhelp32Snapshot = (pfnCreateToolhelp32Snapshot)GetProcAddress(hToolhelp, "CreateToolhelp32Snapshot");
 #ifdef UNICODE
@@ -202,14 +194,14 @@ LPMODULE_INFO CStackWalker::GetModulesTH32()
 		Module32Next = (pfnModule32Next)GetProcAddress(hToolhelp, "Module32NextA");
 #endif
 
-		if ((CreateToolhelp32Snapshot != NULL) && (Module32First != NULL) && (Module32Next != NULL))
+		if ((CreateToolhelp32Snapshot != nullptr) && (Module32First != nullptr) && (Module32Next != nullptr))
 			break;
 
 		FreeLibrary(hToolhelp);
-		hToolhelp = NULL;
+		hToolhelp = nullptr;
 	}
 
-	if (hToolhelp == NULL)
+	if (hToolhelp == nullptr)
 		return pHead;
 
 	hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, m_wPID);
@@ -224,7 +216,7 @@ LPMODULE_INFO CStackWalker::GetModulesTH32()
 
 	while (keepGoing)
 	{
-		LPMODULE_INFO pmi = new MODULE_INFO;
+		auto pmi = new MODULE_INFO;
 		ZeroMemory(pmi, sizeof(MODULE_INFO));
 
 		pmi->dwModSize = me.modBaseSize;
@@ -232,7 +224,7 @@ LPMODULE_INFO CStackWalker::GetModulesTH32()
 		StringCchCopy(pmi->szModuleName, MAX_MODULE_NAME32, me.szModule);
 		StringCchCopy(pmi->szModulePath, MAX_PATH, me.szExePath);
 		GetModuleInformation(pmi);
-		if (pHead == NULL)
+		if (pHead == nullptr)
 		{
 			pHead = pmi;
 			pTail = pHead;
@@ -252,7 +244,7 @@ LPMODULE_INFO CStackWalker::GetModulesTH32()
 
 LPMODULE_INFO CStackWalker::GetModulesPSAPI()
 {
-	LPMODULE_INFO pHead = NULL;
+	LPMODULE_INFO pHead = nullptr;
 	LPMODULE_INFO pTail = pHead;
 	typedef BOOL(WINAPI *pfnEnumProcessModules)(HANDLE hProcess, HMODULE * lphModule, DWORD cb,LPDWORD lpcbNeeded);
 	typedef DWORD(WINAPI *pfnGetModuleFileNameEx)(HANDLE hProcess, HMODULE hModule, LPTSTR lpFilename, DWORD nSize);
@@ -260,21 +252,21 @@ LPMODULE_INFO CStackWalker::GetModulesPSAPI()
 	typedef BOOL(WINAPI *pfnGetModuleInformation)(HANDLE hProcess, HMODULE hModule, LPMODULEINFO pmi, DWORD nSize);
 
 	HINSTANCE hPsapi;
-	pfnEnumProcessModules EnumProcessModules = NULL;
-	pfnGetModuleFileNameEx GetModuleFileNameEx = NULL;
-	pfnGetModuleBaseName GetModuleBaseName = NULL;
-	pfnGetModuleInformation GetModuleInformation = NULL;
+	pfnEnumProcessModules EnumProcessModules = nullptr;
+	pfnGetModuleFileNameEx GetModuleFileNameEx = nullptr;
+	pfnGetModuleBaseName GetModuleBaseName = nullptr;
+	pfnGetModuleInformation GetModuleInformation = nullptr;
 
 	DWORD i;
 	//ModuleEntry e;
 	DWORD        cbNeeded;
 	MODULEINFO   mi;
-	HMODULE*     hMods = NULL;
+	HMODULE*     hMods = nullptr;
 	TCHAR szModuleName[MAX_MODULE_NAME32 + 1] = _T("");
 	TCHAR szModulePath[MAX_PATH] = _T("");
 
 	hPsapi = LoadLibrary(_T("psapi.dll"));
-	if (hPsapi == NULL)
+	if (hPsapi == nullptr)
 	{
 		return pHead;
 	}
@@ -288,7 +280,7 @@ LPMODULE_INFO CStackWalker::GetModulesPSAPI()
 	GetModuleBaseName = (pfnGetModuleBaseName)GetProcAddress(hPsapi, "GetModuleBaseNameA");
 #endif
 	GetModuleInformation = (pfnGetModuleInformation)GetProcAddress(hPsapi, "GetModuleInformation");
-	if ((EnumProcessModules == NULL) || (GetModuleFileNameEx == NULL) || (GetModuleBaseName == NULL) || (GetModuleInformation == NULL))
+	if ((EnumProcessModules == nullptr) || (GetModuleFileNameEx == nullptr) || (GetModuleBaseName == nullptr) || (GetModuleInformation == nullptr))
 	{
 		FreeLibrary(hPsapi);
 		return pHead;
@@ -296,7 +288,7 @@ LPMODULE_INFO CStackWalker::GetModulesPSAPI()
 	
 	EnumProcessModules(m_hProcess, hMods, 0, &cbNeeded);
 	hMods = new HMODULE[cbNeeded / sizeof(HMODULE)];
-	ASSERT(NULL != hMods);
+	ASSERT(nullptr != hMods)
 	ZeroMemory(hMods, cbNeeded);
 
 	if (!EnumProcessModules(m_hProcess, hMods, cbNeeded, &cbNeeded))
@@ -309,14 +301,14 @@ LPMODULE_INFO CStackWalker::GetModulesPSAPI()
 		GetModuleInformation(m_hProcess, hMods[i], &mi, sizeof(mi));
 		GetModuleFileNameEx(m_hProcess, hMods[i], szModulePath, MAX_PATH);
 		GetModuleBaseName(m_hProcess, hMods[i], szModuleName, MAX_MODULE_NAME32);
-		LPMODULE_INFO pmi = new MODULE_INFO;
+		auto pmi = new MODULE_INFO;
 		ZeroMemory(pmi, sizeof(MODULE_INFO));
 		pmi->dwModSize = mi.SizeOfImage;
 		pmi->ModuleAddress = (DWORD64)mi.lpBaseOfDll;
 		StringCchCopy(pmi->szModuleName, MAX_MODULE_NAME32, szModuleName);
 		StringCchCopy(pmi->szModulePath, MAX_PATH, szModulePath);
 		this->GetModuleInformation(pmi);
-		if (pHead == NULL)
+		if (pHead == nullptr)
 		{
 			pHead = pmi;
 			pTail = pHead;
@@ -328,16 +320,11 @@ LPMODULE_INFO CStackWalker::GetModulesPSAPI()
 	}
 
 cleanup:
-	if (hPsapi != NULL)
-	{
-		FreeLibrary(hPsapi);
-	}
-	if (hMods != NULL)
-	{
-		delete[] hMods;
-	}
+    FreeLibrary(hPsapi);
 
-	return pHead;
+    delete[] hMods;
+
+    return pHead;
 }
 
 void CStackWalker::OutputString(LPCTSTR lpszFormat, ...)
@@ -357,7 +344,7 @@ void CStackWalker::GetModuleInformation(LPMODULE_INFO pmi)
 	IMAGEHLP_MODULE64  im = {0};
 	im.SizeOfStruct = sizeof(IMAGEHLP_MODULE64);
 
-	VS_FIXEDFILEINFO* pvfi = NULL;
+	VS_FIXEDFILEINFO* pvfi = nullptr;
 	DWORD dwHandle = 0;
 	DWORD dwInfoSize = 0;
 	dwInfoSize = GetFileVersionInfoSize(pmi->szModulePath, &dwHandle);
@@ -394,12 +381,12 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 	//加载符号表
 	LoadSymbol();
 
-	LPSTACKINFO pHead = NULL;
+	LPSTACKINFO pHead = nullptr;
 	LPSTACKINFO pTail = pHead;
 
 	//获取当前线程的上下文环境
 	CONTEXT c = {0};
-	if (context == NULL)
+	if (context == nullptr)
 	{
 #if _WIN32_WINNT <= 0x0501
 		if (hThread == GetCurrentThread())
@@ -407,7 +394,7 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 		if (GetThreadId(hThread) == GetCurrentThreadId())
 #endif
 		{
-			GET_CURRENT_THREAD_CONTEXT(c, CONTEXT_FULL);
+			GET_CURRENT_THREAD_CONTEXT(c, CONTEXT_FULL)
 		}
 		else
 		{
@@ -418,7 +405,7 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 			if (GetThreadContext(hThread, &c) == FALSE)
 			{
 				ResumeThread(hThread);
-				return NULL;
+				return nullptr;
 			}
 		}
 	}
@@ -463,9 +450,9 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 
 	
 	DWORD64 dwDisplayment = 0;
-	PIMAGEHLP_SYMBOL64 pSym = (PIMAGEHLP_SYMBOL64)new BYTE[sizeof(IMAGEHLP_SYMBOL64) + STACKWALK_MAX_NAMELEN];
-	PIMAGEHLP_LINE64 pLine = new IMAGEHLP_LINE64;
-	while (StackWalk64(imageType, m_hProcess, hThread, &sf, &c, NULL, SymFunctionTableAccess64, SymGetModuleBase64, NULL))
+	auto pSym = (PIMAGEHLP_SYMBOL64)new BYTE[sizeof(IMAGEHLP_SYMBOL64) + STACKWALK_MAX_NAMELEN];
+	auto pLine = new IMAGEHLP_LINE64;
+	while (StackWalk64(imageType, m_hProcess, hThread, &sf, &c, nullptr, SymFunctionTableAccess64, SymGetModuleBase64, nullptr))
 	{
 		ZeroMemory(pSym, sizeof(IMAGEHLP_SYMBOL64) + STACKWALK_MAX_NAMELEN);
 		ZeroMemory(pLine, sizeof(IMAGEHLP_LINE64));
@@ -474,7 +461,7 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 		pSym->MaxNameLength = STACKWALK_MAX_NAMELEN;
 		pLine->SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 
-		LPSTACKINFO pCallStack = new STACKINFO;
+		auto pCallStack = new STACKINFO;
 		ZeroMemory(pCallStack, sizeof(STACKINFO));
 		pCallStack->szFncAddr = sf.AddrPC.Offset;
 		if (sf.AddrPC.Offset != 0)
@@ -510,7 +497,7 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 			
 			//这里为了将获取函数信息失败的情况与正常的情况一起输出，防止用户在查看时出现误解
 			this->OutputString(_T("%08llx:%s [%s][%ld]\n"), pCallStack->szFncAddr, pCallStack->undFullName, pCallStack->szFileName, pCallStack->uFileNum);
-			if (NULL == pHead)
+			if (nullptr == pHead)
 			{
 				pHead = pCallStack;
 				pTail = pHead;
@@ -531,7 +518,7 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 void CStackWalker::FreeStackInformations(LPSTACKINFO psi)
 {
 	LPSTACKINFO head = psi;
-	while (NULL != head)
+	while (nullptr != head)
 	{
 		psi = psi->pNext;
 		delete head;

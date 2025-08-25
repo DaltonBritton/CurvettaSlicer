@@ -245,6 +245,8 @@ void CBaseException::ShowExceptionResoult(DWORD dwExceptionCode)
 			OutputString(_T("INT_OVERFLOW\r\n"));
 		}
 		return ;
+    default:
+        break;
 	}
 
 	TCHAR szBuffer[512] = { 0 };
@@ -357,8 +359,7 @@ void CBaseException::ShowRegistorInformation(PCONTEXT pCtx)
 
 void CBaseException::STF(unsigned int ui,  PEXCEPTION_POINTERS pEp)
 {
-	CBaseException base(GetCurrentProcess(), GetCurrentProcessId(), nullptr, pEp);
-	throw base;
+	throw CBaseException(GetCurrentProcess(), GetCurrentProcessId(), nullptr, pEp);
 }
 
 void CBaseException::ShowExceptionInformation()
