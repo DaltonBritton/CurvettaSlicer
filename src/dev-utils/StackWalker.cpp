@@ -22,7 +22,7 @@ CStackWalker::CStackWalker(HANDLE hProcess, WORD wPID, LPCTSTR lpSymbolPath):
 
 }
 
-CStackWalker::~CStackWalker(void)
+CStackWalker::~CStackWalker()
 {
     delete[] m_lpszSymbolPath;
 
