@@ -82,8 +82,8 @@ endif()
 if(ORCA_TOOLS)
     # OrcaSlicer_profile_validator
     if(APPLE)
-        add_executable(OrcaSlicer_profile_validator MACOSX_BUNDLE dev-utils/OrcaSlicer_profile_validator.cpp)
-        set_target_properties(OrcaSlicer_profile_validator PROPERTIES
+        add_executable(CurvettaSlicer_profile_validator MACOSX_BUNDLE dev-utils/CurvettaSlicer_profile_validator.cpp)
+        set_target_properties(CurvettaSlicer_profile_validator PROPERTIES
             MACOSX_BUNDLE TRUE
             MACOSX_BUNDLE_BUNDLE_NAME "CurvettaSlicer Profile Validator"
             MACOSX_BUNDLE_BUNDLE_VERSION "${SLIC3R_VERSION}"
