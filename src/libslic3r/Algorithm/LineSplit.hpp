@@ -3,8 +3,8 @@
 
 #include "ClipperZUtils.hpp"
 
-namespace Slic3r {
-namespace Algorithm {
+
+namespace Slic3r::Algorithm {
 
 struct SplitLineJunction
 {
@@ -65,6 +65,6 @@ SplittedLine split_line(const PathType& path, const ExPolygons& clip, bool close
 }
 
 } // Algorithm
-} // Slic3r
+// Slic3r
 
 #endif /* SRC_LIBSLIC3R_ALGORITHM_LINE_SPLIT_HPP_ */
