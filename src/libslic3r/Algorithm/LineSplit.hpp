@@ -24,8 +24,8 @@ struct SplitLineJunction
         , clipped(clipped)
         , src_idx(src_idx) {}
 
-    bool is_src() const { return src_idx >= 0; }
-    size_t get_src_index() const
+    [[nodiscard]] bool is_src() const { return src_idx >= 0; }
+    [[nodiscard]] size_t get_src_index() const
     {
         if (is_src()) {
             return src_idx;
