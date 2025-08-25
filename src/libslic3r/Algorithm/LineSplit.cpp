@@ -6,8 +6,8 @@
 
 //#define DEBUG_SPLIT_LINE
 
-namespace Slic3r {
-namespace Algorithm {
+
+namespace Slic3r::Algorithm {
 
 #ifdef DEBUG_SPLIT_LINE
 static std::atomic<std::uint32_t> g_dbg_id = 0;
@@ -313,4 +313,4 @@ SplittedLine do_split_line(const ClipperZUtils::ZPath& path, const ExPolygons& c
 }
 
 } // Algorithm
-} // Slic3r
+// Slic3r
