@@ -11,7 +11,6 @@ namespace textconv_helper
 	class CW2A_;
 	class CW2W_;
 	class CA2BSTR_;
-	class CW2BSTR_;
 
 	// typedefs for the well known text conversions
 	typedef CA2W_ A2W_;
