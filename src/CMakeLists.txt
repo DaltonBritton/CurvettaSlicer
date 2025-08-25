@@ -4,31 +4,15 @@ project(CurvettaSlicer-native)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_subdirectory(build-utils)
-add_subdirectory(admesh)
+# Include dev-utils for encoding check and other utilities
+add_subdirectory(dev-utils)
 # add_subdirectory(avrdude)
-add_subdirectory(clipper)
-add_subdirectory(miniz)
-add_subdirectory(minilzo)
-add_subdirectory(glu-libtess)
-add_subdirectory(qhull)
-add_subdirectory(Shiny)
-add_subdirectory(semver)
-add_subdirectory(libigl)
-add_subdirectory(hints)
-add_subdirectory(mcut)
-add_subdirectory(qoi)
-
-# Adding libnest2d project for bin packing...
-add_subdirectory(libnest2d)
+# Note: semver and hints are now included from deps_src/CMakeLists.txt
 
 add_subdirectory(libslic3r)
 
 if (SLIC3R_GUI)
-    add_subdirectory(imgui)
-    add_subdirectory(imguizmo)
-    add_subdirectory(hidapi)
-    include_directories(hidapi/include)
+    # imgui, imguizmo, and hidapi are now included from deps_src
 
     if(WIN32)
         message(STATUS "WXWIN environment set to: $ENV{WXWIN}")
@@ -98,7 +82,7 @@ endif()
 if(ORCA_TOOLS)
     # OrcaSlicer_profile_validator
     if(APPLE)
-        add_executable(CurvettaSlicer_profile_validator MACOSX_BUNDLE CurvettaSlicer_profile_validator.cpp)
+        add_executable(CurvettaSlicer_profile_validator MACOSX_BUNDLE dev-utils/CurvettaSlicer_profile_validator.cpp)
         set_target_properties(CurvettaSlicer_profile_validator PROPERTIES
             MACOSX_BUNDLE TRUE
             MACOSX_BUNDLE_BUNDLE_NAME "CurvettaSlicer Profile Validator"
@@ -109,7 +93,7 @@ if(ORCA_TOOLS)
             MACOSX_BUNDLE_GUI_IDENTIFIER "com.softfever.orcaslicer.profile-validator"
         )
     else()
-        add_executable(CurvettaSlicer_profile_validator CurvettaSlicer_profile_validator.cpp)
+        add_executable(CurvettaSlicer_profile_validator dev-utils/CurvettaSlicer_profile_validator.cpp)
     endif()
     target_link_libraries(CurvettaSlicer_profile_validator libslic3r boost_headeronly libcurl OpenSSL::SSL OpenSSL::Crypto)
     target_compile_definitions(CurvettaSlicer_profile_validator PRIVATE -DBOOST_ALL_NO_LIB -DBOOST_USE_WINAPI_VERSION=0x602 -DBOOST_SYSTEM_USE_UTF8)
@@ -120,11 +104,11 @@ endif()
 
 # Create a slic3r executable
 # Process mainfests for various platforms.
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/msw/CurvettaSlicer.rc.in ${CMAKE_CURRENT_BINARY_DIR}/CurvettaSlicer.rc @ONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/msw/CurvettaSlicer.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/CurvettaSlicer.manifest @ONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/osx/Info.plist.in ${CMAKE_CURRENT_BINARY_DIR}/Info.plist @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dev-utils/platform/msw/CurvettaSlicer.rc.in ${CMAKE_CURRENT_BINARY_DIR}/CurvettaSlicer.rc @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dev-utils/platform/msw/CurvettaSlicer.manifest.in ${CMAKE_CURRENT_BINARY_DIR}/CurvettaSlicer.manifest @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dev-utils/platform/osx/Info.plist.in ${CMAKE_CURRENT_BINARY_DIR}/Info.plist @ONLY)
 if (WIN32)
-    add_library(CurvettaSlicer SHARED CurvettaSlicer.cpp CurvettaSlicer.hpp BaseException.cpp BaseException.h StackWalker.cpp StackWalker.h)
+    add_library(CurvettaSlicer SHARED CurvettaSlicer.cpp CurvettaSlicer.hpp dev-utils/BaseException.cpp dev-utils/BaseException.h dev-utils/StackWalker.cpp dev-utils/StackWalker.h)
 else ()
     add_executable(CurvettaSlicer CurvettaSlicer.cpp CurvettaSlicer.hpp)
 endif ()
@@ -138,11 +122,11 @@ if (NOT WIN32 AND NOT APPLE)
     # Binary name on unix like systems (Linux, Unix)
     set_target_properties(CurvettaSlicer PROPERTIES OUTPUT_NAME "curvetta-slicer")
     set(SLIC3R_APP_CMD "curvetta-slicer")
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/unix/build_linux_image.sh.in ${CMAKE_CURRENT_BINARY_DIR}/build_linux_image.sh USE_SOURCE_PERMISSIONS @ONLY)
-
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dev-utils/platform/unix/build_linux_image.sh.in ${CMAKE_CURRENT_BINARY_DIR}/build_linux_image.sh USE_SOURCE_PERMISSIONS @ONLY)
 endif ()
 
 target_link_libraries(CurvettaSlicer libslic3r cereal::cereal)
+# target_include_directories(OrcaSlicer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/slic3r)
 if (APPLE)
 #    add_compile_options(-stdlib=libc++)
 #    add_definitions(-DBOOST_THREAD_DONT_USE_CHRONO -DBOOST_NO_CXX11_RVALUE_REFERENCES -DBOOST_THREAD_USES_MOVE)

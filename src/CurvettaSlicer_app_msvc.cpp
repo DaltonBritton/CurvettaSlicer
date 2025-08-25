@@ -5,7 +5,7 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <shellapi.h>
-#include <wchar.h>
+#include <cwchar>
 
 
 
@@ -19,8 +19,9 @@ extern "C"
 }
 #endif /* SLIC3R_GUI */
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cerrno>
+#include <cstdlib>
+#include <cstdio>
 
 #ifdef SLIC3R_GUI
     #include <GL/GL.h>
@@ -32,7 +33,6 @@ extern "C"
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
-#include <stdio.h>
 
 #ifdef SLIC3R_GUI
 class OpenGLVersionCheck
@@ -48,7 +48,7 @@ public:
 
     bool load_opengl_dll()
     {
-        MSG      msg     = {0};
+        MSG      msg     = {};
         WNDCLASS wc      = {0};
         wc.lpfnWndProc   = OpenGLVersionCheck::supports_opengl2_wndproc;
         wc.hInstance     = (HINSTANCE)GetModuleHandle(nullptr);
@@ -56,10 +56,10 @@ public:
         wc.lpszClassName = L"OrcaSlicer_opengl_version_check";
         wc.style = CS_OWNDC;
         if (RegisterClass(&wc)) {
-            HWND hwnd = CreateWindowW(wc.lpszClassName, L"OrcaSlicer_opengl_version_check", WS_OVERLAPPEDWINDOW, 0, 0, 640, 480, 0, 0, wc.hInstance, (LPVOID)this);
+            HWND hwnd = CreateWindowW(wc.lpszClassName, L"OrcaSlicer_opengl_version_check", WS_OVERLAPPEDWINDOW, 0, 0, 640, 480, nullptr, nullptr, wc.hInstance, (LPVOID)this);
             if (hwnd) {
                 message_pump_exit = false;
-                while (GetMessage(&msg, NULL, 0, 0 ) > 0 && ! message_pump_exit)
+                while (GetMessage(&msg, nullptr, 0, 0 ) > 0 && ! message_pump_exit)
                     DispatchMessage(&msg);
             }
         }
@@ -78,7 +78,7 @@ public:
         }
     }
 
-    bool is_version_greater_or_equal_to(unsigned int major, unsigned int minor) const
+    [[nodiscard]] bool is_version_greater_or_equal_to(unsigned int major, unsigned int minor) const
     {
         // printf("is_version_greater_or_equal_to, version: %s\n", version.c_str());
         std::vector<std::string> tokens;
@@ -91,11 +91,27 @@ public:
 
         unsigned int gl_major = 0;
         unsigned int gl_minor = 0;
-        if (numbers.size() > 0)
-            gl_major = ::atoi(numbers[0].c_str());
-        if (numbers.size() > 1)
-            gl_minor = ::atoi(numbers[1].c_str());
-        // printf("Major: %d, minor: %d\n", gl_major, gl_minor);
+
+        if(!numbers.empty()){
+            errno = 0;
+            gl_major = strtol(numbers[0].c_str(), nullptr, 10);
+            if(errno == ERANGE)
+            {
+                printf("Overflow or underflow occurred when parsing gl_minor..\n");
+                return false;
+            }
+        }
+
+        if(numbers.size() > 1){
+            errno = 0;
+            gl_minor = strtol(numbers[0].c_str(), nullptr, 10);
+            if(errno == ERANGE)
+            {
+                printf("Overflow or underflow occurred when parsing gl_minor.\n");
+                return false;
+            }
+        }
+
         if (gl_major < major)
             return false;
         else if (gl_major > major)
@@ -120,10 +136,10 @@ protected:
         typedef BOOL     	(WINAPI *Func_wglDeleteContext)(HGLRC);
         typedef GLubyte* 	(WINAPI *Func_glGetString     )(GLenum);
 
-        Func_wglCreateContext 	wglCreateContext = (Func_wglCreateContext)GetProcAddress(hOpenGL, "wglCreateContext");
-        Func_wglMakeCurrent 	wglMakeCurrent 	 = (Func_wglMakeCurrent)  GetProcAddress(hOpenGL, "wglMakeCurrent");
-        Func_wglDeleteContext 	wglDeleteContext = (Func_wglDeleteContext)GetProcAddress(hOpenGL, "wglDeleteContext");
-        Func_glGetString 		glGetString 	 = (Func_glGetString)	  GetProcAddress(hOpenGL, "glGetString");
+        auto 	wglCreateContext = (Func_wglCreateContext)GetProcAddress(hOpenGL, "wglCreateContext");
+        auto 	wglMakeCurrent 	 = (Func_wglMakeCurrent)  GetProcAddress(hOpenGL, "wglMakeCurrent");
+        auto 	wglDeleteContext = (Func_wglDeleteContext)GetProcAddress(hOpenGL, "wglDeleteContext");
+        auto 		glGetString 	 = (Func_glGetString)	  GetProcAddress(hOpenGL, "glGetString");
 
         if (wglCreateContext == nullptr || wglMakeCurrent == nullptr || wglDeleteContext == nullptr || glGetString == nullptr) {
             printf("Failed loading the system opengl32.dll: The library is invalid.\n");
@@ -184,8 +200,8 @@ protected:
         {
         case WM_CREATE:
         {
-            CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
-            OpenGLVersionCheck *ogl_data = reinterpret_cast<OpenGLVersionCheck*>(pCreate->lpCreateParams);
+            auto *pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+            auto *ogl_data = reinterpret_cast<OpenGLVersionCheck*>(pCreate->lpCreateParams);
             ogl_data->check(hWnd);
             DestroyWindow(hWnd);
             return 0;
@@ -287,7 +303,7 @@ int wmain(int argc, wchar_t **argv)
 //	printf("Loading Slic3r library: %S\n", path_to_slic3r);
     HINSTANCE hInstance_Slic3r = LoadLibraryExW(path_to_slic3r, nullptr, 0);
     if (hInstance_Slic3r == nullptr) {
-        printf("CurvettaSlicer.dll was not loaded, error=%d\n", GetLastError());
+        printf("CurvettaSlicer.dll was not loaded, error=%lu\n", GetLastError());
         return -1;
     }
 

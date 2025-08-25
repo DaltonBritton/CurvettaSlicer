@@ -116,7 +116,7 @@ private:
     void print_help(bool include_print_options = false, PrinterTechnology printer_technology = ptAny) const;
 
     /// Exports loaded models to a file of the specified format, according to the options affecting output filename.
-    bool export_models(IO::ExportFormat format, std::string path = std::string());
+    bool export_models(IO::ExportFormat format, const std::string& path = std::string());
     //BBS: add export_project function
     bool export_project(Model *model, std::string& path, PlateDataPtrs &partplate_data, std::vector<Preset*>& project_presets,
                         std::vector<ThumbnailData *> &thumbnails,
@@ -126,10 +126,10 @@ private:
         std::vector<ThumbnailData*>& calibration_thumbnails,
         std::vector<PlateBBoxData*>& plate_bboxes, const DynamicPrintConfig* config, bool minimum_save, int plate_to_export = -1);
 
-    bool has_print_action() const { return m_config.opt_bool("export_gcode") || m_config.opt_bool("export_sla"); }
+    [[maybe_unused]] [[nodiscard]] bool has_print_action() const { return m_config.opt_bool("export_gcode") || m_config.opt_bool("export_sla"); }
 
-    std::string output_filepath(const Model &model, IO::ExportFormat format) const;
-    std::string output_filepath(const ModelObject &object, unsigned int index, IO::ExportFormat format, std::string path_dir) const;
+    [[nodiscard]] std::string output_filepath(const Model &model, IO::ExportFormat format) const;
+    [[nodiscard]] std::string output_filepath(const ModelObject &object, unsigned int index, IO::ExportFormat format, std::string path_dir) const;
 };
 
 }
