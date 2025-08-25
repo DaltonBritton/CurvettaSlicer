@@ -457,7 +457,7 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 
 	
 	DWORD64 dwDisplayment = 0;
-	PIMAGEHLP_SYMBOL64 pSym = (PIMAGEHLP_SYMBOL64)new BYTE[sizeof(IMAGEHLP_SYMBOL64) + STACKWALK_MAX_NAMELEN];
+	auto pSym = (PIMAGEHLP_SYMBOL64)new BYTE[sizeof(IMAGEHLP_SYMBOL64) + STACKWALK_MAX_NAMELEN];
 	PIMAGEHLP_LINE64 pLine = new IMAGEHLP_LINE64;
 	while (StackWalk64(imageType, m_hProcess, hThread, &sf, &c, NULL, SymFunctionTableAccess64, SymGetModuleBase64, NULL))
 	{
