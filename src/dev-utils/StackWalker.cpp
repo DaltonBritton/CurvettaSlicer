@@ -221,7 +221,7 @@ LPMODULE_INFO CStackWalker::GetModulesTH32()
 
 	while (keepGoing)
 	{
-		LPMODULE_INFO pmi = new MODULE_INFO;
+		auto pmi = new MODULE_INFO;
 		ZeroMemory(pmi, sizeof(MODULE_INFO));
 
 		pmi->dwModSize = me.modBaseSize;
@@ -306,7 +306,7 @@ LPMODULE_INFO CStackWalker::GetModulesPSAPI()
 		GetModuleInformation(m_hProcess, hMods[i], &mi, sizeof(mi));
 		GetModuleFileNameEx(m_hProcess, hMods[i], szModulePath, MAX_PATH);
 		GetModuleBaseName(m_hProcess, hMods[i], szModuleName, MAX_MODULE_NAME32);
-		LPMODULE_INFO pmi = new MODULE_INFO;
+		auto pmi = new MODULE_INFO;
 		ZeroMemory(pmi, sizeof(MODULE_INFO));
 		pmi->dwModSize = mi.SizeOfImage;
 		pmi->ModuleAddress = (DWORD64)mi.lpBaseOfDll;
@@ -458,7 +458,7 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 	
 	DWORD64 dwDisplayment = 0;
 	auto pSym = (PIMAGEHLP_SYMBOL64)new BYTE[sizeof(IMAGEHLP_SYMBOL64) + STACKWALK_MAX_NAMELEN];
-	PIMAGEHLP_LINE64 pLine = new IMAGEHLP_LINE64;
+	auto pLine = new IMAGEHLP_LINE64;
 	while (StackWalk64(imageType, m_hProcess, hThread, &sf, &c, NULL, SymFunctionTableAccess64, SymGetModuleBase64, NULL))
 	{
 		ZeroMemory(pSym, sizeof(IMAGEHLP_SYMBOL64) + STACKWALK_MAX_NAMELEN);
@@ -468,7 +468,7 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 		pSym->MaxNameLength = STACKWALK_MAX_NAMELEN;
 		pLine->SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 
-		LPSTACKINFO pCallStack = new STACKINFO;
+		auto pCallStack = new STACKINFO;
 		ZeroMemory(pCallStack, sizeof(STACKINFO));
 		pCallStack->szFncAddr = sf.AddrPC.Offset;
 		if (sf.AddrPC.Offset != 0)
