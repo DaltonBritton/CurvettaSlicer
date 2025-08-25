@@ -47,7 +47,7 @@ namespace textconv_helper
 	class CA2W_
 	{
 	public:
-		CA2W_(LPCSTR pStr, UINT codePage = CP_ACP) : m_pStr(pStr)
+		explicit CA2W_(LPCSTR pStr, UINT codePage = CP_ACP) : m_pStr(pStr)
 		{
 			if (pStr)
 			{
@@ -60,7 +60,7 @@ namespace textconv_helper
 			}
 		}
 		~CA2W_() {}
-		operator LPCWSTR() { return m_pStr ? &m_vWideArray[0] : NULL; }
+		explicit operator LPCWSTR() { return m_pStr ? &m_vWideArray[0] : NULL; }
 		//operator LPOLESTR() { return m_pStr ? (LPOLESTR)&m_vWideArray[0] : (LPOLESTR)NULL; }
 
 	private:
@@ -73,7 +73,7 @@ namespace textconv_helper
 	class CW2A_
 	{
 	public:
-		CW2A_(LPCWSTR pWStr, UINT codePage = CP_ACP) : m_pWStr(pWStr)
+		explicit CW2A_(LPCWSTR pWStr, UINT codePage = CP_ACP) : m_pWStr(pWStr)
 			// Usage:
 			//   CW2A_ ansiString(L"Some Text");
 			//   CW2A_ utf8String(L"Some Text", CP_UTF8);
@@ -93,7 +93,7 @@ namespace textconv_helper
 		{
 			m_pWStr = 0;
 		}
-		operator LPCSTR() { return m_pWStr ? &m_vAnsiArray[0] : NULL; }
+		explicit operator LPCSTR() { return m_pWStr ? &m_vAnsiArray[0] : NULL; }
 
 	private:
 		CW2A_(const CW2A_&);
@@ -105,8 +105,8 @@ namespace textconv_helper
 	class CW2W_
 	{
 	public:
-		CW2W_(LPCWSTR pWStr) : m_pWStr(pWStr) {}
-		operator LPCWSTR() { return const_cast<LPWSTR>(m_pWStr); }
+		explicit CW2W_(LPCWSTR pWStr) : m_pWStr(pWStr) {}
+		explicit operator LPCWSTR() { return const_cast<LPWSTR>(m_pWStr); }
 		//operator LPOLESTR() { return const_cast<LPOLESTR>(m_pWStr); }
 
 	private:
@@ -119,8 +119,8 @@ namespace textconv_helper
 	class CA2A_
 	{
 	public:
-		CA2A_(LPCSTR pStr) : m_pStr(pStr) {}
-		operator LPCSTR() { return (LPSTR)m_pStr; }
+		explicit CA2A_(LPCSTR pStr) : m_pStr(pStr) {}
+		explicit operator LPCSTR() { return (LPSTR)m_pStr; }
 
 	private:
 		CA2A_(const CA2A_&);
@@ -219,7 +219,7 @@ typedef struct tagSTACKINFO
 class CStackWalker
 {
 public:
-	CStackWalker(HANDLE hProcess = GetCurrentProcess(), WORD wPID = GetCurrentProcessId(), LPCTSTR lpSymbolPath = NULL);
+	explicit CStackWalker(HANDLE hProcess = GetCurrentProcess(), WORD wPID = GetCurrentProcessId(), LPCTSTR lpSymbolPath = NULL);
 	~CStackWalker(void);
 	BOOL LoadSymbol();
 	LPMODULE_INFO GetLoadModules();
