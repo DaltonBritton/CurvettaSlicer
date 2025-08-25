@@ -245,6 +245,8 @@ void CBaseException::ShowExceptionResoult(DWORD dwExceptionCode)
 			OutputString(_T("INT_OVERFLOW\r\n"));
 		}
 		return ;
+    default:
+        break;
 	}
 
 	TCHAR szBuffer[512] = { 0 };
