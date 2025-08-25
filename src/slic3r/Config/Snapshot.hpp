@@ -52,7 +52,7 @@ public:
 	// Perform a deep compare of the active print / sla_print / filament / sla_material / printer / physical_printer / vendor directories.
 	// Return true if the content of the current print / sla_print / filament / sla_material / printer / physical_printer / vendor directories
 	// matches the state stored in this snapshot.
-	bool 		equal_to_active(const AppConfig &app_config) const;
+	[[nodiscard]] bool 		equal_to_active(const AppConfig &app_config) const;
 
 	// ID of a snapshot should equal to the name of the snapshot directory.
 	// The ID contains the date/time, reason and comment to be human readable.
@@ -64,7 +64,7 @@ public:
 	std::string 				comment;
 	Reason						reason;
 
-	std::string 				format_reason() const;
+	[[nodiscard]] std::string 				format_reason() const;
 
 	// Active presets at the time of the snapshot.
 	std::string 				print;
@@ -114,10 +114,10 @@ public:
 	// Finds the newest snapshot, which contains a config bundle for vendor_name with config_version.
 	const_iterator					snapshot_with_vendor_preset(const std::string &vendor_name, const Semver &config_version);
 
-	const_iterator					begin()     const { return m_snapshots.begin(); }
-	const_iterator					end()       const { return m_snapshots.end(); }
-	const_iterator 					snapshot(const std::string &id) const;
-	const std::vector<Snapshot>& 	snapshots() const { return m_snapshots; }
+	[[nodiscard]] const_iterator					begin()     const { return m_snapshots.begin(); }
+	[[nodiscard]] const_iterator					end()       const { return m_snapshots.end(); }
+	[[nodiscard]] const_iterator 					snapshot(const std::string &id) const;
+	[[nodiscard]] const std::vector<Snapshot>& 	snapshots() const { return m_snapshots; }
 
 private:
 	// Create the snapshots directory if it does not exist yet.
