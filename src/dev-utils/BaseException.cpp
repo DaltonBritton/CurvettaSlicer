@@ -359,8 +359,7 @@ void CBaseException::ShowRegistorInformation(PCONTEXT pCtx)
 
 void CBaseException::STF(unsigned int ui,  PEXCEPTION_POINTERS pEp)
 {
-	CBaseException base(GetCurrentProcess(), GetCurrentProcessId(), nullptr, pEp);
-	throw base;
+	throw CBaseException(GetCurrentProcess(), GetCurrentProcessId(), nullptr, pEp);
 }
 
 void CBaseException::ShowExceptionInformation()
