@@ -52,7 +52,7 @@ namespace textconv_helper
 			if (pStr)
 			{
 				// Resize the vector and assign null WCHAR to each element
-				int length = MultiByteToWideChar(codePage, 0, pStr, -1, NULL, 0) + 1;
+				int length = MultiByteToWideChar(codePage, 0, pStr, -1, nullptr, 0) + 1;
 				m_vWideArray.assign(length, L'\0');
 
 				// Fill our vector with the converted WCHAR array
@@ -63,7 +63,7 @@ namespace textconv_helper
         CA2W_(const CA2W_&) = delete;
 
 		~CA2W_() = default;
-		explicit operator LPCWSTR() { return m_pStr ? &m_vWideArray[0] : NULL; }
+		explicit operator LPCWSTR() { return m_pStr ? &m_vWideArray[0] : nullptr; }
 		//operator LPOLESTR() { return m_pStr ? (LPOLESTR)&m_vWideArray[0] : (LPOLESTR)NULL; }
 
         CA2W_& operator= (const CA2W_&) = delete;
@@ -85,20 +85,20 @@ namespace textconv_helper
 			//   SetWindowTextA( W2A(L"Some Text") ); The ANSI version of SetWindowText
 		{
 			// Resize the vector and assign null char to each element
-			int length = WideCharToMultiByte(codePage, 0, pWStr, -1, NULL, 0, NULL, NULL) + 1;
+			int length = WideCharToMultiByte(codePage, 0, pWStr, -1, nullptr, 0, nullptr, nullptr) + 1;
 			m_vAnsiArray.assign(length, '\0');
 
 			// Fill our vector with the converted char array
-			WideCharToMultiByte(codePage, 0, pWStr, -1, &m_vAnsiArray[0], length, NULL, NULL);
+			WideCharToMultiByte(codePage, 0, pWStr, -1, &m_vAnsiArray[0], length, nullptr, nullptr);
 		}
 
         CW2A_(const CW2A_&) = delete;
 
 		~CW2A_()
 		{
-			m_pWStr = 0;
+			m_pWStr = nullptr;
 		}
-		explicit operator LPCSTR() { return m_pWStr ? &m_vAnsiArray[0] : NULL; }
+		explicit operator LPCSTR() { return m_pWStr ? &m_vAnsiArray[0] : nullptr; }
 
         CW2A_& operator= (const CW2A_&) = delete;
 
@@ -228,7 +228,7 @@ typedef struct tagSTACKINFO
 class CStackWalker
 {
 public:
-	explicit CStackWalker(HANDLE hProcess = GetCurrentProcess(), WORD wPID = GetCurrentProcessId(), LPCTSTR lpSymbolPath = NULL);
+	explicit CStackWalker(HANDLE hProcess = GetCurrentProcess(), WORD wPID = GetCurrentProcessId(), LPCTSTR lpSymbolPath = nullptr);
 	~CStackWalker();
 	BOOL LoadSymbol();
 	LPMODULE_INFO GetLoadModules();
@@ -237,7 +237,7 @@ public:
 	void FreeModuleInformations(LPMODULE_INFO pmi);
 	virtual void OutputString(LPCTSTR lpszFormat, ...);
 
-	LPSTACKINFO StackWalker(HANDLE hThread = GetCurrentThread(), const CONTEXT* context = NULL);
+	LPSTACKINFO StackWalker(HANDLE hThread = GetCurrentThread(), const CONTEXT* context = nullptr);
 	void FreeStackInformations(LPSTACKINFO psi);
 
 protected:
