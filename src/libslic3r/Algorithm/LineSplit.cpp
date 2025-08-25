@@ -274,11 +274,10 @@ SplittedLine do_split_line(const ClipperZUtils::ZPath& path, const ExPolygons& c
             const auto back = result.back().src_idx;
             if (back < 0) {
                 auto next_idx = -back - 1;
-                if (next_idx == idx) {
-                    next_idx++;
-                } else if (split_chain[next_idx].empty()) {
+                if (next_idx == idx || split_chain[next_idx].empty()) {
                     next_idx++;
                 }
+
                 idx = next_idx;
             } else {
                 result.pop_back();
