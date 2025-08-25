@@ -126,12 +126,7 @@ BOOL CStackWalker::LoadSymbol()
 		StringCchCopy(m_lpszSymbolPath, sLength, szSymbolPath);
 	}
 
-	if (nullptr != m_lpszSymbolPath)
-	{
-		m_bSymbolLoaded = SymInitialize(m_hProcess, textconv_helper::T2A_(m_lpszSymbolPath), TRUE); //这里设置为TRUE，让它在初始化符号表的同时加载符号表
-	}
-
-	DWORD symOptions = SymGetOptions();
+    DWORD symOptions = SymGetOptions();
 	symOptions |= SYMOPT_LOAD_LINES;
 	symOptions |= SYMOPT_FAIL_CRITICAL_ERRORS;
 	symOptions |= SYMOPT_DEBUG;
@@ -325,10 +320,8 @@ LPMODULE_INFO CStackWalker::GetModulesPSAPI()
 	}
 
 cleanup:
-	if (hPsapi != nullptr)
-	{
-		FreeLibrary(hPsapi);
-	}
+    FreeLibrary(hPsapi);
+
     delete[] hMods;
 
     return pHead;
