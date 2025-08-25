@@ -293,7 +293,7 @@ LPMODULE_INFO CStackWalker::GetModulesPSAPI()
 	
 	EnumProcessModules(m_hProcess, hMods, 0, &cbNeeded);
 	hMods = new HMODULE[cbNeeded / sizeof(HMODULE)];
-	ASSERT(NULL != hMods);
+	ASSERT(NULL != hMods)
 	ZeroMemory(hMods, cbNeeded);
 
 	if (!EnumProcessModules(m_hProcess, hMods, cbNeeded, &cbNeeded))
@@ -401,7 +401,7 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 		if (GetThreadId(hThread) == GetCurrentThreadId())
 #endif
 		{
-			GET_CURRENT_THREAD_CONTEXT(c, CONTEXT_FULL);
+			GET_CURRENT_THREAD_CONTEXT(c, CONTEXT_FULL)
 		}
 		else
 		{
