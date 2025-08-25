@@ -59,13 +59,16 @@ namespace textconv_helper
 				MultiByteToWideChar(codePage, 0, pStr, -1, &m_vWideArray[0], length);
 			}
 		}
+
+        CA2W_(const CA2W_&) = delete;
+
 		~CA2W_() = default;
 		explicit operator LPCWSTR() { return m_pStr ? &m_vWideArray[0] : NULL; }
 		//operator LPOLESTR() { return m_pStr ? (LPOLESTR)&m_vWideArray[0] : (LPOLESTR)NULL; }
 
+        CA2W_& operator= (const CA2W_&) = delete;
+
 	private:
-		CA2W_(const CA2W_&);
-		CA2W_& operator= (const CA2W_&);
 		std::vector<wchar_t> m_vWideArray;
 		LPCSTR m_pStr;
 	};
@@ -89,15 +92,17 @@ namespace textconv_helper
 			WideCharToMultiByte(codePage, 0, pWStr, -1, &m_vAnsiArray[0], length, NULL, NULL);
 		}
 
+        CW2A_(const CW2A_&) = delete;
+
 		~CW2A_()
 		{
 			m_pWStr = 0;
 		}
 		explicit operator LPCSTR() { return m_pWStr ? &m_vAnsiArray[0] : NULL; }
 
+        CW2A_& operator= (const CW2A_&) = delete;
+
 	private:
-		CW2A_(const CW2A_&);
-		CW2A_& operator= (const CW2A_&);
 		std::vector<char> m_vAnsiArray;
 		LPCWSTR m_pWStr;
 	};
@@ -106,13 +111,15 @@ namespace textconv_helper
 	{
 	public:
 		explicit CW2W_(LPCWSTR pWStr) : m_pWStr(pWStr) {}
+
+        CW2W_(const CW2W_&) = delete;
+
 		explicit operator LPCWSTR() { return const_cast<LPWSTR>(m_pWStr); }
 		//operator LPOLESTR() { return const_cast<LPOLESTR>(m_pWStr); }
 
-	private:
-		CW2W_(const CW2W_&);
-		CW2W_& operator= (const CW2W_&);
+        CW2W_& operator= (const CW2W_&) = delete;
 
+	private:
 		LPCWSTR m_pWStr;
 	};
 
@@ -120,12 +127,14 @@ namespace textconv_helper
 	{
 	public:
 		explicit CA2A_(LPCSTR pStr) : m_pStr(pStr) {}
+
+        CA2A_(const CA2A_&) = delete;
+
 		explicit operator LPCSTR() { return (LPSTR)m_pStr; }
 
-	private:
-		CA2A_(const CA2A_&);
-		CA2A_& operator= (const CA2A_&);
+        CA2A_& operator= (const CA2A_&) = delete;
 
+	private:
 		LPCSTR m_pStr;
 	};
 
