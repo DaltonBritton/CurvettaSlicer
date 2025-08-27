@@ -140,7 +140,7 @@ struct PolygonsPointIndexSegmentLocator
         Point          start          = poly[val.point_idx];
         unsigned int   next_point_idx = (val.point_idx + 1) % poly.size();
         Point          end            = poly[next_point_idx];
-        return std::pair<Point, Point>(start, end);
+        return {start, end};
     }
 };
 
