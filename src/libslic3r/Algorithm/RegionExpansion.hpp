@@ -6,8 +6,8 @@
 #include <libslic3r/Polygon.hpp>
 #include <libslic3r/ExPolygon.hpp>
 
-namespace Slic3r {
-namespace Algorithm {
+
+namespace Slic3r::Algorithm {
 
 struct RegionExpansionParameters
 {
@@ -113,6 +113,6 @@ std::vector<ExPolygon> merge_expansions_into_expolygons(ExPolygons &&src, std::v
 std::vector<ExPolygon> expand_merge_expolygons(ExPolygons &&src, const ExPolygons &boundary, const RegionExpansionParameters &params);
 
 } // Algorithm
-} // Slic3r
+// Slic3r
 
 #endif /* SRC_LIBSLIC3R_ALGORITHM_REGION_EXPANSION_HPP_ */
