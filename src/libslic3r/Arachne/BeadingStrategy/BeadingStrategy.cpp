@@ -31,7 +31,7 @@ float BeadingStrategy::getTransitionAnchorPos(coord_t lower_bead_count) const
     coord_t lower_optimum = getOptimalThickness(lower_bead_count);
     coord_t transition_point = getTransitionThickness(lower_bead_count);
     coord_t upper_optimum = getOptimalThickness(lower_bead_count + 1);
-    return 1.0 - float(transition_point - lower_optimum) / float(upper_optimum - lower_optimum);
+    return 1.0f - float(transition_point - lower_optimum) / float(upper_optimum - lower_optimum);
 }
 
 std::vector<coord_t> BeadingStrategy::getNonlinearThicknesses(coord_t lower_bead_count) const
