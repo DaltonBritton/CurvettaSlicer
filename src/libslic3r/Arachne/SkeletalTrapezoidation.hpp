@@ -555,4 +555,4 @@ protected:
 };
 
 } // namespace Slic3r::Arachne
-#endif // VORONOI_QUADRILATERALIZATION_H
+#endif // SKELETAL_TRAPEZOIDATION_H
