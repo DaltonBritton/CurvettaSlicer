@@ -4,7 +4,7 @@
 #ifndef BEADING_STRATEGY_H
 #define BEADING_STRATEGY_H
 
-#include <math.h>
+#include <cmath>
 #include <memory>
 #include <string>
 #include <vector>
