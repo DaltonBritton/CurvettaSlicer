@@ -126,7 +126,7 @@ STHalfEdge* STHalfEdge::getNextUnconnected()
     return result->twin;
 }
 
-STHalfEdgeNode::STHalfEdgeNode(SkeletalTrapezoidationJoint data, Point p) : HalfEdgeNode(data, p) {}
+STHalfEdgeNode::STHalfEdgeNode(SkeletalTrapezoidationJoint data, const Point& p) : HalfEdgeNode(data, p) {}
 
 bool STHalfEdgeNode::isMultiIntersection()
 {
@@ -429,7 +429,7 @@ std::pair<SkeletalTrapezoidationGraph::edge_t*, SkeletalTrapezoidationGraph::edg
     return std::make_pair(first, second);
 }
 
-SkeletalTrapezoidationGraph::edge_t* SkeletalTrapezoidationGraph::insertNode(edge_t* edge, Point mid, coord_t mide_node_bead_count)
+SkeletalTrapezoidationGraph::edge_t* SkeletalTrapezoidationGraph::insertNode(edge_t* edge, const Point& mid, coord_t mide_node_bead_count)
 {
     edge_t* last_edge_replacing_input = edge;
 

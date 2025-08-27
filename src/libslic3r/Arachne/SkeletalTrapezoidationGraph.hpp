@@ -61,7 +61,7 @@ class STHalfEdgeNode : public HalfEdgeNode<SkeletalTrapezoidationJoint, Skeletal
     using edge_t = STHalfEdge;
 
 public:
-    STHalfEdgeNode(SkeletalTrapezoidationJoint data, Point p);
+    STHalfEdgeNode(SkeletalTrapezoidationJoint data, const Point& p);
 
     bool isMultiIntersection();
 
@@ -100,7 +100,7 @@ public:
      * 
      * \return the last edge which replaced [edge], which points to the same [to] node
      */
-    edge_t* insertNode(edge_t* edge, Point mid, coord_t mide_node_bead_count);
+    edge_t* insertNode(edge_t* edge, const Point& mid, coord_t mide_node_bead_count);
 
     /*!
      * Return the first and last edge of the edges replacing \p edge pointing to the same node
