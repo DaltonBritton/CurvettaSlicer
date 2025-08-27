@@ -40,7 +40,7 @@ public:
      * \param[in] elem_reserve Number of elements to research space for.
      * \param[in] max_load_factor Maximum average load factor before rehashing.
      */
-    SparseGrid(coord_t cell_size, size_t elem_reserve=0U, float max_load_factor=1.0f);
+    explicit SparseGrid(coord_t cell_size, size_t elem_reserve=0U, float max_load_factor=1.0f);
 
     iterator begin() { return m_grid.begin(); }
     iterator end() { return m_grid.end(); }
