@@ -23,7 +23,7 @@ public:
     node_data_t data;
     Point p;
     edge_t* incident_edge = nullptr;
-    HalfEdgeNode(node_data_t data, Point p)
+    HalfEdgeNode(node_data_t data, const Point& p)
     : data(data)
     , p(p)
     {}
