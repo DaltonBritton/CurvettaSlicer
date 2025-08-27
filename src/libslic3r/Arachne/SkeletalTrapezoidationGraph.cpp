@@ -115,7 +115,7 @@ std::optional<coord_t> STHalfEdge::distToGoUp() const
 
 STHalfEdge* STHalfEdge::getNextUnconnected()
 {
-    edge_t* result = static_cast<STHalfEdge*>(this);
+    auto* result = static_cast<STHalfEdge*>(this);
     while (result->next)
     {
         result = result->next;
