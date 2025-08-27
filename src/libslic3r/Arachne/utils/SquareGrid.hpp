@@ -4,7 +4,7 @@
 #ifndef UTILS_SQUARE_GRID_H
 #define UTILS_SQUARE_GRID_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <cassert>
 #include <vector>
 #include <functional>
