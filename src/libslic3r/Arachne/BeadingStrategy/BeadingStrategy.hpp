@@ -53,36 +53,36 @@ public:
      *
      * \note The \p bead_count might be different from the \ref BeadingStrategy::optimal_bead_count
      */
-    virtual Beading compute(coord_t thickness, coord_t bead_count) const = 0;
+    [[nodiscard]] virtual Beading compute(coord_t thickness, coord_t bead_count) const = 0;
 
     /*!
      * The ideal thickness for a given \param bead_count
      */
-    virtual coord_t getOptimalThickness(coord_t bead_count) const;
+    [[nodiscard]] virtual coord_t getOptimalThickness(coord_t bead_count) const;
 
     /*!
      * The model thickness at which \ref BeadingStrategy::optimal_bead_count transitions from \p lower_bead_count to \p lower_bead_count + 1
      */
-    virtual coord_t getTransitionThickness(coord_t lower_bead_count) const;
+    [[nodiscard]] virtual coord_t getTransitionThickness(coord_t lower_bead_count) const;
 
     /*!
      * The number of beads should we ideally usefor a given model thickness
      */
-    virtual coord_t getOptimalBeadCount(coord_t thickness) const = 0;
+    [[nodiscard]] virtual coord_t getOptimalBeadCount(coord_t thickness) const = 0;
 
     /*!
      * The length of the transitioning region along the marked / significant regions of the skeleton.
      *
      * Transitions are used to smooth out the jumps in integer bead count; the jumps turn into ramps with some incline defined by their length.
      */
-    virtual coord_t getTransitioningLength(coord_t lower_bead_count) const;
+    [[nodiscard]] virtual coord_t getTransitioningLength(coord_t lower_bead_count) const;
 
     /*!
      * The fraction of the transition length to put between the lower end of the transition and the point where the unsmoothed bead count jumps.
      *
      * Transitions are used to smooth out the jumps in integer bead count; the jumps turn into ramps which could be positioned relative to the jump location.
      */
-    virtual float getTransitionAnchorPos(coord_t lower_bead_count) const;
+    [[nodiscard]] virtual float getTransitionAnchorPos(coord_t lower_bead_count) const;
 
     /*!
      * Get the locations in a bead count region where \ref BeadingStrategy::compute exhibits a bend in the widths.
@@ -90,12 +90,12 @@ public:
      *
      * This is used to insert extra support bones into the skeleton, so that the resulting beads in long trapezoids don't linearly change between the two ends.
      */
-    virtual std::vector<coord_t> getNonlinearThicknesses(coord_t lower_bead_count) const;
+    [[nodiscard]] virtual std::vector<coord_t> getNonlinearThicknesses(coord_t lower_bead_count) const;
 
-    virtual std::string toString() const;
+    [[nodiscard]] virtual std::string toString() const;
 
-    double  getSplitMiddleThreshold() const;
-    double  getTransitioningAngle() const;
+    [[nodiscard]] double  getSplitMiddleThreshold() const;
+    [[nodiscard]] double  getTransitioningAngle() const;
 
 protected:
     std::string name;
