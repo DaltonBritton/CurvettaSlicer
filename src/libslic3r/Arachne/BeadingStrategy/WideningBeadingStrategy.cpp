@@ -59,7 +59,7 @@ coord_t WideningBeadingStrategy::getOptimalBeadCount(coord_t thickness) const
     if (thickness < min_input_width)
         return 0;
     coord_t ret = parent->getOptimalBeadCount(thickness);
-    if (thickness >= min_input_width && ret < 1)
+    if (ret < 1)
         return 1;
     return ret;
 }
