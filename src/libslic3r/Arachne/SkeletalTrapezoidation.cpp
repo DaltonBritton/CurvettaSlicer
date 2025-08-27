@@ -216,7 +216,7 @@ void SkeletalTrapezoidation::transferEdge(const Point &from, const Point &to, co
     }
 }
 
-Points SkeletalTrapezoidation::discretize(const VD::edge_type& vd_edge, const std::vector<Segment>& segments)
+Points SkeletalTrapezoidation::discretize(const VD::edge_type& vd_edge, const std::vector<Segment>& segments) const
 {
     assert(Geometry::VoronoiUtils::is_in_range<coord_t>(vd_edge));
 

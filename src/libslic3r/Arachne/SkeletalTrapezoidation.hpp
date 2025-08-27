@@ -210,7 +210,7 @@ protected:
      * \return A number of coordinates along the edge where the edge is broken
      * up into discrete pieces.
      */
-    Points discretize(const VD::edge_type& segment, const std::vector<Segment>& segments);
+    Points discretize(const VD::edge_type& segment, const std::vector<Segment>& segments) const;
 
     /*!
      * For VD cells associated with an input polygon vertex, we need to separate the node at the end and start of the cell into two
