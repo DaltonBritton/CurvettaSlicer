@@ -83,7 +83,7 @@ std::optional<coord_t> STHalfEdge::distToGoUp() const
     }
     if (to->data.distance_to_boundary < from->data.distance_to_boundary)
     {
-        return std::optional<coord_t>();
+        return {};
     }
 
     // Edge is between equidistqant verts; recurse!
@@ -102,7 +102,7 @@ std::optional<coord_t> STHalfEdge::distToGoUp() const
                 ret = dist_to_up;
             }
         }
-        assert(outgoing->twin); if (!outgoing->twin) return std::optional<coord_t>();
+        assert(outgoing->twin); if (!outgoing->twin) return {};
         assert(outgoing->twin->next); if (!outgoing->twin->next) return 0; // This point is on the boundary?! Should never occur
     }
     if (ret)
@@ -466,7 +466,7 @@ Line SkeletalTrapezoidationGraph::getSource(const edge_t &edge) const
     while (to_edge->next)
         to_edge = to_edge->next;
 
-    return Line(from_edge->from->p, to_edge->to->p);
+    return {from_edge->from->p, to_edge->to->p};
 }
 
 }
