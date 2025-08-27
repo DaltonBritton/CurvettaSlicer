@@ -55,9 +55,9 @@ public:
     EdgeType type;
 
     SkeletalTrapezoidationEdge() : SkeletalTrapezoidationEdge(EdgeType::NORMAL) {}
-    SkeletalTrapezoidationEdge(const EdgeType &type) : type(type), is_central(Central::UNKNOWN) {}
+    explicit SkeletalTrapezoidationEdge(const EdgeType &type) : type(type), is_central(Central::UNKNOWN) {}
 
-    bool isCentral() const
+    [[nodiscard]] bool isCentral() const
     {
         assert(is_central != Central::UNKNOWN);
         return is_central == Central::YES;
@@ -66,16 +66,16 @@ public:
     {
         is_central = b ? Central::YES : Central::NO;
     }
-    bool centralIsSet() const
+    [[nodiscard]] bool centralIsSet() const
     {
         return is_central != Central::UNKNOWN;
     }
 
-    bool hasTransitions(bool ignore_empty = false) const
+    [[nodiscard]] bool hasTransitions(bool ignore_empty = false) const
     {
         return transitions.use_count() > 0 && (ignore_empty || ! transitions.lock()->empty());
     }
-    void setTransitions(std::shared_ptr<std::list<TransitionMiddle>> storage)
+    void setTransitions(const std::shared_ptr<std::list<TransitionMiddle>>& storage)
     {
         transitions = storage;
     }
@@ -84,11 +84,11 @@ public:
         return transitions.lock();
     }
 
-    bool hasTransitionEnds(bool ignore_empty = false) const
+    [[nodiscard]] bool hasTransitionEnds(bool ignore_empty = false) const
     {
         return transition_ends.use_count() > 0 && (ignore_empty || ! transition_ends.lock()->empty());
     }
-    void setTransitionEnds(std::shared_ptr<std::list<TransitionEnd>> storage)
+    void setTransitionEnds(const std::shared_ptr<std::list<TransitionEnd>>& storage)
     {
         transition_ends = storage;
     }
@@ -97,11 +97,11 @@ public:
         return transition_ends.lock();
     }
 
-    bool hasExtrusionJunctions(bool ignore_empty = false) const
+    [[nodiscard]] bool hasExtrusionJunctions(bool ignore_empty = false) const
     {
         return extrusion_junctions.use_count() > 0 && (ignore_empty || ! extrusion_junctions.lock()->empty());
     }
-    void setExtrusionJunctions(std::shared_ptr<LineJunctions> storage)
+    void setExtrusionJunctions(const std::shared_ptr<LineJunctions>& storage)
     {
         extrusion_junctions = storage;
     }

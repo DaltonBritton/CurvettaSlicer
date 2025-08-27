@@ -70,9 +70,9 @@ class SkeletalTrapezoidation
     coord_t allowed_filter_deviation; //!< The allowed line width deviation induced by filtering
     coord_t beading_propagation_transition_dist; //!< When there are different beadings propagated from below and from above, use this transitioning distance
     //!< Filter areas marked as 'central' smaller than this
-    inline coord_t central_filter_dist() { return scaled<coord_t>(0.02); }
+    static inline coord_t central_filter_dist() { return scaled<coord_t>(0.02); }
     //!< Generic arithmatic inaccuracy. Only used to determine whether a transition really needs to insert an extra edge.
-    inline coord_t snap_dist() { return scaled<coord_t>(0.02); }
+    static inline coord_t snap_dist() { return scaled<coord_t>(0.02); }
 
     /*!
      * The strategy to use to fill a certain shape with lines.
@@ -172,7 +172,7 @@ protected:
      */
     ankerl::unordered_dense::map<const VD::edge_type *, edge_t *> vd_edge_to_he_edge;
     ankerl::unordered_dense::map<const VD::vertex_type *, node_t *> vd_node_to_he_node;
-    node_t &makeNode(const VD::vertex_type &vd_node, Point p); //!< Get the node which the VD node maps to, or create a new mapping if there wasn't any yet.
+    node_t &makeNode(const VD::vertex_type &vd_node, const Point& p); //!< Get the node which the VD node maps to, or create a new mapping if there wasn't any yet.
 
     /*!
      * (Eventual) returned 'polylines per index' result (from generateToolpaths):
@@ -210,7 +210,7 @@ protected:
      * \return A number of coordinates along the edge where the edge is broken
      * up into discrete pieces.
      */
-    Points discretize(const VD::edge_type& segment, const std::vector<Segment>& segments);
+    [[nodiscard]] Points discretize(const VD::edge_type& segment, const std::vector<Segment>& segments) const;
 
     /*!
      * For VD cells associated with an input polygon vertex, we need to separate the node at the end and start of the cell into two
@@ -410,7 +410,7 @@ protected:
      * region, or ``false`` in every other case (central to central, non-central
      * to non-central, non-central to central, or end-of-the-line).
      */
-    bool isEndOfCentral(const edge_t& edge) const;
+    [[nodiscard]] bool isEndOfCentral(const edge_t& edge) const;
 
     /*!
      * Create extra ribs in the graph where the graph contains a parabolic arc
@@ -436,7 +436,7 @@ protected:
      * \param quad_start_edge The first edge of the quad.
      * \return The edge of the quad that is furthest away from the border.
      */
-    edge_t* getQuadMaxRedgeTo(edge_t* quad_start_edge);
+    static edge_t* getQuadMaxRedgeTo(edge_t* quad_start_edge);
 
     /*!
      * Propagate beading information from nodes that are closer to the edge
@@ -488,7 +488,7 @@ protected:
      * beads.
      * \return The beading at the interpolated location.
      */
-    Beading interpolate(const Beading& left, double ratio_left_to_whole, const Beading& right, coord_t switching_radius) const;
+    [[nodiscard]] Beading interpolate(const Beading& left, double ratio_left_to_whole, const Beading& right, coord_t switching_radius) const;
 
     /*!
      * Subroutine of \ref interpolate(const Beading&, Ratio, const Beading&, coord_t)
@@ -501,7 +501,7 @@ protected:
      * \param right One of the beadings to interpolate between.
      * \return The beading at the interpolated location.
      */
-    Beading interpolate(const Beading& left, double ratio_left_to_whole, const Beading& right) const;
+    static Beading interpolate(const Beading& left, double ratio_left_to_whole, const Beading& right) ;
 
     /*!
      * Get the beading at a certain node of the skeletal graph, or create one if
@@ -523,7 +523,7 @@ protected:
      * \return A beading for the node, or ``nullptr`` if there is no node nearby
      * with a beading.
      */
-    std::shared_ptr<BeadingPropagation> getNearestBeading(node_t* node, coord_t max_dist);
+    static std::shared_ptr<BeadingPropagation> getNearestBeading(node_t* node, coord_t max_dist);
 
     /*!
      * generate junctions for each bone
@@ -555,4 +555,4 @@ protected:
 };
 
 } // namespace Slic3r::Arachne
-#endif // VORONOI_QUADRILATERALIZATION_H
+#endif // SKELETAL_TRAPEZOIDATION_H

@@ -4,8 +4,8 @@
 #ifndef UTILS_POLYLINE_STITCHER_H
 #define UTILS_POLYLINE_STITCHER_H
 
-#include <stddef.h>
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 #include <cassert>
 #include <functional>
 #include <limits>

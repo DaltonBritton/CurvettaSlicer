@@ -54,7 +54,7 @@ public:
      */
     PathsPointIndex(const PathsPointIndex& original) = default;
 
-    Point p() const
+    [[nodiscard]] Point p() const
     {
         if (!polygons)
             return {0, 0};
@@ -65,12 +65,12 @@ public:
     /*!
      * \brief Returns whether this point is initialised.
      */
-    bool initialized() const { return polygons; }
+    [[nodiscard]] bool initialized() const { return polygons; }
 
     /*!
      * Get the polygon to which this PolygonsPointIndex refers
      */
-    const Polygon &getPolygon() const { return (*polygons)[poly_idx]; }
+    [[nodiscard]] const Polygon &getPolygon() const { return (*polygons)[poly_idx]; }
 
     /*!
      * Test whether two iterators refer to the same polygon in the same polygon list.
@@ -92,6 +92,10 @@ public:
     }
     PathsPointIndex &operator=(const PathsPointIndex &other)
     {
+        if(this == &other){
+            return *this;
+        }
+
         polygons  = other.polygons;
         poly_idx  = other.poly_idx;
         point_idx = other.point_idx;
@@ -112,14 +116,14 @@ public:
         return *this;
     }
     //! move the iterator forward (and wrap around at the end)
-    PathsPointIndex next() const
+    [[nodiscard]] PathsPointIndex next() const
     {
         PathsPointIndex ret(*this);
         ++ret;
         return ret;
     }
     //! move the iterator backward (and wrap around at the beginning)
-    PathsPointIndex prev() const
+    [[nodiscard]] PathsPointIndex prev() const
     {
         PathsPointIndex ret(*this);
         --ret;
@@ -140,7 +144,7 @@ struct PolygonsPointIndexSegmentLocator
         Point          start          = poly[val.point_idx];
         unsigned int   next_point_idx = (val.point_idx + 1) % poly.size();
         Point          end            = poly[next_point_idx];
-        return std::pair<Point, Point>(start, end);
+        return {start, end};
     }
 };
 
