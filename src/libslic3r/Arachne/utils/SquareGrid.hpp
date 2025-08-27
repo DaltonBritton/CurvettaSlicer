@@ -31,7 +31,7 @@ public:
     /*! \brief Constructs a grid with the specified cell size.
      * \param[in] cell_size The size to use for a cell (square) in the grid.
      */
-    SquareGrid(const coord_t cell_size);
+    explicit SquareGrid(const coord_t cell_size);
 
     /*!
      * Get the cell size this grid was created for.
