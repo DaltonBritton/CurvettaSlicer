@@ -28,7 +28,7 @@ class STHalfEdgeNode;
 class STHalfEdge : public HalfEdge<SkeletalTrapezoidationJoint, SkeletalTrapezoidationEdge, STHalfEdgeNode, STHalfEdge>
 {
     using edge_t = STHalfEdge;
-    using node_t = STHalfEdgeNode;
+
 public:
     explicit STHalfEdge(SkeletalTrapezoidationEdge data);
 
@@ -59,7 +59,7 @@ public:
 class STHalfEdgeNode : public HalfEdgeNode<SkeletalTrapezoidationJoint, SkeletalTrapezoidationEdge, STHalfEdgeNode, STHalfEdge>
 {
     using edge_t = STHalfEdge;
-    using node_t = STHalfEdgeNode;
+
 public:
     STHalfEdgeNode(SkeletalTrapezoidationJoint data, Point p);
 
