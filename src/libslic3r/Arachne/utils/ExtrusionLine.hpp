@@ -82,7 +82,7 @@ struct ExtrusionLine
 
     ExtrusionLine(size_t inset_idx, bool is_odd);
     ExtrusionLine() : inset_idx(-1), is_odd(true), is_closed(false) {}
-    ExtrusionLine(const ExtrusionLine &other) : inset_idx(other.inset_idx), is_odd(other.is_odd), is_closed(other.is_closed), junctions(other.junctions) {}
+    ExtrusionLine(const ExtrusionLine &other) = default;
 
     ExtrusionLine &operator=(ExtrusionLine &&other)
  noexcept     {
@@ -93,14 +93,7 @@ struct ExtrusionLine
         return *this;
     }
 
-    ExtrusionLine &operator=(const ExtrusionLine &other)
-    {
-        junctions = other.junctions;
-        inset_idx = other.inset_idx;
-        is_odd    = other.is_odd;
-        is_closed = other.is_closed;
-        return *this;
-    }
+    ExtrusionLine &operator=(const ExtrusionLine &other) = default;
 
     [[nodiscard]] std::vector<ExtrusionJunction>::const_iterator begin() const { return junctions.begin(); }
     [[nodiscard]] std::vector<ExtrusionJunction>::const_iterator end() const { return junctions.end(); }
