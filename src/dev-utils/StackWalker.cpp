@@ -44,7 +44,7 @@ BOOL CStackWalker::LoadSymbol()
 	if (nullptr != m_lpszSymbolPath)
 	{
 		
-		m_bSymbolLoaded = SymInitialize(m_hProcess, textconv_helper::T2A_(m_lpszSymbolPath), FALSE);
+		m_bSymbolLoaded = SymInitialize(m_hProcess, (PCSTR) textconv_helper::T2A_(m_lpszSymbolPath), FALSE);
 		return m_bSymbolLoaded;
 	}
 	
@@ -372,7 +372,7 @@ void CStackWalker::GetModuleInformation(LPMODULE_INFO pmi)
 	}
 
 	SymGetModuleInfo64(m_hProcess, pmi->ModuleAddress, &im);
-	StringCchCopy(pmi->szSymbolPath, MAX_PATH, textconv_helper::A2T_(im.LoadedPdbName));
+	StringCchCopy(pmi->szSymbolPath, MAX_PATH, (LPCWSTR) textconv_helper::A2T_(im.LoadedPdbName));
 }
 
 LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
@@ -469,29 +469,29 @@ LPSTACKINFO CStackWalker::StackWalker(HANDLE hThread, const CONTEXT* context)
 			if(SymGetSymFromAddr64(m_hProcess, sf.AddrPC.Offset, &dwDisplayment, pSym))
 			{
 				char szName[STACKWALK_MAX_NAMELEN] = "";
-				StringCchCopy(pCallStack->szFncName, STACKWALK_MAX_NAMELEN, textconv_helper::A2T_(pSym->Name));
+				StringCchCopy(pCallStack->szFncName, STACKWALK_MAX_NAMELEN, (LPCWSTR) textconv_helper::A2T_(pSym->Name));
 				UnDecorateSymbolName(pSym->Name, szName, STACKWALK_MAX_NAMELEN, UNDNAME_COMPLETE);
-				StringCchCopy(pCallStack->undFullName, STACKWALK_MAX_NAMELEN, textconv_helper::A2T_(szName));
+				StringCchCopy(pCallStack->undFullName, STACKWALK_MAX_NAMELEN, (LPCWSTR) textconv_helper::A2T_(szName));
 				ZeroMemory(szName, STACKWALK_MAX_NAMELEN * sizeof(char));
 				UnDecorateSymbolName(pSym->Name, szName, STACKWALK_MAX_NAMELEN, UNDNAME_NAME_ONLY);
-				StringCchCopy(pCallStack->undName, STACKWALK_MAX_NAMELEN, textconv_helper::A2T_(szName));
+				StringCchCopy(pCallStack->undName, STACKWALK_MAX_NAMELEN, (LPCWSTR) textconv_helper::A2T_(szName));
 			}else
 			{
 				//调用错误一般是487(地址无效或者没有访问的权限、在符号表中未找到指定地址的相关信息)
 				//this->OutputString(_T("Call SymGetSymFromAddr64 ,Address %08x Error:%08x\n"), sf.AddrPC.Offset, GetLastError());
 
-                StringCchCopy(pCallStack->undFullName, STACKWALK_MAX_NAMELEN, textconv_helper::A2T_("Unknown"));
+                StringCchCopy(pCallStack->undFullName, STACKWALK_MAX_NAMELEN, (LPCWSTR) textconv_helper::A2T_("Unknown"));
 			}
 
 			if (SymGetLineFromAddr64(m_hProcess, sf.AddrPC.Offset, (DWORD*)&dwDisplayment, pLine))
 			{
-				StringCchCopy(pCallStack->szFileName, MAX_PATH, textconv_helper::A2T_(pLine->FileName));
+				StringCchCopy(pCallStack->szFileName, MAX_PATH, (LPCWSTR) textconv_helper::A2T_(pLine->FileName));
 				pCallStack->uFileNum = pLine->LineNumber;
 			}else
 			{
 				//this->OutputString(_T("Call SymGetLineFromAddr64 ,Address %08x Error:%08x\n"), sf.AddrPC.Offset, GetLastError());
 
-                StringCchCopy(pCallStack->szFileName, MAX_PATH, textconv_helper::A2T_("Unknown file"));
+                StringCchCopy(pCallStack->szFileName, MAX_PATH, (LPCWSTR) textconv_helper::A2T_("Unknown file"));
                 pCallStack->uFileNum = -1;
 			}
 			
