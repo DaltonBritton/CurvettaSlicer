@@ -1263,7 +1263,7 @@ static inline Point normal(const Point& p0, coord_t len)
     if (_len < 1)
         return Point(len, 0);
     return (p0.cast<int64_t>() * int64_t(len) / _len).cast<coord_t>();
-};
+}
 
 void SkeletalTrapezoidation::applyTransitions(ptr_vector_t<std::list<TransitionEnd>>& edge_transition_ends)
 {
@@ -1928,7 +1928,7 @@ void SkeletalTrapezoidation::addToolpathSegment(const ExtrusionJunction& from, c
         generated_toolpaths[inset_idx].back().junctions.push_back(from);
         generated_toolpaths[inset_idx].back().junctions.push_back(to);
     }
-};
+}
 
 void SkeletalTrapezoidation::connectJunctions(ptr_vector_t<LineJunctions>& edge_junctions)
 {
