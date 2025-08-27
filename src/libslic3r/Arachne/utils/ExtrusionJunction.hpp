@@ -43,9 +43,9 @@ struct ExtrusionJunction
         return p == other.p && w == other.w && perimeter_index == other.perimeter_index;
     }
 
-    coord_t x() const { return p.x(); }
-    coord_t y() const { return p.y(); }
-    coord_t z() const { return w; }
+    [[nodiscard]] coord_t x() const { return p.x(); }
+    [[nodiscard]] coord_t y() const { return p.y(); }
+    [[nodiscard]] coord_t z() const { return w; }
 };
 
 inline Point operator-(const ExtrusionJunction& a, const ExtrusionJunction& b)
