@@ -75,7 +75,7 @@ public:
     bool isLocalMaximum(bool strict = false) const;
 };
 
-class SkeletalTrapezoidationGraph: public HalfEdgeGraph<SkeletalTrapezoidationJoint, SkeletalTrapezoidationEdge, STHalfEdgeNode, STHalfEdge>
+class SkeletalTrapezoidationGraph: public HalfEdgeGraph<SkeletalTrapezoidationEdge, STHalfEdgeNode, STHalfEdge>
 {
     using edge_t = STHalfEdge;
     using node_t = STHalfEdgeNode;
