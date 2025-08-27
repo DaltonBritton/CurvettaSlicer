@@ -54,7 +54,7 @@ public:
      */
     PathsPointIndex(const PathsPointIndex& original) = default;
 
-    Point p() const
+    [[nodiscard]] Point p() const
     {
         if (!polygons)
             return {0, 0};
@@ -65,12 +65,12 @@ public:
     /*!
      * \brief Returns whether this point is initialised.
      */
-    bool initialized() const { return polygons; }
+    [[nodiscard]] bool initialized() const { return polygons; }
 
     /*!
      * Get the polygon to which this PolygonsPointIndex refers
      */
-    const Polygon &getPolygon() const { return (*polygons)[poly_idx]; }
+    [[nodiscard]] const Polygon &getPolygon() const { return (*polygons)[poly_idx]; }
 
     /*!
      * Test whether two iterators refer to the same polygon in the same polygon list.
@@ -112,14 +112,14 @@ public:
         return *this;
     }
     //! move the iterator forward (and wrap around at the end)
-    PathsPointIndex next() const
+    [[nodiscard]] PathsPointIndex next() const
     {
         PathsPointIndex ret(*this);
         ++ret;
         return ret;
     }
     //! move the iterator backward (and wrap around at the beginning)
-    PathsPointIndex prev() const
+    [[nodiscard]] PathsPointIndex prev() const
     {
         PathsPointIndex ret(*this);
         --ret;
