@@ -9,6 +9,7 @@
 #include <iostream>
 #include <cassert>
 #include <cinttypes>
+#include <utility>
 
 #include "../Line.hpp"
 #include "libslic3r/Arachne/SkeletalTrapezoidationEdge.hpp"
@@ -18,7 +19,7 @@
 namespace Slic3r::Arachne
 {
 
-STHalfEdge::STHalfEdge(SkeletalTrapezoidationEdge data) : HalfEdge(data) {}
+STHalfEdge::STHalfEdge(SkeletalTrapezoidationEdge data) : HalfEdge(std::move(data)) {}
 
 bool STHalfEdge::canGoUp(bool strict) const
 {
@@ -126,7 +127,7 @@ STHalfEdge* STHalfEdge::getNextUnconnected()
     return result->twin;
 }
 
-STHalfEdgeNode::STHalfEdgeNode(SkeletalTrapezoidationJoint data, const Point& p) : HalfEdgeNode(data, p) {}
+STHalfEdgeNode::STHalfEdgeNode(SkeletalTrapezoidationJoint data, const Point& p) : HalfEdgeNode(std::move(data), p) {}
 
 bool STHalfEdgeNode::isMultiIntersection()
 {
