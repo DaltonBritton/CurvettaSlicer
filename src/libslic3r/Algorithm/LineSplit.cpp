@@ -1,13 +1,11 @@
 #include "LineSplit.hpp"
 
 #include "AABBTreeLines.hpp"
-#include "SVG.hpp"
-#include "Utils.hpp"
 
 //#define DEBUG_SPLIT_LINE
 
-namespace Slic3r {
-namespace Algorithm {
+
+namespace Slic3r::Algorithm {
 
 #ifdef DEBUG_SPLIT_LINE
 static std::atomic<std::uint32_t> g_dbg_id = 0;
@@ -274,11 +272,10 @@ SplittedLine do_split_line(const ClipperZUtils::ZPath& path, const ExPolygons& c
             const auto back = result.back().src_idx;
             if (back < 0) {
                 auto next_idx = -back - 1;
-                if (next_idx == idx) {
-                    next_idx++;
-                } else if (split_chain[next_idx].empty()) {
+                if (next_idx == idx || split_chain[next_idx].empty()) {
                     next_idx++;
                 }
+
                 idx = next_idx;
             } else {
                 result.pop_back();
@@ -313,4 +310,4 @@ SplittedLine do_split_line(const ClipperZUtils::ZPath& path, const ExPolygons& c
 }
 
 } // Algorithm
-} // Slic3r
+// Slic3r
