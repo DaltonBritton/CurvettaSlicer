@@ -7,7 +7,6 @@
 #include "WallToolPaths.hpp"
 
 #include "SkeletalTrapezoidation.hpp"
-#include "../ClipperUtils.hpp"
 #include "utils/linearAlg2D.hpp"
 #include "EdgeGrid.hpp"
 #include "utils/SparseLineGrid.hpp"
@@ -396,7 +395,7 @@ void removeSmallAreas(Polygons &thiss, const double min_area_size, const bool re
 void removeColinearEdges(Polygon &poly, const double max_deviation_angle)
 {
     // TODO: Can be made more efficient (for example, use pointer-types for process-/skip-indices, so we can swap them without copy).
-    size_t num_removed_in_iteration = 0;
+    size_t num_removed_in_iteration;
     do {
         num_removed_in_iteration = 0;
         std::vector<bool> process_indices(poly.points.size(), true);
