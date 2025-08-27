@@ -668,9 +668,9 @@ template<typename T> bool shorterThan(const T &shape, const coord_t check_length
     return true;
 }
 
-void WallToolPaths::removeSmallLines(std::vector<VariableWidthLines> &toolpaths) const
+void WallToolPaths::removeSmallLines(std::vector<VariableWidthLines> &toolpath) const
 {
-    for (VariableWidthLines &inset : toolpaths) {
+    for (VariableWidthLines &inset : toolpath) {
         for (size_t line_idx = 0; line_idx < inset.size(); line_idx++) {
             ExtrusionLine &line      = inset[line_idx];
             coord_t        min_width = std::numeric_limits<coord_t>::max();
