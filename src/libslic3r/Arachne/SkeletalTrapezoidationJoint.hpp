@@ -22,7 +22,7 @@ public:
         coord_t dist_to_bottom_source;
         coord_t dist_from_top_source;
         bool is_upward_propagated_only;
-        BeadingPropagation(Beading  beading)
+        explicit BeadingPropagation(Beading  beading)
             : beading(std::move(beading))
             , dist_to_bottom_source(0)
             , dist_from_top_source(0)
