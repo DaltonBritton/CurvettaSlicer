@@ -1699,7 +1699,7 @@ SkeletalTrapezoidation::Beading SkeletalTrapezoidation::interpolate(const Beadin
 }
 
 
-SkeletalTrapezoidation::Beading SkeletalTrapezoidation::interpolate(const Beading& left, double ratio_left_to_whole, const Beading& right) const
+SkeletalTrapezoidation::Beading SkeletalTrapezoidation::interpolate(const Beading& left, double ratio_left_to_whole, const Beading& right)
 {
     assert(ratio_left_to_whole >= 0.0 && ratio_left_to_whole <= 1.0);
     float ratio_right_to_whole = 1.0 - ratio_left_to_whole;

@@ -70,9 +70,9 @@ class SkeletalTrapezoidation
     coord_t allowed_filter_deviation; //!< The allowed line width deviation induced by filtering
     coord_t beading_propagation_transition_dist; //!< When there are different beadings propagated from below and from above, use this transitioning distance
     //!< Filter areas marked as 'central' smaller than this
-    inline coord_t central_filter_dist() { return scaled<coord_t>(0.02); }
+    static inline coord_t central_filter_dist() { return scaled<coord_t>(0.02); }
     //!< Generic arithmatic inaccuracy. Only used to determine whether a transition really needs to insert an extra edge.
-    inline coord_t snap_dist() { return scaled<coord_t>(0.02); }
+    static inline coord_t snap_dist() { return scaled<coord_t>(0.02); }
 
     /*!
      * The strategy to use to fill a certain shape with lines.
@@ -436,7 +436,7 @@ protected:
      * \param quad_start_edge The first edge of the quad.
      * \return The edge of the quad that is furthest away from the border.
      */
-    edge_t* getQuadMaxRedgeTo(edge_t* quad_start_edge);
+    static edge_t* getQuadMaxRedgeTo(edge_t* quad_start_edge);
 
     /*!
      * Propagate beading information from nodes that are closer to the edge
@@ -501,7 +501,7 @@ protected:
      * \param right One of the beadings to interpolate between.
      * \return The beading at the interpolated location.
      */
-    Beading interpolate(const Beading& left, double ratio_left_to_whole, const Beading& right) const;
+    static Beading interpolate(const Beading& left, double ratio_left_to_whole, const Beading& right) ;
 
     /*!
      * Get the beading at a certain node of the skeletal graph, or create one if
@@ -523,7 +523,7 @@ protected:
      * \return A beading for the node, or ``nullptr`` if there is no node nearby
      * with a beading.
      */
-    std::shared_ptr<BeadingPropagation> getNearestBeading(node_t* node, coord_t max_dist);
+    static std::shared_ptr<BeadingPropagation> getNearestBeading(node_t* node, coord_t max_dist);
 
     /*!
      * generate junctions for each bone
