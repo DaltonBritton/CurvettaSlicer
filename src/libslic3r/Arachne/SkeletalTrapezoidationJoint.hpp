@@ -38,7 +38,7 @@ public:
     , transition_ratio(0)
     {}
 
-    bool hasBeading() const
+    [[nodiscard]] bool hasBeading() const
     {
         return beading.use_count() > 0;
     }
