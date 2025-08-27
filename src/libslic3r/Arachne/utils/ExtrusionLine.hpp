@@ -85,7 +85,7 @@ struct ExtrusionLine
     ExtrusionLine(const ExtrusionLine &other) : inset_idx(other.inset_idx), is_odd(other.is_odd), is_closed(other.is_closed), junctions(other.junctions) {}
 
     ExtrusionLine &operator=(ExtrusionLine &&other)
-    {
+ noexcept     {
         junctions = std::move(other.junctions);
         inset_idx = other.inset_idx;
         is_odd    = other.is_odd;
