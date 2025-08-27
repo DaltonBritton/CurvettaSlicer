@@ -18,7 +18,7 @@ namespace Slic3r
 {
 class Line;
 class Point;
-};
+}
 
 namespace Slic3r::Arachne
 {
@@ -37,13 +37,13 @@ public:
         *
         * \param strict Whether equidistant edges can count as a local maximum
         */
-    bool canGoUp(bool strict = false) const;
+    [[nodiscard]] bool canGoUp(bool strict = false) const;
 
     /*!
         * Check whether the edge goes from a lower to a higher distance_to_boundary.
         * Effectively deals with equidistant edges by looking beyond this edge.
         */
-    bool isUpward() const;
+    [[nodiscard]] bool isUpward() const;
 
     /*!
         * Calculate the traversed distance until we meet an upward edge.
@@ -51,7 +51,7 @@ public:
         *
         * If we can go up then the distance includes the length of the \param edge
         */
-    std::optional<coord_t> distToGoUp() const;
+    [[nodiscard]] std::optional<coord_t> distToGoUp() const;
 
     STHalfEdge* getNextUnconnected();
 };
@@ -65,14 +65,14 @@ public:
 
     bool isMultiIntersection();
 
-    bool isCentral() const;
+    [[nodiscard]] bool isCentral() const;
 
     /*!
         * Check whether this node has a locally maximal distance_to_boundary
         *
         * \param strict Whether equidistant edges can count as a local maximum
         */
-    bool isLocalMaximum(bool strict = false) const;
+    [[nodiscard]] bool isLocalMaximum(bool strict = false) const;
 };
 
 class SkeletalTrapezoidationGraph: public HalfEdgeGraph<SkeletalTrapezoidationEdge, STHalfEdgeNode, STHalfEdge>
@@ -108,7 +108,7 @@ public:
     std::pair<edge_t*, edge_t*> insertRib(edge_t& edge, node_t* mid_node);
 
 protected:
-    Line getSource(const edge_t& edge) const;
+    [[nodiscard]] Line getSource(const edge_t& edge) const;
 };
 
 }
