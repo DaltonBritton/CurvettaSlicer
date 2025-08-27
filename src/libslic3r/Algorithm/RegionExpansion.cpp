@@ -36,7 +36,7 @@ RegionExpansionParameters RegionExpansionParameters::build(
     assert(expansion_step > 0);
     assert(max_nr_expansion_steps > 0);
 
-    RegionExpansionParameters out;
+    RegionExpansionParameters out{};
     // Initial expansion of src to make the source regions intersect with boundary regions just a bit.
     // The expansion should not be too tiny, but also small enough, so the following expansion will
     // compensate for tiny_expansion and bring the wave back to the boundary without producing
