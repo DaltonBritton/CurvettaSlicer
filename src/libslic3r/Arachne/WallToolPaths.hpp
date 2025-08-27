@@ -111,7 +111,7 @@ protected:
     /*!
      * Remove polylines shorter than half the smallest line width along that polyline.
      */
-    void removeSmallLines(std::vector<VariableWidthLines> &toolpaths);
+    void removeSmallLines(std::vector<VariableWidthLines> &toolpaths) const;
 
     /*!
      * Simplifies the variable-width toolpaths by calling the simplify on every line in the toolpath using the provided

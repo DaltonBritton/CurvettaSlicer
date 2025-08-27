@@ -670,7 +670,7 @@ template<typename T> bool shorterThan(const T &shape, const coord_t check_length
     return true;
 }
 
-void WallToolPaths::removeSmallLines(std::vector<VariableWidthLines> &toolpaths)
+void WallToolPaths::removeSmallLines(std::vector<VariableWidthLines> &toolpaths) const
 {
     for (VariableWidthLines &inset : toolpaths) {
         for (size_t line_idx = 0; line_idx < inset.size(); line_idx++) {
