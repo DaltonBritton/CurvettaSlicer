@@ -56,4 +56,4 @@ namespace Slic3r::Arachne
     };
 
 } // namespace Slic3r::Arachne
-#endif // INWARD_DISTRIBUTED_BEADING_STRATEGY_H
+#endif // REDISTRIBUTE_DISTRIBUTED_BEADING_STRATEGY_H
