@@ -30,7 +30,7 @@ class STHalfEdge : public HalfEdge<SkeletalTrapezoidationJoint, SkeletalTrapezoi
     using edge_t = STHalfEdge;
     using node_t = STHalfEdgeNode;
 public:
-    STHalfEdge(SkeletalTrapezoidationEdge data);
+    explicit STHalfEdge(SkeletalTrapezoidationEdge data);
 
     /*!
         * Check (recursively) whether there is any upward edge from the distance_to_boundary of the from of the \param edge
