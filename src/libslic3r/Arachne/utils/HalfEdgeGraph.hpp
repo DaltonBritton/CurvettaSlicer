@@ -15,7 +15,7 @@
 
 namespace Slic3r::Arachne
 {
-template<class node_data_t, class edge_data_t, class derived_node_t, class derived_edge_t> // types of data contained in nodes and edges
+template<class edge_data_t, class derived_node_t, class derived_edge_t> // types of data contained in nodes and edges
 class HalfEdgeGraph
 {
 public:

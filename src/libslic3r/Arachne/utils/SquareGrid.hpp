@@ -4,7 +4,7 @@
 #ifndef UTILS_SQUARE_GRID_H
 #define UTILS_SQUARE_GRID_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <cassert>
 #include <vector>
 #include <functional>
@@ -31,12 +31,12 @@ public:
     /*! \brief Constructs a grid with the specified cell size.
      * \param[in] cell_size The size to use for a cell (square) in the grid.
      */
-    SquareGrid(const coord_t cell_size);
+    explicit SquareGrid(coord_t cell_size);
 
     /*!
      * Get the cell size this grid was created for.
      */
-    coord_t getCellSize() const;
+    [[nodiscard]] coord_t getCellSize() const;
 
     using GridPoint = Point;
     using grid_coord_t = coord_t;
@@ -48,7 +48,7 @@ public:
      * for each cell. Processing stops if function returns false.
      * \return Whether we need to continue processing after this function.
      */
-    bool processLineCells(const std::pair<Point, Point> line, const std::function<bool (GridPoint)>& process_cell_func);
+    bool processLineCells(std::pair<Point, Point> line, const std::function<bool (GridPoint)>& process_cell_func);
 
     /*! \brief Process cells along a line indicated by \p line.
      *
@@ -57,7 +57,7 @@ public:
      * for each cell. Processing stops if function returns false.
      * \return Whether we need to continue processing after this function.
      */
-    bool processLineCells(const std::pair<Point, Point> line, const std::function<bool (GridPoint)>& process_cell_func) const;
+    bool processLineCells(std::pair<Point, Point> line, const std::function<bool (GridPoint)>& process_cell_func) const;
 
     /*! \brief Process cells that might contain sought after points.
      *
@@ -77,13 +77,13 @@ public:
      * \param point The actual location.
      * \return The grid coordinates that correspond to \p point.
      */
-    GridPoint toGridPoint(const Vec2i64 &point) const;
+    [[nodiscard]] GridPoint toGridPoint(const Vec2i64 &point) const;
 
     /*! \brief Compute the grid coordinate of a real space coordinate.
      * \param coord The actual location.
      * \return The grid coordinate that corresponds to \p coord.
      */
-    grid_coord_t toGridCoord(const int64_t &coord) const;
+    [[nodiscard]] grid_coord_t toGridCoord(const int64_t &coord) const;
 
     /*! \brief Compute the lowest coord in a grid cell.
      * The lowest point is the point in the grid cell closest to the origin.
@@ -91,7 +91,7 @@ public:
      * \param grid_coord The grid coordinate.
      * \return The print space coordinate that corresponds to \p grid_coord.
      */
-    coord_t toLowerCoord(const grid_coord_t &grid_coord) const;
+    [[nodiscard]] coord_t toLowerCoord(const grid_coord_t &grid_coord) const;
 
 protected:
     /*! \brief The cell (square) size. */
@@ -105,7 +105,7 @@ protected:
      * \return 1 if the number is positive or 0, or -1 if the number is
      * negative.
      */
-    grid_coord_t nonzeroSign(grid_coord_t z) const;
+    [[nodiscard]] grid_coord_t nonzeroSign(grid_coord_t z) const;
 };
 
 } // namespace Slic3r::Arachne

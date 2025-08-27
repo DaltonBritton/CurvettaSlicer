@@ -6,9 +6,9 @@
 #define UTILS_EXTRUSION_LINE_H
 
 #include <clipper/clipper_z.hpp>
-#include <assert.h>
-#include <stddef.h>
-#include <stdint.h>
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
 #include <algorithm>
 #include <utility>
 #include <vector>
@@ -66,12 +66,12 @@ struct ExtrusionLine
      * Gets the number of vertices in this polygon.
      * \return The number of vertices in this polygon.
      */
-    size_t size() const { return junctions.size(); }
+    [[nodiscard]] size_t size() const { return junctions.size(); }
 
     /*!
      * Whether there are no junctions.
      */
-    bool empty() const { return junctions.empty(); }
+    [[nodiscard]] bool empty() const { return junctions.empty(); }
 
     /*!
      * The list of vertices along which this path runs.
@@ -80,12 +80,12 @@ struct ExtrusionLine
      */
     std::vector<ExtrusionJunction> junctions;
 
-    ExtrusionLine(const size_t inset_idx, const bool is_odd);
+    ExtrusionLine(size_t inset_idx, bool is_odd);
     ExtrusionLine() : inset_idx(-1), is_odd(true), is_closed(false) {}
-    ExtrusionLine(const ExtrusionLine &other) : inset_idx(other.inset_idx), is_odd(other.is_odd), is_closed(other.is_closed), junctions(other.junctions) {}
+    ExtrusionLine(const ExtrusionLine &other) = default;
 
     ExtrusionLine &operator=(ExtrusionLine &&other)
-    {
+ noexcept     {
         junctions = std::move(other.junctions);
         inset_idx = other.inset_idx;
         is_odd    = other.is_odd;
@@ -93,21 +93,14 @@ struct ExtrusionLine
         return *this;
     }
 
-    ExtrusionLine &operator=(const ExtrusionLine &other)
-    {
-        junctions = other.junctions;
-        inset_idx = other.inset_idx;
-        is_odd    = other.is_odd;
-        is_closed = other.is_closed;
-        return *this;
-    }
+    ExtrusionLine &operator=(const ExtrusionLine &other) = default;
 
-    std::vector<ExtrusionJunction>::const_iterator begin() const { return junctions.begin(); }
-    std::vector<ExtrusionJunction>::const_iterator end() const { return junctions.end(); }
-    std::vector<ExtrusionJunction>::const_reverse_iterator rbegin() const { return junctions.rbegin(); }
-    std::vector<ExtrusionJunction>::const_reverse_iterator rend() const { return junctions.rend(); }
-    std::vector<ExtrusionJunction>::const_reference front() const { return junctions.front(); }
-    std::vector<ExtrusionJunction>::const_reference back() const { return junctions.back(); }
+    [[nodiscard]] std::vector<ExtrusionJunction>::const_iterator begin() const { return junctions.begin(); }
+    [[nodiscard]] std::vector<ExtrusionJunction>::const_iterator end() const { return junctions.end(); }
+    [[nodiscard]] std::vector<ExtrusionJunction>::const_reverse_iterator rbegin() const { return junctions.rbegin(); }
+    [[nodiscard]] std::vector<ExtrusionJunction>::const_reverse_iterator rend() const { return junctions.rend(); }
+    [[nodiscard]] std::vector<ExtrusionJunction>::const_reference front() const { return junctions.front(); }
+    [[nodiscard]] std::vector<ExtrusionJunction>::const_reference back() const { return junctions.back(); }
     const ExtrusionJunction &operator[](unsigned int index) const { return junctions[index]; }
     ExtrusionJunction &operator[](unsigned int index) { return junctions[index]; }
     std::vector<ExtrusionJunction>::iterator begin() { return junctions.begin(); }
@@ -131,15 +124,15 @@ struct ExtrusionLine
     /*!
      * Sum the total length of this path.
      */
-    int64_t getLength() const;
-    int64_t polylineLength() const { return getLength(); }
+    [[nodiscard]] int64_t getLength() const;
+    [[nodiscard]] int64_t polylineLength() const { return getLength(); }
 
     /*!
      * Put all junction locations into a polygon object.
      *
      * When this path is not closed the returned Polygon should be handled as a polyline, rather than a polygon.
      */
-    Polygon toPolygon() const
+    [[nodiscard]] Polygon toPolygon() const
     {
         Polygon ret;
         for (const ExtrusionJunction &j : junctions)
@@ -194,11 +187,11 @@ struct ExtrusionLine
      * \param B Intermediate point of the 3-point-straight line
      * \param C End point of the 3-point-straight line
      * */
-    static int64_t calculateExtrusionAreaDeviationError(ExtrusionJunction A, ExtrusionJunction B, ExtrusionJunction C);
+    static int64_t calculateExtrusionAreaDeviationError(const ExtrusionJunction& A, const ExtrusionJunction& B, const ExtrusionJunction& C);
 
-    bool is_contour() const;
+    [[nodiscard]] bool is_contour() const;
 
-    double area() const;
+    [[nodiscard]] double area() const;
 };
 
 template<class PathType>
@@ -286,8 +279,8 @@ using VariableWidthLines = std::vector<ExtrusionLine>; //<! The ExtrusionLines g
 
 namespace Slic3r {
 
-void extrusion_paths_append(ExtrusionPaths &dst, const ClipperLib_Z::Paths &extrusion_paths, const ExtrusionRole role, const Flow &flow);
-void extrusion_paths_append(ExtrusionPaths &dst, const Arachne::ExtrusionLine &extrusion, const ExtrusionRole role, const Flow &flow);
+void extrusion_paths_append(ExtrusionPaths &dst, const ClipperLib_Z::Paths &extrusion_paths, ExtrusionRole role, const Flow &flow);
+void extrusion_paths_append(ExtrusionPaths &dst, const Arachne::ExtrusionLine &extrusion, ExtrusionRole role, const Flow &flow);
 
 } // namespace Slic3r
 
