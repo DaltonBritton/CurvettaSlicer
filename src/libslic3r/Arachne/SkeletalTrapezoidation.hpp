@@ -210,7 +210,7 @@ protected:
      * \return A number of coordinates along the edge where the edge is broken
      * up into discrete pieces.
      */
-    Points discretize(const VD::edge_type& segment, const std::vector<Segment>& segments) const;
+    [[nodiscard]] Points discretize(const VD::edge_type& segment, const std::vector<Segment>& segments) const;
 
     /*!
      * For VD cells associated with an input polygon vertex, we need to separate the node at the end and start of the cell into two
@@ -410,7 +410,7 @@ protected:
      * region, or ``false`` in every other case (central to central, non-central
      * to non-central, non-central to central, or end-of-the-line).
      */
-    bool isEndOfCentral(const edge_t& edge) const;
+    [[nodiscard]] bool isEndOfCentral(const edge_t& edge) const;
 
     /*!
      * Create extra ribs in the graph where the graph contains a parabolic arc
@@ -488,7 +488,7 @@ protected:
      * beads.
      * \return The beading at the interpolated location.
      */
-    Beading interpolate(const Beading& left, double ratio_left_to_whole, const Beading& right, coord_t switching_radius) const;
+    [[nodiscard]] Beading interpolate(const Beading& left, double ratio_left_to_whole, const Beading& right, coord_t switching_radius) const;
 
     /*!
      * Subroutine of \ref interpolate(const Beading&, Ratio, const Beading&, coord_t)
