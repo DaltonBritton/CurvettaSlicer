@@ -20,9 +20,9 @@ public:
     PolygonsSegmentIndex() : PolygonsPointIndex(){};
     PolygonsSegmentIndex(const Polygons *polygons, unsigned int poly_idx, unsigned int point_idx) : PolygonsPointIndex(polygons, poly_idx, point_idx){};
 
-    Point from() const { return PolygonsPointIndex::p(); }
+    [[nodiscard]] Point from() const { return PolygonsPointIndex::p(); }
 
-    Point to() const { return PolygonsSegmentIndex::next().p(); }
+    [[nodiscard]] Point to() const { return PolygonsSegmentIndex::next().p(); }
 };
 
 } // namespace Slic3r::Arachne
