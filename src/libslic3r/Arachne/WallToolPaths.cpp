@@ -313,8 +313,8 @@ void removeDegenerateVerts(Polygons &thiss)
         };
         bool isChanged = false;
         for (size_t idx = 0; idx < poly.size(); idx++) {
-            const Point &last = (result.size() == 0) ? poly.back() : result.back();
-            if (idx + 1 == poly.size() && result.size() == 0)
+            const Point &last = result.empty() ? poly.back() : result.back();
+            if (idx + 1 == poly.size() && result.empty())
                 break;
 
             const Point &next = (idx + 1 == poly.size()) ? result[0] : poly[idx + 1];
