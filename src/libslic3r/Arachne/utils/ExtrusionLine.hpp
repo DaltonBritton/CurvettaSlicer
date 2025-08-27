@@ -66,12 +66,12 @@ struct ExtrusionLine
      * Gets the number of vertices in this polygon.
      * \return The number of vertices in this polygon.
      */
-    size_t size() const { return junctions.size(); }
+    [[nodiscard]] size_t size() const { return junctions.size(); }
 
     /*!
      * Whether there are no junctions.
      */
-    bool empty() const { return junctions.empty(); }
+    [[nodiscard]] bool empty() const { return junctions.empty(); }
 
     /*!
      * The list of vertices along which this path runs.
@@ -102,12 +102,12 @@ struct ExtrusionLine
         return *this;
     }
 
-    std::vector<ExtrusionJunction>::const_iterator begin() const { return junctions.begin(); }
-    std::vector<ExtrusionJunction>::const_iterator end() const { return junctions.end(); }
-    std::vector<ExtrusionJunction>::const_reverse_iterator rbegin() const { return junctions.rbegin(); }
-    std::vector<ExtrusionJunction>::const_reverse_iterator rend() const { return junctions.rend(); }
-    std::vector<ExtrusionJunction>::const_reference front() const { return junctions.front(); }
-    std::vector<ExtrusionJunction>::const_reference back() const { return junctions.back(); }
+    [[nodiscard]] std::vector<ExtrusionJunction>::const_iterator begin() const { return junctions.begin(); }
+    [[nodiscard]] std::vector<ExtrusionJunction>::const_iterator end() const { return junctions.end(); }
+    [[nodiscard]] std::vector<ExtrusionJunction>::const_reverse_iterator rbegin() const { return junctions.rbegin(); }
+    [[nodiscard]] std::vector<ExtrusionJunction>::const_reverse_iterator rend() const { return junctions.rend(); }
+    [[nodiscard]] std::vector<ExtrusionJunction>::const_reference front() const { return junctions.front(); }
+    [[nodiscard]] std::vector<ExtrusionJunction>::const_reference back() const { return junctions.back(); }
     const ExtrusionJunction &operator[](unsigned int index) const { return junctions[index]; }
     ExtrusionJunction &operator[](unsigned int index) { return junctions[index]; }
     std::vector<ExtrusionJunction>::iterator begin() { return junctions.begin(); }
@@ -131,15 +131,15 @@ struct ExtrusionLine
     /*!
      * Sum the total length of this path.
      */
-    int64_t getLength() const;
-    int64_t polylineLength() const { return getLength(); }
+    [[nodiscard]] int64_t getLength() const;
+    [[nodiscard]] int64_t polylineLength() const { return getLength(); }
 
     /*!
      * Put all junction locations into a polygon object.
      *
      * When this path is not closed the returned Polygon should be handled as a polyline, rather than a polygon.
      */
-    Polygon toPolygon() const
+    [[nodiscard]] Polygon toPolygon() const
     {
         Polygon ret;
         for (const ExtrusionJunction &j : junctions)
@@ -196,9 +196,9 @@ struct ExtrusionLine
      * */
     static int64_t calculateExtrusionAreaDeviationError(const ExtrusionJunction& A, const ExtrusionJunction& B, const ExtrusionJunction& C);
 
-    bool is_contour() const;
+    [[nodiscard]] bool is_contour() const;
 
-    double area() const;
+    [[nodiscard]] double area() const;
 };
 
 template<class PathType>
