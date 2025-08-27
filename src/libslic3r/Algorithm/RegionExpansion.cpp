@@ -7,8 +7,8 @@
 
 #include <numeric>
 
-namespace Slic3r {
-namespace Algorithm {
+
+namespace Slic3r::Algorithm {
 
 // Calculating radius discretization according to ClipperLib offsetter code, see void ClipperOffset::DoOffset(double delta)
 inline double clipper_round_offset_error(double offset, double arc_tolerance)
@@ -560,4 +560,4 @@ std::vector<ExPolygon> expand_merge_expolygons(ExPolygons &&src, const ExPolygon
 }
 
 } // Algorithm
-} // Slic3r
+// Slic3r
