@@ -33,7 +33,7 @@ public:
     bool    is_top_or_bottom_layer;
 };
 
-WallToolPathsParams make_paths_params(const int layer_id, const PrintObjectConfig &print_object_config, const PrintConfig &print_config);
+WallToolPathsParams make_paths_params(int layer_id, const PrintObjectConfig &print_object_config, const PrintConfig &print_config);
 
 class WallToolPaths
 {
