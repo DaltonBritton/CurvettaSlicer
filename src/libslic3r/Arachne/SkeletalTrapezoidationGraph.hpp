@@ -108,7 +108,7 @@ public:
     std::pair<edge_t*, edge_t*> insertRib(edge_t& edge, node_t* mid_node);
 
 protected:
-    [[nodiscard]] Line getSource(const edge_t& edge) const;
+    [[nodiscard]] static Line getSource(const edge_t& edge) ;
 };
 
 }

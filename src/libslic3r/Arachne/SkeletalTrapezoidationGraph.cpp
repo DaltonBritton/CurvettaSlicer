@@ -455,7 +455,7 @@ SkeletalTrapezoidationGraph::edge_t* SkeletalTrapezoidationGraph::insertNode(edg
     return last_edge_replacing_input;
 }
 
-Line SkeletalTrapezoidationGraph::getSource(const edge_t &edge) const
+Line SkeletalTrapezoidationGraph::getSource(const edge_t &edge)
 {
     const edge_t *from_edge = &edge;
     while (from_edge->prev)
