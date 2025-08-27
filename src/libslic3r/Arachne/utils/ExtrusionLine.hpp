@@ -6,9 +6,9 @@
 #define UTILS_EXTRUSION_LINE_H
 
 #include <clipper/clipper_z.hpp>
-#include <assert.h>
-#include <stddef.h>
-#include <stdint.h>
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
 #include <algorithm>
 #include <utility>
 #include <vector>
