@@ -172,7 +172,7 @@ protected:
      */
     ankerl::unordered_dense::map<const VD::edge_type *, edge_t *> vd_edge_to_he_edge;
     ankerl::unordered_dense::map<const VD::vertex_type *, node_t *> vd_node_to_he_node;
-    node_t &makeNode(const VD::vertex_type &vd_node, Point p); //!< Get the node which the VD node maps to, or create a new mapping if there wasn't any yet.
+    node_t &makeNode(const VD::vertex_type &vd_node, const Point& p); //!< Get the node which the VD node maps to, or create a new mapping if there wasn't any yet.
 
     /*!
      * (Eventual) returned 'polylines per index' result (from generateToolpaths):

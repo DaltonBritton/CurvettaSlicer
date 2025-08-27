@@ -94,7 +94,7 @@ static void export_graph_to_svg(const std::string                               
 }
 #endif
 
-SkeletalTrapezoidation::node_t &SkeletalTrapezoidation::makeNode(const VD::vertex_type &vd_node, Point p) {
+SkeletalTrapezoidation::node_t &SkeletalTrapezoidation::makeNode(const VD::vertex_type &vd_node, const Point& p) {
     auto he_node_it = vd_node_to_he_node.find(&vd_node);
     if (he_node_it == vd_node_to_he_node.end())
     {
@@ -254,7 +254,7 @@ Points SkeletalTrapezoidation::discretize(const VD::edge_type& vd_edge, const st
         Point   x_axis_dir    = perp(Point(right_point - left_point));
         coord_t x_axis_length = x_axis_dir.cast<int64_t>().norm();
 
-        const auto projected_x = [x_axis_dir, x_axis_length, middle](Point from) //Project a point on the edge.
+        const auto projected_x = [x_axis_dir, x_axis_length, middle](const Point& from) //Project a point on the edge.
         {
             Point vec = from - middle;
             assert(( vec.cast<int64_t>().dot(x_axis_dir.cast<int64_t>())/ int64_t(x_axis_length)) <= std::numeric_limits<coord_t>::max());
