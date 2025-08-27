@@ -91,7 +91,6 @@ protected:
     /*! \brief Map from grid locations (GridPoint) to elements (Elem). */
     GridMap m_grid;
 };
-;
 
 template<class ElemT> SparseGrid<ElemT>::SparseGrid(coord_t cell_size, size_t elem_reserve, float max_load_factor) : SquareGrid(cell_size)
 {
