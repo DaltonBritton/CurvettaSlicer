@@ -216,7 +216,7 @@ void ExtrusionLine::simplify(const int64_t smallest_line_segment_squared, const 
     junctions = new_junctions;
 }
 
-int64_t ExtrusionLine::calculateExtrusionAreaDeviationError(ExtrusionJunction A, ExtrusionJunction B, ExtrusionJunction C) {
+int64_t ExtrusionLine::calculateExtrusionAreaDeviationError(const ExtrusionJunction& A, const ExtrusionJunction& B, const ExtrusionJunction& C) {
     /*
      * A             B                          C              A                                        C
      * ---------------                                         **************

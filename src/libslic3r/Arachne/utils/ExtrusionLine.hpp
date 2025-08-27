@@ -194,7 +194,7 @@ struct ExtrusionLine
      * \param B Intermediate point of the 3-point-straight line
      * \param C End point of the 3-point-straight line
      * */
-    static int64_t calculateExtrusionAreaDeviationError(ExtrusionJunction A, ExtrusionJunction B, ExtrusionJunction C);
+    static int64_t calculateExtrusionAreaDeviationError(const ExtrusionJunction& A, const ExtrusionJunction& B, const ExtrusionJunction& C);
 
     bool is_contour() const;
 
