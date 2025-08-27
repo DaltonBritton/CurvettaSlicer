@@ -5,6 +5,7 @@
 #define SKELETAL_TRAPEZOIDATION_JOINT_H
 
 #include <memory> // smart pointers
+#include <utility>
 
 #include "libslic3r/Arachne/BeadingStrategy/BeadingStrategy.hpp"
 
@@ -21,8 +22,8 @@ public:
         coord_t dist_to_bottom_source;
         coord_t dist_from_top_source;
         bool is_upward_propagated_only;
-        BeadingPropagation(const Beading& beading)
-            : beading(beading)
+        BeadingPropagation(Beading  beading)
+            : beading(std::move(beading))
             , dist_to_bottom_source(0)
             , dist_from_top_source(0)
             , is_upward_propagated_only(false)
