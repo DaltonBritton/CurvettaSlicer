@@ -580,11 +580,8 @@ void SkeletalTrapezoidation::updateIsCentral()
         {
             edge.data.setIsCentral(edge.twin->data.isCentral());
         }
-        else if(edge.data.type == SkeletalTrapezoidationEdge::EdgeType::EXTRA_VD)
-        {
-            edge.data.setIsCentral(false);
-        }
-        else if(std::max(edge.from->data.distance_to_boundary, edge.to->data.distance_to_boundary) < outer_edge_filter_length)
+        else if(edge.data.type == SkeletalTrapezoidationEdge::EdgeType::EXTRA_VD ||
+                 std::max(edge.from->data.distance_to_boundary, edge.to->data.distance_to_boundary) < outer_edge_filter_length)
         {
             edge.data.setIsCentral(false);
         }
