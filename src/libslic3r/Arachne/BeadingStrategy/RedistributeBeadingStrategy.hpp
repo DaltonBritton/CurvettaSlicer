@@ -39,15 +39,15 @@ namespace Slic3r::Arachne
 
         ~RedistributeBeadingStrategy() override = default;
 
-        Beading compute(coord_t thickness, coord_t bead_count) const override;
+        [[nodiscard]] Beading compute(coord_t thickness, coord_t bead_count) const override;
 
-        coord_t getOptimalThickness(coord_t bead_count) const override;
-        coord_t getTransitionThickness(coord_t lower_bead_count) const override;
-        coord_t getOptimalBeadCount(coord_t thickness) const override;
-        coord_t getTransitioningLength(coord_t lower_bead_count) const override;
-        float getTransitionAnchorPos(coord_t lower_bead_count) const override;
+        [[nodiscard]] coord_t getOptimalThickness(coord_t bead_count) const override;
+        [[nodiscard]] coord_t getTransitionThickness(coord_t lower_bead_count) const override;
+        [[nodiscard]] coord_t getOptimalBeadCount(coord_t thickness) const override;
+        [[nodiscard]] coord_t getTransitioningLength(coord_t lower_bead_count) const override;
+        [[nodiscard]] float getTransitionAnchorPos(coord_t lower_bead_count) const override;
 
-        std::string toString() const override;
+        [[nodiscard]] std::string toString() const override;
 
     protected:
         BeadingStrategyPtr parent;
