@@ -55,7 +55,7 @@ public:
     EdgeType type;
 
     SkeletalTrapezoidationEdge() : SkeletalTrapezoidationEdge(EdgeType::NORMAL) {}
-    SkeletalTrapezoidationEdge(const EdgeType &type) : type(type), is_central(Central::UNKNOWN) {}
+    explicit SkeletalTrapezoidationEdge(const EdgeType &type) : type(type), is_central(Central::UNKNOWN) {}
 
     [[nodiscard]] bool isCentral() const
     {
