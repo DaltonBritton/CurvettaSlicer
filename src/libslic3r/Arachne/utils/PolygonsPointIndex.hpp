@@ -92,6 +92,10 @@ public:
     }
     PathsPointIndex &operator=(const PathsPointIndex &other)
     {
+        if(this == &other){
+            return *this;
+        }
+
         polygons  = other.polygons;
         poly_idx  = other.poly_idx;
         point_idx = other.point_idx;
