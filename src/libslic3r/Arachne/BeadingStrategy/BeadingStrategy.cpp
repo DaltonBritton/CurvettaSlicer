@@ -17,14 +17,7 @@ BeadingStrategy::BeadingStrategy(coord_t optimal_width, double wall_split_middle
     name = "Unknown";
 }
 
-BeadingStrategy::BeadingStrategy(const BeadingStrategy &other)
-    : optimal_width(other.optimal_width)
-    , wall_split_middle_threshold(other.wall_split_middle_threshold)
-    , wall_add_middle_threshold(other.wall_add_middle_threshold)
-    , default_transition_length(other.default_transition_length)
-    , transitioning_angle(other.transitioning_angle)
-    , name(other.name)
-{}
+BeadingStrategy::BeadingStrategy(const BeadingStrategy &other) = default;
 
 coord_t BeadingStrategy::getTransitioningLength(coord_t lower_bead_count) const
 {
