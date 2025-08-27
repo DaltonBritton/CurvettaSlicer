@@ -49,4 +49,4 @@ protected:
 };
 
 } // namespace Slic3r::Arachne
-#endif // LIMITED_DISTRIBUTED_BEADING_STRATEGY_H
+#endif // LIMITED_BEADING_STRATEGY_H
