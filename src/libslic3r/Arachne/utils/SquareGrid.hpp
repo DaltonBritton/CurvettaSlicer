@@ -31,7 +31,7 @@ public:
     /*! \brief Constructs a grid with the specified cell size.
      * \param[in] cell_size The size to use for a cell (square) in the grid.
      */
-    explicit SquareGrid(const coord_t cell_size);
+    explicit SquareGrid(coord_t cell_size);
 
     /*!
      * Get the cell size this grid was created for.
@@ -48,7 +48,7 @@ public:
      * for each cell. Processing stops if function returns false.
      * \return Whether we need to continue processing after this function.
      */
-    bool processLineCells(const std::pair<Point, Point> line, const std::function<bool (GridPoint)>& process_cell_func);
+    bool processLineCells(std::pair<Point, Point> line, const std::function<bool (GridPoint)>& process_cell_func);
 
     /*! \brief Process cells along a line indicated by \p line.
      *
@@ -57,7 +57,7 @@ public:
      * for each cell. Processing stops if function returns false.
      * \return Whether we need to continue processing after this function.
      */
-    bool processLineCells(const std::pair<Point, Point> line, const std::function<bool (GridPoint)>& process_cell_func) const;
+    bool processLineCells(std::pair<Point, Point> line, const std::function<bool (GridPoint)>& process_cell_func) const;
 
     /*! \brief Process cells that might contain sought after points.
      *
