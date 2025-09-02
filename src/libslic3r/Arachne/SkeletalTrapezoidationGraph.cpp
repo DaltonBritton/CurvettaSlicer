@@ -13,6 +13,7 @@
 #include "libslic3r/Arachne/SkeletalTrapezoidationEdge.hpp"
 #include "libslic3r/Arachne/SkeletalTrapezoidationJoint.hpp"
 #include "libslic3r/Point.hpp"
+#include "libslic3r/Line.hpp"
 
 namespace Slic3r::Arachne
 {
