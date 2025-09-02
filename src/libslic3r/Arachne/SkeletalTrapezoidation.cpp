@@ -4,7 +4,6 @@
 #include "SkeletalTrapezoidation.hpp"
 
 #include <boost/log/trivial.hpp>
-#include <boost/polygon/polygon.hpp>
 #include <queue>
 #include <algorithm>
 #include <cmath>
