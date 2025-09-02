@@ -20,9 +20,9 @@ public:
     PolygonsSegmentIndex() : PolygonsPointIndex(){};
     PolygonsSegmentIndex(const Polygons *polygons, unsigned int poly_idx, unsigned int point_idx) : PolygonsPointIndex(polygons, poly_idx, point_idx){};
 
-    Point from() const { return PolygonsPointIndex::p(); }
+    [[nodiscard]] Point from() const { return PolygonsPointIndex::p(); }
 
-    Point to() const { return PolygonsSegmentIndex::next().p(); }
+    [[nodiscard]] Point to() const { return PolygonsSegmentIndex::next().p(); }
 };
 
 } // namespace Slic3r::Arachne
@@ -39,7 +39,7 @@ template<> struct segment_traits<Slic3r::Arachne::PolygonsSegmentIndex>
     typedef coord_t       coordinate_type;
     typedef Slic3r::Point point_type;
 
-    static inline point_type get(const Slic3r::Arachne::PolygonsSegmentIndex &CSegment, direction_1d dir)
+    static inline point_type get(const Slic3r::Arachne::PolygonsSegmentIndex &CSegment, const direction_1d& dir)
     {
         return dir.to_int() ? CSegment.to() : CSegment.from();
     }

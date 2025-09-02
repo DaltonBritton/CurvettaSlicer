@@ -26,7 +26,7 @@ public:
     edge_t* prev = nullptr;
     node_t* from = nullptr;
     node_t* to = nullptr;
-    HalfEdge(edge_data_t data)
+    explicit HalfEdge(edge_data_t data)
     : data(data)
     {}
     bool operator==(const edge_t& other)
