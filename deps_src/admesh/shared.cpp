@@ -20,8 +20,6 @@
  *           https://github.com/admesh/admesh/issues
  */
 
-#include <stdlib.h>
-#include <string.h>
 
 #include <vector>
 
@@ -62,9 +60,9 @@ void stl_generate_shared_vertices(stl_file *stl, indexed_triangle_set &its)
 			++ fan_traversal_stamp;
 			for (;;) {
 				// Next edge on facet_in_fan_idx to be traversed. The edge is indexed by its starting vertex index.
-				int next_edge    = 0;
+				int next_edge;
 				// Vertex index in facet_in_fan_idx, which is being pivoted around, and which is being assigned a new shared vertex.
-				int pivot_vertex = 0;
+				int pivot_vertex;
 				if (vnot > 2) {
 					// The edge of facet_in_fan_idx opposite to vnot is equally oriented, therefore
 					// the neighboring facet is flipped.
@@ -139,10 +137,10 @@ bool its_write_off(const indexed_triangle_set &its, const char *file)
 
 	fprintf(fp, "OFF\n");
 	fprintf(fp, "%d %d 0\n", (int)its.vertices.size(), (int)its.indices.size());
-	for (int i = 0; i < its.vertices.size(); ++ i)
-		fprintf(fp, "\t%f %f %f\n", its.vertices[i](0), its.vertices[i](1), its.vertices[i](2));
-	for (uint32_t i = 0; i < its.indices.size(); ++ i)
-		fprintf(fp, "\t3 %d %d %d\n", its.indices[i][0], its.indices[i][1], its.indices[i][2]);
+	for (const auto & vertex : its.vertices)
+		fprintf(fp, "\t%f %f %f\n", vertex(0), vertex(1), vertex(2));
+	for (const auto & index : its.indices)
+		fprintf(fp, "\t3 %d %d %d\n", index[0], index[1], index[2]);
 	fclose(fp);
 	return true;
 }
@@ -180,8 +178,9 @@ bool its_write_vrml(const indexed_triangle_set &its, const char *file)
 	fprintf(fp, "\t\tDEF STLTriangles IndexedFaceSet {\n");
 	fprintf(fp, "\t\t\tcoordIndex [\n");
 
-	for (size_t i = 0; i + 1 < its.indices.size(); ++ i)
-		fprintf(fp, "\t\t\t\t%d, %d, %d, -1,\n", its.indices[i][0], its.indices[i][1], its.indices[i][2]);
+    for (const auto & index : its.indices)
+        fprintf(fp, "\t\t\t\t%d, %d, %d, -1,\n", index[0], index[1], index[2]);
+
 	fprintf(fp, "\t\t\t\t%d, %d, %d, -1]\n", its.indices[i][0], its.indices[i][1], its.indices[i][2]);
 	fprintf(fp, "\t\t}\n");
 	fprintf(fp, "\t}\n");
@@ -199,10 +198,10 @@ bool its_write_obj(const indexed_triangle_set &its, const char *file)
     	return false;
   	}
 
-	for (size_t i = 0; i < its.vertices.size(); ++ i)
-    	fprintf(fp, "v %f %f %f\n", its.vertices[i](0), its.vertices[i](1), its.vertices[i](2));
-  	for (size_t i = 0; i < its.indices.size(); ++ i)
-    	fprintf(fp, "f %d %d %d\n", its.indices[i][0]+1, its.indices[i][1]+1, its.indices[i][2]+1);
+	for (const auto & vertex : its.vertices)
+    	fprintf(fp, "v %f %f %f\n", vertex(0), vertex(1), vertex(2));
+  	for (const auto & index : its.indices)
+    	fprintf(fp, "f %d %d %d\n", index[0]+1, index[1]+1, index[2]+1);
   	fclose(fp);
   	return true;
 }

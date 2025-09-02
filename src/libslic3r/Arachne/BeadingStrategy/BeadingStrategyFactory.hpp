@@ -4,7 +4,6 @@
 #ifndef BEADING_STRATEGY_FACTORY_H
 #define BEADING_STRATEGY_FACTORY_H
 
-#include <math.h>
 #include <cmath>
 
 #include "BeadingStrategy.hpp"

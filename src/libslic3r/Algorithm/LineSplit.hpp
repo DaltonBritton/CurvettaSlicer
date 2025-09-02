@@ -3,8 +3,8 @@
 
 #include "ClipperZUtils.hpp"
 
-namespace Slic3r {
-namespace Algorithm {
+
+namespace Slic3r::Algorithm {
 
 struct SplitLineJunction
 {
@@ -24,8 +24,8 @@ struct SplitLineJunction
         , clipped(clipped)
         , src_idx(src_idx) {}
 
-    bool is_src() const { return src_idx >= 0; }
-    size_t get_src_index() const
+    [[nodiscard]] bool is_src() const { return src_idx >= 0; }
+    [[nodiscard]] size_t get_src_index() const
     {
         if (is_src()) {
             return src_idx;
@@ -49,7 +49,7 @@ SplittedLine split_line(const PathType& path, const ExPolygons& clip, bool close
 
     // Convert the input path into an open ZPath
     ClipperZUtils::ZPath p;
-    p.reserve(path.size() + closed ? 1 : 0);
+    p.reserve(path.size() + (closed ? 1 : 0));
     ClipperLib_Z::cInt z = 0;
     for (const auto& point : path) {
         p.emplace_back(point.x(), point.y(), z);
@@ -65,6 +65,6 @@ SplittedLine split_line(const PathType& path, const ExPolygons& clip, bool close
 }
 
 } // Algorithm
-} // Slic3r
+// Slic3r
 
 #endif /* SRC_LIBSLIC3R_ALGORITHM_LINE_SPLIT_HPP_ */

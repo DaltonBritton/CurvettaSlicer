@@ -7,8 +7,8 @@
 
 #include <numeric>
 
-namespace Slic3r {
-namespace Algorithm {
+
+namespace Slic3r::Algorithm {
 
 // Calculating radius discretization according to ClipperLib offsetter code, see void ClipperOffset::DoOffset(double delta)
 inline double clipper_round_offset_error(double offset, double arc_tolerance)
@@ -36,13 +36,13 @@ RegionExpansionParameters RegionExpansionParameters::build(
     assert(expansion_step > 0);
     assert(max_nr_expansion_steps > 0);
 
-    RegionExpansionParameters out;
+    RegionExpansionParameters out{};
     // Initial expansion of src to make the source regions intersect with boundary regions just a bit.
     // The expansion should not be too tiny, but also small enough, so the following expansion will
     // compensate for tiny_expansion and bring the wave back to the boundary without producing
     // ugly cusps where it touches the boundary.
     out.tiny_expansion = std::min(0.25f * full_expansion, scaled<float>(0.05f));
-    size_t nsteps = size_t(ceil((full_expansion - out.tiny_expansion) / expansion_step));
+    auto nsteps = size_t(ceil((full_expansion - out.tiny_expansion) / expansion_step));
     if (max_nr_expansion_steps > 0)
         nsteps = std::min(nsteps, max_nr_expansion_steps);
     assert(nsteps > 0);
@@ -560,4 +560,4 @@ std::vector<ExPolygon> expand_merge_expolygons(ExPolygons &&src, const ExPolygon
 }
 
 } // Algorithm
-} // Slic3r
+// Slic3r

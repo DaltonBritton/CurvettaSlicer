@@ -65,7 +65,7 @@ unsigned char *utf8_check(unsigned char *s)
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 

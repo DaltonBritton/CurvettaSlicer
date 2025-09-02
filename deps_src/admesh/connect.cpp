@@ -20,10 +20,7 @@
  *           https://github.com/admesh/admesh/issues
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include <cstring>
 
 #include <algorithm>
 #include <vector>
@@ -42,7 +39,7 @@ struct HashEdge {
 	// Compare two keys.
 	bool operator==(const HashEdge &rhs) const { return memcmp(key, rhs.key, sizeof(key)) == 0; }
 	bool operator!=(const HashEdge &rhs) const { return ! (*this == rhs); }
-	int  hash(int M) const { return ((key[0] / 11 + key[1] / 7 + key[2] / 3) ^ (key[3] / 11  + key[4] / 7 + key[5] / 3)) % M; }
+	[[nodiscard]] int  hash(int M) const { return ((key[0] / 11 + key[1] / 7 + key[2] / 3) ^ (key[3] / 11  + key[4] / 7 + key[5] / 3)) % M; }
 
 	// Index of a facet owning this edge.
 	int        facet_number;
@@ -71,7 +68,7 @@ struct HashEdge {
 	  	memcpy(&this->key[3], b->data(), sizeof(stl_vertex));
 	  	// Switch negative zeros to positive zeros, so memcmp will consider them to be equal.
 	  	for (size_t i = 0; i < 6; ++ i) {
-	    	unsigned char *p = (unsigned char*)(this->key + i);
+	    	auto *p = (unsigned char*)(this->key + i);
 	#if BOOST_ENDIAN_LITTLE_BYTE
 	    	if (p[0] == 0 && p[1] == 0 && p[2] == 0 && p[3] == 0x80)
 	      		// Negative zero, switch to positive zero.
@@ -114,14 +111,14 @@ struct HashEdge {
 	}
 
 private:
-	inline bool vertex_lower(const stl_vertex &a, const stl_vertex &b) {
+	static inline bool vertex_lower(const stl_vertex &a, const stl_vertex &b) {
 	  	return (a(0) != b(0)) ? (a(0) < b(0)) :
 	           ((a(1) != b(1)) ? (a(1) < b(1)) : (a(2) < b(2)));
 	}
 };
 
 struct HashTableEdges {
-	HashTableEdges(size_t number_of_faces) {
+	explicit HashTableEdges(size_t number_of_faces) {
 		this->M = (int)hash_size_from_nr_faces(number_of_faces);
 		this->heads.assign(this->M, nullptr);
 		this->tail = pool.construct();
@@ -140,12 +137,12 @@ struct HashTableEdges {
 
 	void insert_edge_exact(stl_file *stl, const HashEdge &edge)
 	{
-		this->insert_edge(stl, edge, [stl](const HashEdge& edge1, const HashEdge& edge2) { record_neighbors(stl, edge1, edge2); });
+        this->insert_edge(edge, [stl](const HashEdge& edge1, const HashEdge& edge2) { record_neighbors(stl, edge1, edge2); });
 	}
 
 	void insert_edge_nearby(stl_file *stl, const HashEdge &edge)
 	{
-		this->insert_edge(stl, edge, [stl](const HashEdge& edge1, const HashEdge& edge2) { match_neighbors_nearby(stl, edge1, edge2); });
+        this->insert_edge(edge, [stl](const HashEdge& edge1, const HashEdge& edge2) { match_neighbors_nearby(stl, edge1, edge2); });
 	}
 
 	// Hash table on edges
@@ -173,9 +170,8 @@ private:
 
 
 	// MatchNeighbors(stl_file *stl, const HashEdge &edge_a, const HashEdge &edge_b)
-	template<typename MatchNeighbors>
-	void insert_edge(stl_file *stl, const HashEdge &edge, MatchNeighbors match_neighbors)
-	{
+	template<typename MatchNeighbors> void insert_edge(const HashEdge& edge, MatchNeighbors match_neighbors)
+    {
 		int       chain_number = edge.hash(this->M);
 		HashEdge *link         = this->heads[chain_number];
 		if (link == this->tail) {
@@ -216,9 +212,7 @@ private:
 					// This is a match.  Record result in neighbors list.
 					match_neighbors(edge, *link->next);
 					// Delete the matched edge from the list.
-					HashEdge *temp = link->next;
 					link->next = link->next->next;
-					// pool.destroy(temp);
 #ifndef NDEBUG
 					++ this->freed;
 #endif /* NDEBUG */
@@ -337,7 +331,7 @@ private:
 			}
 		}
 
-		auto change_vertices = [stl](int facet_num, int vnot, stl_vertex new_vertex)
+		auto change_vertices = [stl](int facet_num, int vnot, const stl_vertex& new_vertex)
 		{
 			int first_facet = facet_num;
 			bool direction = false;
@@ -463,9 +457,10 @@ void stl_check_facets_exact(stl_file *stl)
 	for (uint32_t i = 0; i < stl->stats.number_of_facets; ++ i) {
 		const stl_facet &facet = stl->facet_start[i];
 		for (int j = 0; j < 3; ++ j) {
-			HashEdge edge;
-			edge.facet_number = i;
-			edge.which_edge = j;
+			HashEdge edge{};
+            edge.facet_number = static_cast<int>(i);
+            edge.which_edge = j;
+
 			edge.load_exact(stl, &facet.vertex[j], &facet.vertex[(j + 1) % 3]);
 			hash_table.insert_edge_exact(stl, edge);
 		}
@@ -494,9 +489,10 @@ void stl_check_facets_nearby(stl_file *stl, float tolerance)
     	stl_facet facet = stl->facet_start[i];
     	for (int j = 0; j < 3; j++) {
       		if (stl->neighbors_start[i].neighbor[j] == -1) {
-        		HashEdge edge;
-        		edge.facet_number = i;
-        		edge.which_edge = j;
+                HashEdge edge{};
+                edge.facet_number = static_cast<int>(i);
+                edge.which_edge = j;
+
         		if (edge.load_nearby(stl, facet.vertex[j], facet.vertex[(j + 1) % 3], tolerance))
           			// Only insert edges that have different keys.
           			hash_table.insert_edge_nearby(stl, edge);
@@ -558,7 +554,7 @@ void stl_remove_unconnected_facets(stl_file *stl)
 		  	}
 		};
 
-		int edge_to_collapse = 0;
+		int edge_to_collapse;
 	   	if (stl->facet_start[facet].vertex[0] == stl->facet_start[facet].vertex[1]) {
 			if (stl->facet_start[facet].vertex[1] == stl->facet_start[facet].vertex[2]) {
 				// All 3 vertices are equal. Collapse the edge with no neighbor if it exists.
@@ -658,9 +654,10 @@ void stl_fill_holes(stl_file *stl)
 		for (int j = 0; j < 3; ++ j) {
 	  		if(stl->neighbors_start[i].neighbor[j] != -1)
 	  			continue;
-			HashEdge edge;
-	  		edge.facet_number = i;
-	  		edge.which_edge = j;
+            HashEdge edge{};
+            edge.facet_number = static_cast<int>(i);
+            edge.which_edge = j;
+
 	  		edge.load_exact(stl, &facet.vertex[j], &facet.vertex[(j + 1) % 3]);
 	  		hash_table.insert_edge_exact(stl, edge);
 		}
@@ -682,12 +679,11 @@ void stl_fill_holes(stl_file *stl)
 		  	int vnot = (j + 2) % 3;
 
 	  		for (;;) {
-				int pivot_vertex = 0;
-				int next_edge = 0;
+				int pivot_vertex;
+				int next_edge;
 	    		if (vnot > 2) {
 	      			if (direction) {
-	        			pivot_vertex = (vnot + 1) % 3;
-	        			next_edge = vnot % 3;
+                        next_edge = vnot % 3;
 	      			} else {
 	        			pivot_vertex = (vnot + 2) % 3;
 	        			next_edge = pivot_vertex;
@@ -695,8 +691,7 @@ void stl_fill_holes(stl_file *stl)
 	      			direction = ! direction;
 	    		} else {
 	      			if(direction == 0) {
-	        			pivot_vertex = (vnot + 1) % 3;
-	        			next_edge = vnot;
+                        next_edge = vnot;
 	      			} else {
 	        			pivot_vertex = (vnot + 2) % 3;
 	        			next_edge = pivot_vertex;
@@ -708,9 +703,10 @@ void stl_fill_holes(stl_file *stl)
 	      			new_facet.vertex[2] = stl->facet_start[facet_num].vertex[vnot % 3];
 				    stl_add_facet(stl, &new_facet);
 	      			for (int k = 0; k < 3; ++ k) {
-	      				HashEdge edge;
-	        			edge.facet_number = stl->stats.number_of_facets - 1;
-	        			edge.which_edge = k;
+                        HashEdge edge{};
+                        edge.facet_number = static_cast<int>(i);
+                        edge.which_edge = j;
+
 	        			edge.load_exact(stl, &new_facet.vertex[k], &new_facet.vertex[(k + 1) % 3]);
 	        			hash_table.insert_edge_exact(stl, edge);
 	      			}

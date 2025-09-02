@@ -20,13 +20,13 @@
  *           https://github.com/admesh/admesh/issues
  */
 
-#ifndef __admesh_stl__
-#define __admesh_stl__
+#pragma once
 
-#include <stdio.h>
-#include <stdint.h>
-#include <stddef.h>
+#include <cstdio>
+#include <cstdint>
+#include <cstddef>
 
+#include <utility>
 #include <vector>
 #include <Eigen/Geometry> 
 
@@ -58,9 +58,9 @@ typedef enum {
 struct stl_facet {
 	stl_normal normal;
 	stl_vertex vertex[3];
-	char       extra[2];
+	char       extra[2]{};
 
-	stl_facet  rotated(const Eigen::Quaternion<float, Eigen::DontAlign> &rot) const {
+	[[nodiscard]] stl_facet  rotated(const Eigen::Quaternion<float, Eigen::DontAlign> &rot) const {
 		stl_facet out;
 		out.normal    = rot * this->normal;
 		out.vertex[0] = rot * this->vertex[0];
@@ -89,19 +89,19 @@ struct stl_neighbors {
   		which_vertex_not[1] = -1;
   		which_vertex_not[2] = -1;
   	}
-  	int num_neighbors() const { return 3 - ((this->neighbor[0] == -1) + (this->neighbor[1] == -1) + (this->neighbor[2] == -1)); }
+  	[[nodiscard]] int num_neighbors() const { return 3 - ((this->neighbor[0] == -1) + (this->neighbor[1] == -1) + (this->neighbor[2] == -1)); }
 
   	// Index of a neighbor facet.
-  	int   neighbor[3];
+  	int   neighbor[3]{};
   	// Index of an opposite vertex at the neighbor face.
-  	char  which_vertex_not[3];
+  	char  which_vertex_not[3]{};
 };
 
 struct stl_stats {
-    stl_stats() {}
-    void  reset_header(int size) {
+    stl_stats() = default;
+    void  reset_header(int new_size) {
         header.clear();
-        header.resize(size +1);
+        header.resize(new_size +1);
     }
     std::vector<char>    header;
     stl_type      type                      = (stl_type)0;
@@ -149,7 +149,7 @@ struct stl_stats {
 };
 
 struct stl_file {
-	stl_file() {}
+	stl_file() = default;
 
 	void clear() {
 		this->facet_start.clear();
@@ -157,11 +157,11 @@ struct stl_file {
         this->stats.clear();
 	}
 
-	size_t memsize() const {
+	[[nodiscard]] size_t memsize() const {
 		return sizeof(*this) + sizeof(stl_facet) * facet_start.size() + sizeof(stl_neighbors) * neighbors_start.size();
 	}
 
-    char mw_data[256];
+    char mw_data[256]{};
 	std::vector<stl_facet>     		facet_start;
 	std::vector<stl_neighbors> 		neighbors_start;
 	// Statistics
@@ -174,7 +174,7 @@ struct FaceProperty
     double area;
     // stl_normal normal;
 
-    std::string to_string() const
+    [[nodiscard]] std::string to_string() const
     {
         std::string str;
         // skip normal type facet to improve performance 
@@ -197,7 +197,7 @@ struct FaceProperty
             if (this->type <= eNormal || this->type >= eMaxNumFaceTypes)
                 break;
 
-            size_t type_end_pos = str.find(" ");
+            size_t type_end_pos = str.find(' ');
             if (type_end_pos == std::string::npos) {
                 this->area = 0.f;
                 return;
@@ -209,7 +209,7 @@ struct FaceProperty
             else
                 this->area = 0.f;
             return;
-        } while (0);
+        } while (false);
 
         this->type = eNormal;
         this->area = 0.f;
@@ -218,15 +218,15 @@ struct FaceProperty
 
 struct indexed_triangle_set
 {
-    indexed_triangle_set(std::vector<stl_triangle_vertex_indices>    indices_,
-        std::vector<stl_vertex>                     vertices_) :indices(indices_), vertices(vertices_) {
+    indexed_triangle_set(const std::vector<stl_triangle_vertex_indices>&    indices_,
+        std::vector<stl_vertex>                     vertices_) :indices(indices_), vertices(std::move(vertices_)) {
         properties.resize(indices_.size());
     }
-    indexed_triangle_set() {}
+    indexed_triangle_set() = default;
 
     void clear() { indices.clear(); vertices.clear(); properties.clear(); }
 
-    size_t memsize() const {
+    [[nodiscard]] size_t memsize() const {
         return sizeof(*this) + (sizeof(stl_triangle_vertex_indices) + sizeof(FaceProperty)) * indices.size() + sizeof(stl_vertex) * vertices.size();
     }
 
@@ -234,11 +234,11 @@ struct indexed_triangle_set
     std::vector<stl_vertex>                     vertices;
     std::vector<FaceProperty>                   properties;
 
-    bool empty() const { return indices.empty() || vertices.empty(); }
-    stl_vertex get_vertex(int facet_idx, int vertex_idx) const{
+    [[nodiscard]] bool empty() const { return indices.empty() || vertices.empty(); }
+    [[nodiscard]] stl_vertex get_vertex(int facet_idx, int vertex_idx) const{
         return vertices[indices[facet_idx][vertex_idx]];
     }
-    float facet_area(int facet_idx) const {
+    [[nodiscard]] float facet_area(int facet_idx) const {
         return std::abs((get_vertex(facet_idx, 0) - get_vertex(facet_idx, 1))
             .cross(get_vertex(facet_idx, 0) - get_vertex(facet_idx, 2)).norm()) / 2;
     }
@@ -318,8 +318,8 @@ inline void stl_transform(stl_file *stl, const Eigen::Transform<T, 3, Eigen::Aff
     const Eigen::Matrix<T, 3, 3, Eigen::DontAlign> r = t.matrix().template block<3, 3>(0, 0).inverse().transpose();
     for (size_t i = 0; i < stl->stats.number_of_facets; ++ i) {
 		stl_facet &f = stl->facet_start[i];
-		for (size_t j = 0; j < 3; ++j)
-			f.vertex[j] = (t * f.vertex[j].template cast<T>()).template cast<float>().eval();
+		for (auto & vertex : f.vertex)
+            vertex = (t * vertex.template cast<T>()).template cast<float>().eval();
 		f.normal = (r * f.normal.template cast<T>()).template cast<float>().eval();
 	}
 
@@ -332,8 +332,8 @@ inline void stl_transform(stl_file *stl, const Eigen::Matrix<T, 3, 3, Eigen::Don
     const Eigen::Matrix<T, 3, 3, Eigen::DontAlign> r = m.inverse().transpose();
     for (size_t i = 0; i < stl->stats.number_of_facets; ++ i) {
 		stl_facet &f = stl->facet_start[i];
-		for (size_t j = 0; j < 3; ++j)
-			f.vertex[j] = (m * f.vertex[j].template cast<T>()).template cast<float>().eval();
+		for (auto & vertex : f.vertex)
+			vertex = (m * vertex.template cast<T>()).template cast<float>().eval();
         f.normal = (r * f.normal.template cast<T>()).template cast<float>().eval();
     }
 
@@ -412,5 +412,3 @@ extern void stl_add_facet(stl_file *stl, const stl_facet *new_facet);
 // Validate the mesh, assert on error.
 extern bool stl_validate(const stl_file *stl);
 extern bool stl_validate(const stl_file *stl, const indexed_triangle_set &its);
-
-#endif

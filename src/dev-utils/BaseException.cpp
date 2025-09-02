@@ -5,9 +5,7 @@
 #include <iostream>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
-#include <boost/log/trivial.hpp>
-#include <boost/format.hpp>
-#include <mutex>
+#include <utility>
 
 static std::string g_log_folder;
 static std::atomic<int> g_crash_log_count = 0;
@@ -16,13 +14,13 @@ static std::mutex g_dump_mutex;
 CBaseException::CBaseException(HANDLE hProcess, WORD wPID, LPCTSTR lpSymbolPath, PEXCEPTION_POINTERS pEp):
 	CStackWalker(hProcess, wPID, lpSymbolPath)
 {
-	if (NULL != pEp)
+	if (nullptr != pEp)
 	{
 		m_pEp = new EXCEPTION_POINTERS;
 		CopyMemory(m_pEp, pEp, sizeof(EXCEPTION_POINTERS));
 	}
 	output_file = new boost::nowide::ofstream();
-	std::time_t t = std::time(0);
+	std::time_t t = std::time(nullptr);
 	std::tm* now_time = std::localtime(&t);
 	std::stringstream buf;
 
@@ -38,7 +36,7 @@ CBaseException::CBaseException(HANDLE hProcess, WORD wPID, LPCTSTR lpSymbolPath,
 	}
 }
 
-CBaseException::~CBaseException(void)
+CBaseException::~CBaseException()
 {
 	if (output_file) {
 		output_file->close();
@@ -50,7 +48,7 @@ CBaseException::~CBaseException(void)
 //BBS set crash log folder
 void CBaseException::set_log_folder(std::string log_folder)
 {
-	g_log_folder = log_folder;
+	g_log_folder = std::move(log_folder);
 }
 
 void CBaseException::OutputString(LPCTSTR lpszFormat, ...)
@@ -64,12 +62,12 @@ void CBaseException::OutputString(LPCTSTR lpszFormat, ...)
 	//WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), szBuf, _tcslen(szBuf), NULL, NULL);
 
 	//output it to the current directory of binary
-	std::string output_str = textconv_helper::T2A_(szBuf);
+	std::string output_str = static_cast<const char* const>(textconv_helper::T2A_(szBuf));
 	*output_file << output_str;
 	output_file->flush();
 }
 
-void CBaseException::ShowLoadModules()
+[[maybe_unused]] void CBaseException::ShowLoadModules()
 {
 	LoadSymbol();
 	LPMODULE_INFO pHead = GetLoadModules();
@@ -80,7 +78,7 @@ void CBaseException::ShowLoadModules()
 	GetUserName(szBuf, &dwSize);
 	OutputString(_T("Current User:%s\r\n"), szBuf);
 	OutputString(_T("BaseAddress:\tSize:\tName\tPath\tSymbolPath\tVersion\r\n"));
-	while (NULL != pmi)
+	while (nullptr != pmi)
 	{
 		OutputString(_T("%08x\t%d\t%s\t%s\t%s\t%s\r\n"), (unsigned long)(pmi->ModuleAddress), pmi->dwModSize, pmi->szModuleName, pmi->szModulePath, pmi->szSymbolPath, pmi->szVersion);
 		pmi = pmi->pNext;
@@ -247,13 +245,15 @@ void CBaseException::ShowExceptionResoult(DWORD dwExceptionCode)
 			OutputString(_T("INT_OVERFLOW\r\n"));
 		}
 		return ;
+    default:
+        break;
 	}
 
 	TCHAR szBuffer[512] = { 0 };
 
 	FormatMessage(  FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_HMODULE,
 		GetModuleHandle( _T("NTDLL.DLL") ),
-		dwExceptionCode, 0, szBuffer, sizeof( szBuffer ), 0 );
+		dwExceptionCode, 0, szBuffer, sizeof( szBuffer ), nullptr );
 
 	OutputString(_T("%s"), szBuffer);
 	OutputString(_T("\r\n"));
@@ -273,7 +273,7 @@ LONG WINAPI CBaseException::UnhandledExceptionFilter(PEXCEPTION_POINTERS pExcept
 		return EXCEPTION_CONTINUE_SEARCH;
 	}
     g_dump_mutex.lock();
-	CBaseException base(GetCurrentProcess(), GetCurrentProcessId(), NULL, pExceptionInfo);
+	CBaseException base(GetCurrentProcess(), GetCurrentProcessId(), nullptr, pExceptionInfo);
 	base.ShowExceptionInformation();
     g_dump_mutex.unlock();
 
@@ -282,7 +282,7 @@ LONG WINAPI CBaseException::UnhandledExceptionFilter(PEXCEPTION_POINTERS pExcept
 
 LONG WINAPI CBaseException::UnhandledExceptionFilter2(PEXCEPTION_POINTERS pExceptionInfo )
 {
-	CBaseException base(GetCurrentProcess(), GetCurrentProcessId(), NULL, pExceptionInfo);
+	CBaseException base(GetCurrentProcess(), GetCurrentProcessId(), nullptr, pExceptionInfo);
 	base.ShowExceptionInformation();
 
 	return EXCEPTION_CONTINUE_SEARCH;
@@ -296,7 +296,7 @@ BOOL CBaseException::GetLogicalAddress(
 	if ( !VirtualQuery( addr, &mbi, sizeof(mbi) ) )
 		return FALSE;
 
-	DWORD_PTR hMod = (DWORD_PTR)mbi.AllocationBase;
+	auto hMod = (DWORD_PTR)mbi.AllocationBase;
 
 	if ( !GetModuleFileName( (HMODULE)hMod, szModule, len ) )
 		return FALSE;
@@ -304,8 +304,8 @@ BOOL CBaseException::GetLogicalAddress(
 	if (!hMod)
 		return FALSE;
 
-	PIMAGE_DOS_HEADER pDosHdr = (PIMAGE_DOS_HEADER)hMod;
-	PIMAGE_NT_HEADERS pNtHdr = (PIMAGE_NT_HEADERS)(hMod + pDosHdr->e_lfanew);
+	auto pDosHdr = (PIMAGE_DOS_HEADER)hMod;
+	auto pNtHdr = (PIMAGE_NT_HEADERS)(hMod + pDosHdr->e_lfanew);
 	PIMAGE_SECTION_HEADER pSection = IMAGE_FIRST_SECTION( pNtHdr );
 
 	DWORD_PTR rva = (DWORD_PTR)addr - hMod;
@@ -359,8 +359,7 @@ void CBaseException::ShowRegistorInformation(PCONTEXT pCtx)
 
 void CBaseException::STF(unsigned int ui,  PEXCEPTION_POINTERS pEp)
 {
-	CBaseException base(GetCurrentProcess(), GetCurrentProcessId(), NULL, pEp);
-	throw base;
+	throw CBaseException(GetCurrentProcess(), GetCurrentProcessId(), nullptr, pEp);
 }
 
 void CBaseException::ShowExceptionInformation()
@@ -385,4 +384,14 @@ void CBaseException::ShowExceptionInformation()
 	ShowRegistorInformation(m_pEp->ContextRecord);
 
 	ShowCallstack(GetCurrentThread(), m_pEp->ContextRecord);
+}
+
+[[maybe_unused]] void CBaseException::ShowCallstack() {
+    this->ShowCallstack(GetCurrentThread());
+}
+void CBaseException::ShowCallstack(HANDLE hThread) {
+    this->ShowCallstack(hThread, nullptr);
+}
+[[maybe_unused]] void CBaseException::ShowCallstack(const CONTEXT* context) {
+    this->ShowCallstack(GetCurrentThread(), context);
 }

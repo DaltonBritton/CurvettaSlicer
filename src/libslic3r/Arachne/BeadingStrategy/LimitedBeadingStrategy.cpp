@@ -4,7 +4,6 @@
 #include <boost/log/trivial.hpp>
 #include <cassert>
 #include <utility>
-#include <cstddef>
 
 #include "LimitedBeadingStrategy.hpp"
 #include "libslic3r/Point.hpp"
