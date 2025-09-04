@@ -72,7 +72,7 @@ struct CSGPart {
     CSGStackOp stack_operation;
     std::string name;
 
-    CSGPart(AnyPtr<const indexed_triangle_set> ptr = {},
+    explicit CSGPart(AnyPtr<const indexed_triangle_set> ptr = {},
             CSGType                            op  = CSGType::Union,
             const Transform3f                 &tr  = Transform3f::Identity())
         : its_ptr{std::move(ptr)}
