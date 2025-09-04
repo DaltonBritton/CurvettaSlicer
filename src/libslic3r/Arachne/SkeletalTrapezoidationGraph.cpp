@@ -5,20 +5,20 @@
 
 #include <ankerl/unordered_dense.h>
 #include <boost/log/trivial.hpp>
-#include <algorithm>
 #include <iostream>
 #include <cassert>
 #include <cinttypes>
+#include <utility>
 
-#include "../Line.hpp"
 #include "libslic3r/Arachne/SkeletalTrapezoidationEdge.hpp"
 #include "libslic3r/Arachne/SkeletalTrapezoidationJoint.hpp"
 #include "libslic3r/Point.hpp"
+#include "libslic3r/Line.hpp"
 
 namespace Slic3r::Arachne
 {
 
-STHalfEdge::STHalfEdge(SkeletalTrapezoidationEdge data) : HalfEdge(data) {}
+STHalfEdge::STHalfEdge(SkeletalTrapezoidationEdge data) : HalfEdge(std::move(data)) {}
 
 bool STHalfEdge::canGoUp(bool strict) const
 {
@@ -83,7 +83,7 @@ std::optional<coord_t> STHalfEdge::distToGoUp() const
     }
     if (to->data.distance_to_boundary < from->data.distance_to_boundary)
     {
-        return std::optional<coord_t>();
+        return {};
     }
 
     // Edge is between equidistqant verts; recurse!
@@ -102,7 +102,7 @@ std::optional<coord_t> STHalfEdge::distToGoUp() const
                 ret = dist_to_up;
             }
         }
-        assert(outgoing->twin); if (!outgoing->twin) return std::optional<coord_t>();
+        assert(outgoing->twin); if (!outgoing->twin) return {};
         assert(outgoing->twin->next); if (!outgoing->twin->next) return 0; // This point is on the boundary?! Should never occur
     }
     if (ret)
@@ -114,7 +114,7 @@ std::optional<coord_t> STHalfEdge::distToGoUp() const
 
 STHalfEdge* STHalfEdge::getNextUnconnected()
 {
-    edge_t* result = static_cast<STHalfEdge*>(this);
+    auto* result = static_cast<STHalfEdge*>(this);
     while (result->next)
     {
         result = result->next;
@@ -126,7 +126,7 @@ STHalfEdge* STHalfEdge::getNextUnconnected()
     return result->twin;
 }
 
-STHalfEdgeNode::STHalfEdgeNode(SkeletalTrapezoidationJoint data, Point p) : HalfEdgeNode(data, p) {}
+STHalfEdgeNode::STHalfEdgeNode(SkeletalTrapezoidationJoint data, const Point& p) : HalfEdgeNode(std::move(data), p) {}
 
 bool STHalfEdgeNode::isMultiIntersection()
 {
@@ -429,7 +429,7 @@ std::pair<SkeletalTrapezoidationGraph::edge_t*, SkeletalTrapezoidationGraph::edg
     return std::make_pair(first, second);
 }
 
-SkeletalTrapezoidationGraph::edge_t* SkeletalTrapezoidationGraph::insertNode(edge_t* edge, Point mid, coord_t mide_node_bead_count)
+SkeletalTrapezoidationGraph::edge_t* SkeletalTrapezoidationGraph::insertNode(edge_t* edge, const Point& mid, coord_t mide_node_bead_count)
 {
     edge_t* last_edge_replacing_input = edge;
 
@@ -456,7 +456,7 @@ SkeletalTrapezoidationGraph::edge_t* SkeletalTrapezoidationGraph::insertNode(edg
     return last_edge_replacing_input;
 }
 
-Line SkeletalTrapezoidationGraph::getSource(const edge_t &edge) const
+Line SkeletalTrapezoidationGraph::getSource(const edge_t &edge)
 {
     const edge_t *from_edge = &edge;
     while (from_edge->prev)
@@ -466,7 +466,7 @@ Line SkeletalTrapezoidationGraph::getSource(const edge_t &edge) const
     while (to_edge->next)
         to_edge = to_edge->next;
 
-    return Line(from_edge->from->p, to_edge->to->p);
+    return {from_edge->from->p, to_edge->to->p};
 }
 
 }

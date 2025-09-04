@@ -25,7 +25,7 @@ namespace Slic3r::Arachne
 
 WallToolPathsParams make_paths_params(const int layer_id, const PrintObjectConfig &print_object_config, const PrintConfig &print_config)
 {
-    WallToolPathsParams input_params;
+    WallToolPathsParams input_params{};
     {
         const double min_nozzle_diameter = *std::min_element(print_config.nozzle_diameter.values.begin(), print_config.nozzle_diameter.values.end());
         if (const auto &min_feature_size_opt = print_object_config.min_feature_size)
@@ -313,8 +313,8 @@ void removeDegenerateVerts(Polygons &thiss)
         };
         bool isChanged = false;
         for (size_t idx = 0; idx < poly.size(); idx++) {
-            const Point &last = (result.size() == 0) ? poly.back() : result.back();
-            if (idx + 1 == poly.size() && result.size() == 0)
+            const Point &last = result.empty() ? poly.back() : result.back();
+            if (idx + 1 == poly.size() && result.empty())
                 break;
 
             const Point &next = (idx + 1 == poly.size()) ? result[0] : poly[idx + 1];
@@ -396,7 +396,7 @@ void removeSmallAreas(Polygons &thiss, const double min_area_size, const bool re
 void removeColinearEdges(Polygon &poly, const double max_deviation_angle)
 {
     // TODO: Can be made more efficient (for example, use pointer-types for process-/skip-indices, so we can swap them without copy).
-    size_t num_removed_in_iteration = 0;
+    size_t num_removed_in_iteration;
     do {
         num_removed_in_iteration = 0;
         std::vector<bool> process_indices(poly.points.size(), true);
@@ -563,9 +563,7 @@ void WallToolPaths::stitchToolPaths(std::vector<VariableWidthLines> &toolpaths, 
 {
     const coord_t stitch_distance = bead_width_x - 1; //In 0-width contours, junctions can cause up to 1-line-width gaps. Don't stitch more than 1 line width.
 
-    for (unsigned int wall_idx = 0; wall_idx < toolpaths.size(); wall_idx++) {
-        VariableWidthLines& wall_lines = toolpaths[wall_idx];
-
+    for (auto & wall_lines : toolpaths) {
         VariableWidthLines stitched_polylines;
         VariableWidthLines closed_polygons;
         PolylineStitcher<VariableWidthLines, ExtrusionLine, ExtrusionJunction>::stitch(wall_lines, stitched_polylines, closed_polygons, stitch_distance);
@@ -670,9 +668,9 @@ template<typename T> bool shorterThan(const T &shape, const coord_t check_length
     return true;
 }
 
-void WallToolPaths::removeSmallLines(std::vector<VariableWidthLines> &toolpaths)
+void WallToolPaths::removeSmallLines(std::vector<VariableWidthLines> &toolpath) const
 {
-    for (VariableWidthLines &inset : toolpaths) {
+    for (VariableWidthLines &inset : toolpath) {
         for (size_t line_idx = 0; line_idx < inset.size(); line_idx++) {
             ExtrusionLine &line      = inset[line_idx];
             coord_t        min_width = std::numeric_limits<coord_t>::max();
@@ -690,12 +688,12 @@ void WallToolPaths::removeSmallLines(std::vector<VariableWidthLines> &toolpaths)
 
 void WallToolPaths::simplifyToolPaths(std::vector<VariableWidthLines> &toolpaths)
 {
-    for (size_t toolpaths_idx = 0; toolpaths_idx < toolpaths.size(); ++toolpaths_idx)
+    for (auto & toolpath : toolpaths)
     {
         const int64_t maximum_resolution = Slic3r::Arachne::meshfix_maximum_resolution();
         const int64_t maximum_deviation = Slic3r::Arachne::meshfix_maximum_deviation();
         const int64_t maximum_extrusion_area_deviation = Slic3r::Arachne::meshfix_maximum_extrusion_area_deviation(); // unit: μm²
-        for (auto& line : toolpaths[toolpaths_idx])
+        for (auto& line : toolpath)
         {
             line.simplify(maximum_resolution * maximum_resolution, maximum_deviation * maximum_deviation, maximum_extrusion_area_deviation);
         }

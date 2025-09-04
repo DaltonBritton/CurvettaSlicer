@@ -94,7 +94,7 @@ static void export_graph_to_svg(const std::string                               
 }
 #endif
 
-SkeletalTrapezoidation::node_t &SkeletalTrapezoidation::makeNode(const VD::vertex_type &vd_node, Point p) {
+SkeletalTrapezoidation::node_t &SkeletalTrapezoidation::makeNode(const VD::vertex_type &vd_node, const Point& p) {
     auto he_node_it = vd_node_to_he_node.find(&vd_node);
     if (he_node_it == vd_node_to_he_node.end())
     {
@@ -216,7 +216,7 @@ void SkeletalTrapezoidation::transferEdge(const Point &from, const Point &to, co
     }
 }
 
-Points SkeletalTrapezoidation::discretize(const VD::edge_type& vd_edge, const std::vector<Segment>& segments)
+Points SkeletalTrapezoidation::discretize(const VD::edge_type& vd_edge, const std::vector<Segment>& segments) const
 {
     assert(Geometry::VoronoiUtils::is_in_range<coord_t>(vd_edge));
 
@@ -254,7 +254,7 @@ Points SkeletalTrapezoidation::discretize(const VD::edge_type& vd_edge, const st
         Point   x_axis_dir    = perp(Point(right_point - left_point));
         coord_t x_axis_length = x_axis_dir.cast<int64_t>().norm();
 
-        const auto projected_x = [x_axis_dir, x_axis_length, middle](Point from) //Project a point on the edge.
+        const auto projected_x = [x_axis_dir, x_axis_length, middle](const Point& from) //Project a point on the edge.
         {
             Point vec = from - middle;
             assert(( vec.cast<int64_t>().dot(x_axis_dir.cast<int64_t>())/ int64_t(x_axis_length)) <= std::numeric_limits<coord_t>::max());
@@ -455,8 +455,6 @@ void SkeletalTrapezoidation::constructFromPolygons(const Polygons& polys)
             edge.from->incident_edge = &edge;
 }
 
-using NodeSet = SkeletalTrapezoidation::NodeSet;
-
 void SkeletalTrapezoidation::separatePointyQuadEndNodes()
 {
     NodeSet visited_nodes;
@@ -580,11 +578,8 @@ void SkeletalTrapezoidation::updateIsCentral()
         {
             edge.data.setIsCentral(edge.twin->data.isCentral());
         }
-        else if(edge.data.type == SkeletalTrapezoidationEdge::EdgeType::EXTRA_VD)
-        {
-            edge.data.setIsCentral(false);
-        }
-        else if(std::max(edge.from->data.distance_to_boundary, edge.to->data.distance_to_boundary) < outer_edge_filter_length)
+        else if(edge.data.type == SkeletalTrapezoidationEdge::EdgeType::EXTRA_VD ||
+                 std::max(edge.from->data.distance_to_boundary, edge.to->data.distance_to_boundary) < outer_edge_filter_length)
         {
             edge.data.setIsCentral(false);
         }
@@ -1261,9 +1256,9 @@ static inline Point normal(const Point& p0, coord_t len)
 {
     int64_t _len = p0.cast<int64_t>().norm();
     if (_len < 1)
-        return Point(len, 0);
+        return {len, 0};
     return (p0.cast<int64_t>() * int64_t(len) / _len).cast<coord_t>();
-};
+}
 
 void SkeletalTrapezoidation::applyTransitions(ptr_vector_t<std::list<TransitionEnd>>& edge_transition_ends)
 {
@@ -1702,7 +1697,7 @@ SkeletalTrapezoidation::Beading SkeletalTrapezoidation::interpolate(const Beadin
 }
 
 
-SkeletalTrapezoidation::Beading SkeletalTrapezoidation::interpolate(const Beading& left, double ratio_left_to_whole, const Beading& right) const
+SkeletalTrapezoidation::Beading SkeletalTrapezoidation::interpolate(const Beading& left, double ratio_left_to_whole, const Beading& right)
 {
     assert(ratio_left_to_whole >= 0.0 && ratio_left_to_whole <= 1.0);
     float ratio_right_to_whole = 1.0 - ratio_left_to_whole;
@@ -1928,7 +1923,7 @@ void SkeletalTrapezoidation::addToolpathSegment(const ExtrusionJunction& from, c
         generated_toolpaths[inset_idx].back().junctions.push_back(from);
         generated_toolpaths[inset_idx].back().junctions.push_back(to);
     }
-};
+}
 
 void SkeletalTrapezoidation::connectJunctions(ptr_vector_t<LineJunctions>& edge_junctions)
 {
