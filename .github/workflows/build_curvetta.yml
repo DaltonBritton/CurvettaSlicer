@@ -372,7 +372,7 @@ jobs:
           release_id: 168368737
           asset_path: ./build/CurvettaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage
           asset_name: CurvettaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_nightly.AppImage
-            asset_content_type: application/octet-stream
+          asset_content_type: application/octet-stream
           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
       - name: Deploy Ubuntu release
         if: ${{ ! env.ACT && github.ref == 'refs/heads/main' && inputs.os == 'ubuntu-24.04' }}
