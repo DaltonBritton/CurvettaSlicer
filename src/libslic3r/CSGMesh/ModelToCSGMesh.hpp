@@ -7,7 +7,7 @@
 #include "libslic3r/SLA/Hollowing.hpp"
 #include "libslic3r/MeshSplitImpl.hpp"
 
-namespace Slic3r { namespace csg {
+namespace Slic3r::csg {
 
 // Flags to select which parts to export from Model into a csg part collection.
 // These flags can be chained with the | operator
@@ -87,6 +87,6 @@ bool model_to_csgmesh(const ModelObject &mo,
     return has_splitable_volume;
 }
 
-}} // namespace Slic3r::csg
+} // namespace Slic3r::csg
 
 #endif // MODELTOCSGMESH_HPP
