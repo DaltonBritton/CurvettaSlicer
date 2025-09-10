@@ -4,7 +4,7 @@
 #include <libslic3r/AnyPtr.hpp>
 #include <admesh/stl.h>
 
-namespace Slic3r { namespace csg {
+namespace Slic3r::csg {
 
 // A CSGPartT should be an object that can provide at least a mesh + trafo and an
 // associated csg operation. A collection of CSGPartT objects can then
@@ -72,7 +72,7 @@ struct CSGPart {
     CSGStackOp stack_operation;
     std::string name;
 
-    CSGPart(AnyPtr<const indexed_triangle_set> ptr = {},
+    explicit CSGPart(AnyPtr<const indexed_triangle_set> ptr = {},
             CSGType                            op  = CSGType::Union,
             const Transform3f                 &tr  = Transform3f::Identity())
         : its_ptr{std::move(ptr)}
@@ -116,6 +116,6 @@ indexed_triangle_set csgmesh_merge_positive_parts(const Cont &csgmesh)
     return m;
 }
 
-}} // namespace Slic3r::csg
+} // namespace Slic3r::csg
 
 #endif // CSGMESH_HPP

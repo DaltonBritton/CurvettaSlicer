@@ -3,7 +3,7 @@
 
 #include "CSGMesh.hpp"
 
-namespace Slic3r { namespace csg {
+namespace Slic3r::csg {
 
 // Copy a csg range but for the meshes, only copy the pointers. If the copy
 // is made from a CSGPart compatible object, and the pointer is a shared one,
@@ -75,6 +75,6 @@ bool is_same(const Range<ItA> &A, const Range<ItB> &B)
     return ret;
 }
 
-}} // namespace Slic3r::csg
+} // namespace Slic3r::csg
 
-#endif // CSGCOPY_HPP
+#endif // CSGMESHCOPY_HPP

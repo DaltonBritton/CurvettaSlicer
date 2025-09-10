@@ -9,7 +9,7 @@
 #include "libslic3r/ClipperUtils.hpp"
 #include "libslic3r/Execution/ExecutionTBB.hpp"
 
-namespace Slic3r { namespace csg {
+namespace Slic3r::csg {
 
 namespace detail {
 
@@ -126,6 +126,6 @@ std::vector<ExPolygons> slice_csgmesh_ex(
     return ret;
 }
 
-}} // namespace Slic3r::csg
+} // namespace Slic3r::csg
 
 #endif // SLICECSGMESH_HPP

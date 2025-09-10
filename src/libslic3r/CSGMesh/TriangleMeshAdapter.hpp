@@ -5,7 +5,7 @@
 
 #include "libslic3r/TriangleMesh.hpp"
 
-namespace Slic3r { namespace csg {
+namespace Slic3r::csg {
 
 // Provide default overloads for indexed_triangle_set to be usable as a plain
 // CSGPart with an implicit union operation
@@ -90,6 +90,6 @@ inline Transform3f get_transform(const TriangleMesh * const part)
     return Transform3f::Identity();
 }
 
-}} // namespace Slic3r::csg
+} // namespace Slic3r::csg
 
 #endif // TRIANGLEMESHADAPTER_HPP
