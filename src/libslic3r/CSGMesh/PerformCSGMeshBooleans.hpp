@@ -10,7 +10,7 @@
 //#include "libslic3r/Execution/ExecutionSeq.hpp"
 #include "libslic3r/MeshBoolean.hpp"
 
-namespace Slic3r { namespace csg {
+namespace Slic3r::csg {
     enum class BooleanFailReason { OK, MeshEmpty, NotBoundAVolume, SelfIntersect, NoIntersection};
 
 // This method can be overriden when a specific CSGPart type supports caching
@@ -376,7 +376,7 @@ MeshBoolean::mcut::McutMeshPtr  perform_csgmesh_booleans_mcut(const Range<It>& c
     return ret;
 }
 
-} // namespace csg
-} // namespace Slic3r
+} // namespace Slic3r::csg
+
 
 #endif // PERFORMCSGMESHBOOLEANS_HPP
