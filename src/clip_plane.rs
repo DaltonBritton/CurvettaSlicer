@@ -1,13 +1,9 @@
 use three_d::{Vector3, Vector4};
 
-/// Maximum number of clipping planes supported by [`crate::ClippedColorMaterial`].
-/// Must match the `MAX_CLIP_PLANES` define baked into the fragment shader.
-pub const MAX_CLIP_PLANES: usize = 8;
-
 /// A single clipping plane that can be dragged along its normal and rotated.
-/// Triangles on the positive side of the plane (in the direction the normal
-/// points) are hidden by the shader.
-#[derive(Clone, Copy, Debug)]
+/// Any tetrahedron with at least one corner on the positive side of the
+/// plane (in the direction the normal points) is hidden entirely.
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct ClipPlane {
     pub enabled: bool,
     /// Rotation of the plane's normal around the Y axis, in degrees.
@@ -44,4 +40,33 @@ impl ClipPlane {
         let n = self.normal();
         Vector4::new(n.x, n.y, n.z, self.offset)
     }
+}
+
+/// Returns the vertex indices (as produced by [`crate::tet_to_mesh`]) of every
+/// triangle belonging to a tetrahedron that is fully visible, i.e. none of
+/// its 4 corners lies on the clipped side of any enabled plane. A tet with
+/// even one clipped corner is left out entirely, hiding all 4 of its faces.
+pub fn visible_triangle_indices(
+    tet_corners: &[[Vector3<f32>; 4]],
+    planes: &[ClipPlane],
+) -> Vec<u32> {
+    let active_planes: Vec<Vector4<f32>> = planes
+        .iter()
+        .filter(|p| p.enabled)
+        .map(ClipPlane::as_vec4)
+        .collect();
+
+    let mut indices = Vec::with_capacity(tet_corners.len() * 12);
+    for (tet_index, corners) in tet_corners.iter().enumerate() {
+        let hidden = active_planes.iter().any(|plane| {
+            corners
+                .iter()
+                .any(|c| c.x * plane.x + c.y * plane.y + c.z * plane.z > plane.w)
+        });
+        if !hidden {
+            let base = (tet_index * 12) as u32;
+            indices.extend(base..base + 12);
+        }
+    }
+    indices
 }

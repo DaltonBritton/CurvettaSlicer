@@ -24,8 +24,11 @@ pub fn main() {
     let mut control = OrbitControl::new(camera.target(), 1.0, 20.0);
 
     let tet_mesh = gen_tet().unwrap();
-    let cpu_mesh = tet_to_mesh(tet_mesh);
-    let mut model = Gm::new(Mesh::new(&context, &cpu_mesh), ClippedColorMaterial::default());
+    let (cpu_mesh, tet_corners) = tet_to_mesh(tet_mesh);
+    let mut model = Gm::new(Mesh::new(&context, &cpu_mesh), ColorMaterial::default());
+
+    let mut planes: Vec<ClipPlane> = Vec::new();
+    let mut applied_planes: Option<Vec<ClipPlane>> = None;
 
     let mut gui = GUI::new(&context);
 
@@ -44,7 +47,7 @@ pub fn main() {
                     ui.separator();
 
                     let mut remove_index: Option<usize> = None;
-                    for (i, plane) in model.material.planes.iter_mut().enumerate() {
+                    for (i, plane) in planes.iter_mut().enumerate() {
                         ui.push_id(i, |ui| {
                             ui.group(|ui| {
                                 ui.horizontal(|ui| {
@@ -78,12 +81,12 @@ pub fn main() {
                         });
                     }
                     if let Some(i) = remove_index {
-                        model.material.planes.remove(i);
+                        planes.remove(i);
                     }
 
                     ui.separator();
                     if ui.button("Add plane").clicked() {
-                        model.material.planes.push(ClipPlane::default());
+                        planes.push(ClipPlane::default());
                     }
                 });
                 panel_width = gui_context.globally_used_rect().width();
@@ -124,6 +127,13 @@ pub fn main() {
                     *handled = true;
                 }
             }
+        }
+
+        if applied_planes.as_deref() != Some(planes.as_slice()) {
+            let indices = visible_triangle_indices(&tet_corners, &planes);
+            *model.geometry.indices_mut() =
+                TriangleBuffer::IndexedU32(ElementBuffer::new_with_data(&context, &indices));
+            applied_planes = Some(planes.clone());
         }
 
         frame_input
