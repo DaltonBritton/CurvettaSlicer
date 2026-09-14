@@ -1,7 +1,7 @@
 use three_d::context::NONE;
 use tritet::{InputDataTetMesh, StrError, Tetgen};
 
-const SAVE_FIGURE: bool = true;
+const SAVE_FIGURE: bool = false;
 
 pub fn gen_tet() -> Result<Tetgen, StrError> {
     // allocate data for 4 points
