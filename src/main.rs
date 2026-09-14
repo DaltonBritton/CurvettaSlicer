@@ -25,10 +25,82 @@ pub fn main() {
 
     let tet_mesh = gen_tet().unwrap();
     let cpu_mesh = tet_to_mesh(tet_mesh);
-    let model = Gm::new(Mesh::new(&context, &cpu_mesh), ColorMaterial::default());
+    let mut model = Gm::new(Mesh::new(&context, &cpu_mesh), ClippedColorMaterial::default());
+
+    let mut gui = GUI::new(&context);
 
     window.render_loop(move |mut frame_input| {
-        camera.set_viewport(frame_input.viewport);
+        let mut panel_width = 0.0;
+        gui.update(
+            &mut frame_input.events,
+            frame_input.accumulated_time,
+            frame_input.viewport,
+            frame_input.device_pixel_ratio,
+            |gui_context| {
+                egui::SidePanel::left("clip_planes_panel").show(gui_context, |ui| {
+                    ui.heading("Clipping Planes");
+                    ui.label("Drag the offset to slide a plane along its normal.");
+                    ui.label("Drag the angles to rotate it.");
+                    ui.separator();
+
+                    let mut remove_index: Option<usize> = None;
+                    for (i, plane) in model.material.planes.iter_mut().enumerate() {
+                        ui.push_id(i, |ui| {
+                            ui.group(|ui| {
+                                ui.horizontal(|ui| {
+                                    ui.checkbox(&mut plane.enabled, format!("Plane {}", i + 1));
+                                    if ui.button("Remove").clicked() {
+                                        remove_index = Some(i);
+                                    }
+                                });
+                                ui.horizontal(|ui| {
+                                    ui.label("Offset");
+                                    ui.add(egui::DragValue::new(&mut plane.offset).speed(0.01));
+                                });
+                                ui.horizontal(|ui| {
+                                    ui.label("Azimuth");
+                                    ui.add(
+                                        egui::DragValue::new(&mut plane.azimuth_deg)
+                                            .speed(1.0)
+                                            .suffix("\u{b0}"),
+                                    );
+                                });
+                                ui.horizontal(|ui| {
+                                    ui.label("Elevation");
+                                    ui.add(
+                                        egui::DragValue::new(&mut plane.elevation_deg)
+                                            .speed(1.0)
+                                            .range(-90.0..=90.0)
+                                            .suffix("\u{b0}"),
+                                    );
+                                });
+                            });
+                        });
+                    }
+                    if let Some(i) = remove_index {
+                        model.material.planes.remove(i);
+                    }
+
+                    ui.separator();
+                    if ui.button("Add plane").clicked() {
+                        model.material.planes.push(ClipPlane::default());
+                    }
+                });
+                panel_width = gui_context.globally_used_rect().width();
+            },
+        );
+
+        let panel_width_physical = (panel_width * frame_input.device_pixel_ratio) as u32;
+        let viewport = Viewport {
+            x: panel_width_physical as i32,
+            y: 0,
+            width: frame_input
+                .viewport
+                .width
+                .saturating_sub(panel_width_physical),
+            height: frame_input.viewport.height,
+        };
+        camera.set_viewport(viewport);
         control.handle_events(&mut camera, &mut frame_input.events);
 
         for event in frame_input.events.iter_mut() {
@@ -57,7 +129,9 @@ pub fn main() {
         frame_input
             .screen()
             .clear(ClearState::color_and_depth(0.85, 0.85, 0.85, 1.0, 1.0))
-            .render(&camera, &model, &[]);
+            .render(&camera, &model, &[])
+            .write(|| gui.render())
+            .unwrap();
 
         FrameOutput::default()
     });
