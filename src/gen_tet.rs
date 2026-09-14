@@ -7,10 +7,10 @@ pub fn gen_tet() -> Result<Tetgen, StrError> {
     // allocate data for 4 points
     let input_data = InputDataTetMesh {
         points: vec![
-            (0, 0.0, 1.0, 0.0), // marker, x, y, z
+            (0, 0.0, 5.0, 0.0), // marker, x, y, z
             (0, 0.0, 0.0, 0.0),
-            (0, 1.0, 1.0, 0.0),
-            (0, 0.0, 1.0, 1.0),
+            (0, 5.0, 5.0, 0.0),
+            (0, 0.0, 5.0, 5.0),
         ],
         facets: vec![
             (0, vec![0, 2, 1]), // marker, point indices
@@ -26,7 +26,7 @@ pub fn gen_tet() -> Result<Tetgen, StrError> {
     let tetgen = Tetgen::from_input_data(&input_data)?;
 
     // generate mesh
-    let global_max_volume = Some(0.05);
+    let global_max_volume = Some(0.5);
     let min_angle = Some(45.);
     tetgen.generate_mesh(false, false, global_max_volume, min_angle)?;
 

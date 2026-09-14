@@ -1,4 +1,4 @@
-use three_d::{Vector3, Vector4};
+use three_d::{InnerSpace, Mat3, Mat4, Vector3, Vector4};
 
 /// A single clipping plane that can be dragged along its normal and rotated.
 /// Any tetrahedron with at least one corner on the positive side of the
@@ -39,6 +39,25 @@ impl ClipPlane {
     pub fn as_vec4(&self) -> Vector4<f32> {
         let n = self.normal();
         Vector4::new(n.x, n.y, n.z, self.offset)
+    }
+
+    /// A transform that places a unit square (as produced by
+    /// `CpuMesh::square`, a 2x2 quad centered at the origin in the XY plane
+    /// facing +Z) so that it lies on this plane, scaled to be `size` units
+    /// across, for previewing the plane while it's being edited.
+    pub fn transform(&self, size: f32) -> Mat4 {
+        let n = self.normal();
+        // Any vector not parallel to `n` works as a seed for building an
+        // orthonormal basis around it.
+        let seed = if n.y.abs() < 0.99 {
+            Vector3::new(0.0, 1.0, 0.0)
+        } else {
+            Vector3::new(1.0, 0.0, 0.0)
+        };
+        let right = seed.cross(n).normalize();
+        let up = n.cross(right);
+        let rotation = Mat3::from_cols(right, up, n);
+        Mat4::from_translation(n * self.offset) * Mat4::from(rotation) * Mat4::from_scale(size)
     }
 }
 
