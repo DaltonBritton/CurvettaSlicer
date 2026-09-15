@@ -66,12 +66,15 @@ fn to_f32(p: Vector3<f64>) -> Vector3<f32> {
     Vector3::new(p.x as f32, p.y as f32, p.z as f32)
 }
 
+// Tetgen/STL data is Z-up; swap Z and Y (negating the new Z) here so the
+// world matches the camera's Y-up convention everywhere downstream,
+// including the tet corners used for clip-plane visibility.
 fn read_point(tetgen: &Tetgen, index: usize) -> Vector3<f64> {
     let x = tetgen.out_point(index, 0);
     let y = tetgen.out_point(index, 1);
     let z = tetgen.out_point(index, 2);
 
-    Vector3 { x, y, z }
+    Vector3 { x, y: z, z: -y }
 }
 
 fn random_color(rng: &mut ThreadRng) -> Srgba {

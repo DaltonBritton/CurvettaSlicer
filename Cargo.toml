@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+binrw = "0.15.2"
 rand = "0.10.2"
 three-d = {version = "0.19", features=["egui-gui"]}
 tritet = {version="3.2.0", features=["with_tetgen"]}

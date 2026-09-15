@@ -1,8 +1,16 @@
+use binrw::BinRead;
+use std::fs::File;
 use three_d::*;
 
 use tet_visulizer::*;
 
 pub fn main() {
+    let mut file = File::open("").expect("Unable To Open File");
+    let stl_file = StlFile::read(&mut file).expect("Unable to Parse Stl File");
+
+    let tet_mesh = gen_tet(stl_file).expect("Error Occured while generating tets");
+    let (cpu_mesh, tet_corners) = tet_to_mesh(tet_mesh);
+
     let window = Window::new(WindowSettings {
         title: "Tet Visualizer".to_string(),
         max_size: Some((1280, 720)),
@@ -19,12 +27,10 @@ pub fn main() {
         vec3(0.0, 1.0, 0.0),
         degrees(45.0),
         0.1,
-        100.0,
+        100000.0,
     );
-    let mut control = OrbitControl::new(camera.target(), 1.0, 20.0);
+    let mut control = OrbitControl::new(camera.target(), 1.0, 1000.0);
 
-    let tet_mesh = gen_tet().unwrap();
-    let (cpu_mesh, tet_corners) = tet_to_mesh(tet_mesh);
     let mut model = Gm::new(Mesh::new(&context, &cpu_mesh), ColorMaterial::default());
 
     // Big enough to comfortably span the model from any plane orientation.
@@ -48,7 +54,7 @@ pub fn main() {
             frame_input.viewport,
             frame_input.device_pixel_ratio,
             |gui_context| {
-                egui::SidePanel::left("clip_planes_panel").show(gui_context, |ui| {
+                egui::Panel::left("clip_planes_panel").show(gui_context, |ui| {
                     ui.heading("Clipping Planes");
                     ui.label("Drag the offset to slide a plane along its normal.");
                     ui.label("Drag the angles to rotate it.");
