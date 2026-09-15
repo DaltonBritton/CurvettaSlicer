@@ -1,8 +1,4 @@
-use std::fs::File;
-
-use binrw::BinRead;
-use three_d::context::NONE;
-use tritet::{InputDataTetMesh, StrError, Tetgen};
+use tritet::{StrError, Tetgen};
 
 use crate::{StlFile, stl_to_tet_input};
 

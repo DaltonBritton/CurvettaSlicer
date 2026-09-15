@@ -54,7 +54,7 @@ pub fn main() {
             frame_input.viewport,
             frame_input.device_pixel_ratio,
             |gui_context| {
-                egui::Panel::left("clip_planes_panel").show(gui_context, |ui| {
+                egui::Panel::left("clip_planes_panel").show_inside(gui_context, |ui| {
                     ui.heading("Clipping Planes");
                     ui.label("Drag the offset to slide a plane along its normal.");
                     ui.label("Drag the angles to rotate it.");

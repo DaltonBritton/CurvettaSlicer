@@ -6,7 +6,7 @@ const TET_FACES: [[usize; 3]; 4] = [[0, 1, 2], [0, 3, 1], [0, 2, 3], [1, 3, 2]];
 
 /// Build a flat-shaded, per-face-colored `CpuMesh` for a single tetrahedron
 /// defined by its four vertices.
-fn tetrahedron_mesh(v: [Vec3; 4]) -> CpuMesh {
+fn _tetrahedron_mesh(v: [Vec3; 4]) -> CpuMesh {
     let face_colors = [
         Srgba::new(220, 60, 60, 255),
         Srgba::new(60, 180, 90, 255),
