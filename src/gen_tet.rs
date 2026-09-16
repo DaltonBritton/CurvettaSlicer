@@ -30,7 +30,7 @@ pub fn gen_tet(stl_file: StlFile) -> Result<Tetgen, StrError> {
 
     // generate mesh
     let global_max_volume = Some(10.);
-    let min_angle = Some(50.);
+    let min_angle = Some(45.);
     tetgen.generate_mesh(true, false, global_max_volume, min_angle)?;
 
     // draw edges of tetrahedra

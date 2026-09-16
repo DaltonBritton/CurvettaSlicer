@@ -9,4 +9,5 @@ pub use gen_tet::*;
 pub use stl_serialization::*;
 pub use stl_to_tet_input::*;
 pub use tet_to_mesh::*;
+pub mod data;
 pub mod sphere_tet;
