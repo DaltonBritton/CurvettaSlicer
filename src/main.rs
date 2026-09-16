@@ -22,7 +22,7 @@ pub fn main() {
         duration
     );
 
-    let (cpu_mesh, tet_corners) = tet_to_mesh(tet_mesh);
+    let cpu_mesh = tet_graph._render_boundary_faces(); // tet_to_mesh(tet_mesh);
 
     let window = Window::new(WindowSettings {
         title: "Tet Visualizer".to_string(),
@@ -47,11 +47,7 @@ pub fn main() {
     let mut model = Gm::new(Mesh::new(&context, &cpu_mesh), ColorMaterial::default());
 
     // Big enough to comfortably span the model from any plane orientation.
-    let plane_size = tet_corners
-        .iter()
-        .flatten()
-        .fold(1.0_f32, |max_dist, p| max_dist.max(p.magnitude()))
-        * 3.0;
+    let plane_size = 64.;
 
     let mut planes: Vec<ClipPlane> = Vec::new();
     let mut applied_planes: Option<Vec<ClipPlane>> = None;
@@ -154,36 +150,6 @@ pub fn main() {
                     *handled = true;
                 }
             }
-        }
-
-        if applied_planes.as_deref() != Some(planes.as_slice()) {
-            let indices = visible_triangle_indices(&tet_corners, &planes);
-            *model.geometry.indices_mut() =
-                TriangleBuffer::IndexedU32(ElementBuffer::new_with_data(&context, &indices));
-
-            plane_models = planes
-                .iter()
-                .map(|plane| {
-                    let mut mesh = Mesh::new(&context, &CpuMesh::square());
-                    mesh.set_transformation(plane.transform(plane_size));
-                    Gm::new(
-                        mesh,
-                        ColorMaterial {
-                            color: Srgba::new(150, 150, 150, 60),
-                            render_states: RenderStates {
-                                cull: Cull::None,
-                                write_mask: WriteMask::COLOR,
-                                blend: Blend::TRANSPARENCY,
-                                ..Default::default()
-                            },
-                            is_transparent: true,
-                            ..Default::default()
-                        },
-                    )
-                })
-                .collect();
-
-            applied_planes = Some(planes.clone());
         }
 
         frame_input

@@ -6,7 +6,7 @@ use std::{
 
 use three_d::{MetricSpace, Vector3};
 
-use crate::data::tet::Tet;
+use crate::data::tet::{self, Tet};
 
 #[derive(Debug, Clone, Copy)]
 pub struct NeighborEdge {
@@ -65,9 +65,9 @@ impl Display for TetNode {
 }
 
 pub struct TetGraph {
-    _points: Vec<Vector3<f64>>,
+    points: Vec<Vector3<f64>>,
     nodes: Vec<TetNode>,
-    _boundary_faces: HashMap<[usize; 3], usize>,
+    boundary_faces: HashMap<[usize; 3], usize>,
 }
 
 impl TetGraph {
@@ -79,9 +79,9 @@ impl TetGraph {
         println!("Graph Complete");
 
         Self {
-            _points: points,
+            points: points,
             nodes,
-            _boundary_faces: boundary_faces,
+            boundary_faces: boundary_faces,
         }
     }
 
@@ -182,6 +182,18 @@ impl TetGraph {
 
     pub fn len(&self) -> usize {
         self.nodes.len()
+    }
+
+    pub fn get_points(&self) -> &[Vector3<f64>] {
+        &self.points
+    }
+
+    pub fn get_nodes(&self) -> &[TetNode] {
+        &self.nodes
+    }
+
+    pub fn get_boundary_faces(&self) -> &HashMap<[usize; 3], usize> {
+        &self.boundary_faces
     }
 }
 
