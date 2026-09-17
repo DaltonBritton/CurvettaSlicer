@@ -6,5 +6,7 @@ edition = "2024"
 [dependencies]
 binrw = "0.15.2"
 rand = "0.10.2"
+strum = "0.28.0"
+strum_macros = "0.28.0"
 three-d = {version = "0.19", features=["egui-gui"]}
 tritet = {version="3.2.0", features=["with_tetgen"]}

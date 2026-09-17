@@ -22,7 +22,7 @@ pub fn main() {
         duration
     );
 
-    let cpu_mesh = tet_graph._render_boundary_faces(); // tet_to_mesh(tet_mesh);
+    let cpu_mesh = tet_graph._render_tets_as_nodes();
 
     let window = Window::new(WindowSettings {
         title: "Tet Visualizer".to_string(),
@@ -44,14 +44,17 @@ pub fn main() {
     );
     let mut control = OrbitControl::new(camera.target(), 1.0, 1000.0);
 
-    let mut model = Gm::new(Mesh::new(&context, &cpu_mesh), ColorMaterial::default());
+    let model = Gm::new(
+        InstancedMesh::new(&context, &cpu_mesh, &CpuMesh::sphere(32)),
+        ColorMaterial::default(),
+    ); //Gm::new(Mesh::new(&context, &cpu_mesh), ColorMaterial::default());
 
     // Big enough to comfortably span the model from any plane orientation.
-    let plane_size = 64.;
+    let _plane_size = 64.;
 
     let mut planes: Vec<ClipPlane> = Vec::new();
-    let mut applied_planes: Option<Vec<ClipPlane>> = None;
-    let mut plane_models: Vec<Gm<Mesh, ColorMaterial>> = Vec::new();
+    let mut _applied_planes: Option<Vec<ClipPlane>> = None;
+    let mut _plane_models: Vec<Gm<Mesh, ColorMaterial>> = Vec::new();
 
     let mut gui = GUI::new(&context);
 
@@ -157,7 +160,7 @@ pub fn main() {
             .clear(ClearState::color_and_depth(0.85, 0.85, 0.85, 1.0, 1.0))
             .render(
                 &camera,
-                std::iter::once(&model).chain(plane_models.iter()),
+                std::iter::once(&model), //.chain(plane_models.iter()),
                 &[],
             )
             .write(|| gui.render())
