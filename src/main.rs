@@ -45,7 +45,7 @@ pub fn main() {
     let mut control = OrbitControl::new(camera.target(), 1.0, 1000.0);
 
     let model = Gm::new(
-        InstancedMesh::new(&context, &cpu_mesh, &CpuMesh::sphere(32)),
+        InstancedMesh::new(&context, &cpu_mesh, &CpuMesh::sphere(12)),
         ColorMaterial::default(),
     ); //Gm::new(Mesh::new(&context, &cpu_mesh), ColorMaterial::default());
 

@@ -1,4 +1,4 @@
-use three_d::{CpuMesh, InstancedMesh, Instances, Mat4, Srgba, Vector3};
+use three_d::{CpuMesh, Instances, Mat4, Srgba, Vector3};
 
 use crate::{
     data::TetGraph,
