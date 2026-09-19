@@ -1,9 +1,7 @@
-use std::collections::HashSet;
-
 use three_d::{CpuMesh, InnerSpace, Instances, Mat4, MetricSpace, Quaternion, Srgba, Vector3};
 
 use crate::{
-    data::{TetGraph, TetIndex},
+    data::TetGraph,
     rendering::utils::{random_color, remap_point_yz_axis},
 };
 

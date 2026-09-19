@@ -13,7 +13,7 @@ pub use tet::*;
 
 #[derive(Debug, Clone, Copy)]
 pub struct NeighborEdge {
-    index: TetIndex,
+    _index: TetIndex,
     _dist: f64,
 }
 
