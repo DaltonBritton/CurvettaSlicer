@@ -7,14 +7,20 @@ use std::{
 use strum::IntoEnumIterator;
 use three_d::{MetricSpace, Vector3};
 
-use crate::data::tet_graph::tet::{Tet, TetFace, TetIndex, TetVertexId, TetVertexIndex};
-
 mod tet;
+
+pub use tet::*;
 
 #[derive(Debug, Clone, Copy)]
 pub struct NeighborEdge {
-    _index: TetIndex,
+    index: TetIndex,
     _dist: f64,
+}
+
+#[derive(Debug, Clone)]
+pub struct TwoWayNeighborEdge {
+    pub neighbor_a: TetIndex,
+    pub neighbor_b: TetIndex,
 }
 
 #[derive(Debug)]
@@ -61,7 +67,7 @@ impl TetNode {
         self.center
     }
 
-    fn _get_neighbor(&self, face_id: TetVertexId) -> Option<NeighborEdge> {
+    pub fn get_neighbor(&self, face_id: TetVertexId) -> Option<NeighborEdge> {
         match face_id {
             TetVertexId::A => self.neighbors[0],
             TetVertexId::B => self.neighbors[1],
@@ -96,6 +102,7 @@ pub struct TetGraph {
     points: Vec<Vector3<f64>>,
     nodes: Vec<TetNode>,
     boundary_faces: HashMap<TetFace, TetIndex>,
+    neighbor_edges: Vec<TwoWayNeighborEdge>,
 }
 
 impl TetGraph {
@@ -103,13 +110,14 @@ impl TetGraph {
         println!("Computing Graph");
         let points = Self::read_vertices(&tetgen);
         let mut nodes = Self::read_tets(&tetgen, &points);
-        let boundary_faces = Self::assosiate_neighbors(&mut nodes);
+        let (boundary_faces, neighbor_edges) = Self::assosiate_neighbors(&mut nodes);
         println!("Graph Complete");
 
         Self {
             points: points,
             nodes,
             boundary_faces: boundary_faces,
+            neighbor_edges: neighbor_edges,
         }
     }
 
@@ -150,8 +158,11 @@ impl TetGraph {
         nodes
     }
 
-    fn assosiate_neighbors(nodes: &mut Vec<TetNode>) -> HashMap<TetFace, TetIndex> {
-        let mut boundary_faces: HashMap<TetFace, TetIndex> = HashMap::with_capacity(nodes.len());
+    fn assosiate_neighbors(
+        nodes: &mut Vec<TetNode>,
+    ) -> (HashMap<TetFace, TetIndex>, Vec<TwoWayNeighborEdge>) {
+        let mut boundary_faces: HashMap<TetFace, TetIndex> = HashMap::new();
+        let mut edges: Vec<TwoWayNeighborEdge> = Vec::with_capacity(nodes.len() * 3);
         let mut num_neighbors: u64 = 0;
 
         for node_i in 0..nodes.len() {
@@ -177,7 +188,7 @@ impl TetGraph {
                         node.set_neighbor(
                             face_id,
                             Some(NeighborEdge {
-                                _index: neighbor_i,
+                                index: neighbor_i,
                                 _dist: dist,
                             }),
                         );
@@ -190,10 +201,15 @@ impl TetGraph {
                         neighbor.set_neighbor(
                             neighbor_face_id,
                             Some(NeighborEdge {
-                                _index: node_i,
+                                index: node_i,
                                 _dist: dist,
                             }),
                         );
+
+                        edges.push(TwoWayNeighborEdge {
+                            neighbor_a: node_i,
+                            neighbor_b: neighbor_i,
+                        });
 
                         neighbor_node_entry.remove();
                         num_neighbors += 1;
@@ -208,7 +224,7 @@ impl TetGraph {
         println!("Found {} Neighbors!", num_neighbors);
         println!("{} Remaining Boundary Faces!", boundary_faces.len());
 
-        boundary_faces
+        (boundary_faces, edges)
     }
 
     pub fn len(&self) -> usize {
@@ -233,6 +249,10 @@ impl TetGraph {
 
     pub fn get_boundary_faces(&self) -> &HashMap<TetFace, TetIndex> {
         &self.boundary_faces
+    }
+
+    pub fn get_neighbor_edges(&self) -> &[TwoWayNeighborEdge] {
+        &self.neighbor_edges
     }
 }
 
@@ -275,8 +295,8 @@ mod tests {
 
         let remaining_faces = TetGraph::assosiate_neighbors(&mut nodes);
 
-        assert!(nodes[0].neighbors[0].is_some_and(|neighbor| neighbor._index == TetIndex::new(1)));
-        assert!(nodes[1].neighbors[3].is_some_and(|neighbor| neighbor._index == TetIndex::new(0)));
+        assert!(nodes[0].neighbors[0].is_some_and(|neighbor| neighbor.index == TetIndex::new(1)));
+        assert!(nodes[1].neighbors[3].is_some_and(|neighbor| neighbor.index == TetIndex::new(0)));
 
         assert_eq!(remaining_faces.len(), 6);
     }

@@ -1,21 +1,23 @@
-use three_d::{CpuMesh, Instances, Mat4, Srgba, Vector3};
+use std::collections::HashSet;
+
+use three_d::{CpuMesh, InnerSpace, Instances, Mat4, MetricSpace, Quaternion, Srgba, Vector3};
 
 use crate::{
-    data::TetGraph,
+    data::{TetGraph, TetIndex},
     rendering::utils::{random_color, remap_point_yz_axis},
 };
+
+fn vec_cast(Vector3 { x, y, z }: Vector3<f64>) -> Vector3<f32> {
+    Vector3 {
+        x: x as f32,
+        y: y as f32,
+        z: z as f32,
+    }
+}
 
 impl TetGraph {
     pub fn _render_tets(&self) {}
     pub fn _render_tets_as_nodes(&self) -> Instances {
-        fn vec_cast(Vector3 { x, y, z }: Vector3<f64>) -> Vector3<f32> {
-            Vector3 {
-                x: x as f32,
-                y: y as f32,
-                z: z as f32,
-            }
-        }
-
         let nodes = self.get_nodes();
 
         let node_instance_transforms = nodes
@@ -67,5 +69,38 @@ impl TetGraph {
 
         mesh
     }
-    pub fn _render_neighbor_edges(&self) {}
+    pub fn _render_neighbor_edges(&self) -> Instances {
+        let edges = self.get_neighbor_edges();
+        let mut edge_transforms = Vec::with_capacity(edges.len());
+        let mut colors: Vec<Srgba> = Vec::with_capacity(edges.len());
+
+        //used for the color generation
+        let mut rng = rand::rng();
+
+        for edge in edges {
+            let neighbor_a_center = remap_point_yz_axis(self.get_node(edge.neighbor_a).center());
+            let neighbor_b_center = remap_point_yz_axis(self.get_node(edge.neighbor_b).center());
+
+            let dir = (neighbor_b_center - neighbor_a_center).normalize();
+
+            let dist = neighbor_a_center.distance(neighbor_b_center);
+
+            let scale = Mat4::from_nonuniform_scale(dist as f32, 0.1, 0.1);
+            let rotation = Mat4::from(Quaternion::from_arc(Vector3::unit_x(), vec_cast(dir), None));
+            let translation = Mat4::from_translation(vec_cast(neighbor_a_center));
+
+            let transform = translation * rotation * scale;
+
+            edge_transforms.push(transform);
+
+            let color = random_color(&mut rng);
+            colors.push(color);
+        }
+
+        Instances {
+            transformations: edge_transforms,
+            texture_transformations: None,
+            colors: Some(colors),
+        }
+    }
 }

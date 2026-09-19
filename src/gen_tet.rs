@@ -29,7 +29,7 @@ pub fn gen_tet(stl_file: StlFile) -> Result<Tetgen, StrError> {
     let tetgen = Tetgen::from_input_data(&input_data)?;
 
     // generate mesh
-    let global_max_volume = Some(20.);
+    let global_max_volume = Some(100.);
     let min_angle = Some(45.);
     tetgen.generate_mesh(true, false, global_max_volume, min_angle)?;
 

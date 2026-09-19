@@ -22,7 +22,7 @@ pub fn main() {
         duration
     );
 
-    let cpu_mesh = tet_graph._render_tets_as_nodes();
+    let cpu_mesh = tet_graph._render_neighbor_edges();
 
     let window = Window::new(WindowSettings {
         title: "Tet Visualizer".to_string(),
@@ -45,7 +45,7 @@ pub fn main() {
     let mut control = OrbitControl::new(camera.target(), 1.0, 1000.0);
 
     let model = Gm::new(
-        InstancedMesh::new(&context, &cpu_mesh, &CpuMesh::sphere(12)),
+        InstancedMesh::new(&context, &cpu_mesh, &CpuMesh::cylinder(8)),
         ColorMaterial::default(),
     ); //Gm::new(Mesh::new(&context, &cpu_mesh), ColorMaterial::default());
 
