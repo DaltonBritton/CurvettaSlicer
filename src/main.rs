@@ -4,6 +4,14 @@ use three_d::*;
 
 use tet_visulizer::{data::TetGraph, *};
 
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
+enum RenderMode {
+    FullTets,
+    TetGraphNodes,
+    TetGraphEdges,
+    TetGraphBoundaryFaces,
+}
+
 pub fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -21,8 +29,6 @@ pub fn main() {
         "Time elapsed in your_expensive_function() is: {:?}",
         duration
     );
-
-    let cpu_mesh = tet_graph._render_neighbor_edges();
 
     let window = Window::new(WindowSettings {
         title: "Tet Visualizer".to_string(),
@@ -44,11 +50,6 @@ pub fn main() {
     );
     let mut control = OrbitControl::new(camera.target(), 1.0, 1000.0);
 
-    let model = Gm::new(
-        InstancedMesh::new(&context, &cpu_mesh, &CpuMesh::cylinder(8)),
-        ColorMaterial::default(),
-    ); //Gm::new(Mesh::new(&context, &cpu_mesh), ColorMaterial::default());
-
     // Big enough to comfortably span the model from any plane orientation.
     let _plane_size = 64.;
 
@@ -57,6 +58,14 @@ pub fn main() {
     let mut _plane_models: Vec<Gm<Mesh, ColorMaterial>> = Vec::new();
 
     let mut gui = GUI::new(&context);
+
+    let neighbor_edges_mesh = construct_neighbor_edges_mesh(&context, &tet_graph);
+    let graph_nodes_mesh = construct_graph_nodes_mesh(&context, &tet_graph);
+    let graph_boundary_faces_mesh = construct_graph_boundary_faces_mesh(&context, &tet_graph);
+
+    let mut show_neighbor_edges_mesh = false;
+    let mut show_graph_nodes_mesh = false;
+    let mut show_graph_boundary_faces_mesh = false;
 
     window.render_loop(move |mut frame_input| {
         let mut panel_width = 0.0;
@@ -67,53 +76,13 @@ pub fn main() {
             frame_input.device_pixel_ratio,
             |gui_context| {
                 egui::Panel::left("clip_planes_panel").show_inside(gui_context, |ui| {
-                    ui.heading("Clipping Planes");
-                    ui.label("Drag the offset to slide a plane along its normal.");
-                    ui.label("Drag the angles to rotate it.");
-                    ui.separator();
+                    ui.heading("Render Modes");
 
-                    let mut remove_index: Option<usize> = None;
-                    for (i, plane) in planes.iter_mut().enumerate() {
-                        ui.push_id(i, |ui| {
-                            ui.group(|ui| {
-                                ui.horizontal(|ui| {
-                                    ui.checkbox(&mut plane.enabled, format!("Plane {}", i + 1));
-                                    if ui.button("Remove").clicked() {
-                                        remove_index = Some(i);
-                                    }
-                                });
-                                ui.horizontal(|ui| {
-                                    ui.label("Offset");
-                                    ui.add(egui::DragValue::new(&mut plane.offset).speed(0.01));
-                                });
-                                ui.horizontal(|ui| {
-                                    ui.label("Azimuth");
-                                    ui.add(
-                                        egui::DragValue::new(&mut plane.azimuth_deg)
-                                            .speed(1.0)
-                                            .suffix("\u{b0}"),
-                                    );
-                                });
-                                ui.horizontal(|ui| {
-                                    ui.label("Elevation");
-                                    ui.add(
-                                        egui::DragValue::new(&mut plane.elevation_deg)
-                                            .speed(1.0)
-                                            .range(-90.0..=90.0)
-                                            .suffix("\u{b0}"),
-                                    );
-                                });
-                            });
-                        });
-                    }
-                    if let Some(i) = remove_index {
-                        planes.remove(i);
-                    }
-
-                    ui.separator();
-                    if ui.button("Add plane").clicked() {
-                        planes.push(ClipPlane::default());
-                    }
+                    ui.horizontal(|ui| {
+                        ui.checkbox(&mut show_graph_boundary_faces_mesh, "Surface");
+                        ui.checkbox(&mut show_neighbor_edges_mesh, "Graph Edges");
+                        ui.checkbox(&mut show_graph_nodes_mesh, "Graph Nodes");
+                    })
                 });
                 panel_width = gui_context.globally_used_rect().width();
             },
@@ -155,12 +124,23 @@ pub fn main() {
             }
         }
 
+        let mut model: Vec<&dyn Object> = Vec::new();
+        if show_graph_nodes_mesh {
+            model.push(&graph_nodes_mesh);
+        }
+        if show_graph_boundary_faces_mesh {
+            model.push(&graph_boundary_faces_mesh);
+        }
+        if show_neighbor_edges_mesh {
+            model.push(&neighbor_edges_mesh);
+        }
+
         frame_input
             .screen()
             .clear(ClearState::color_and_depth(0.85, 0.85, 0.85, 1.0, 1.0))
             .render(
                 &camera,
-                std::iter::once(&model), //.chain(plane_models.iter()),
+                model, //.chain(plane_models.iter()),
                 &[],
             )
             .write(|| gui.render())
@@ -168,4 +148,40 @@ pub fn main() {
 
         FrameOutput::default()
     });
+}
+
+fn construct_neighbor_edges_mesh(
+    context: &Context,
+    tet_graph: &TetGraph,
+) -> Gm<InstancedMesh, ColorMaterial> {
+    let instances = tet_graph._render_neighbor_edges();
+
+    let model = Gm::new(
+        InstancedMesh::new(context, &instances, &CpuMesh::cylinder(8)),
+        ColorMaterial::default(),
+    );
+    model
+}
+
+fn construct_graph_nodes_mesh(
+    context: &Context,
+    tet_graph: &TetGraph,
+) -> Gm<InstancedMesh, ColorMaterial> {
+    let instances = tet_graph._render_tets_as_nodes();
+
+    let model = Gm::new(
+        InstancedMesh::new(context, &instances, &CpuMesh::sphere(16)),
+        ColorMaterial::default(),
+    );
+    model
+}
+
+fn construct_graph_boundary_faces_mesh(
+    context: &Context,
+    tet_graph: &TetGraph,
+) -> Gm<Mesh, ColorMaterial> {
+    let instances = tet_graph._render_boundary_faces();
+
+    let model = Gm::new(Mesh::new(context, &instances), ColorMaterial::default());
+    model
 }

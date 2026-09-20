@@ -188,7 +188,7 @@ impl TetGraph {
                         node.set_neighbor(
                             face_id,
                             Some(NeighborEdge {
-                                index: neighbor_i,
+                                _index: neighbor_i,
                                 _dist: dist,
                             }),
                         );
@@ -201,7 +201,7 @@ impl TetGraph {
                         neighbor.set_neighbor(
                             neighbor_face_id,
                             Some(NeighborEdge {
-                                index: node_i,
+                                _index: node_i,
                                 _dist: dist,
                             }),
                         );
@@ -293,10 +293,10 @@ mod tests {
             ),
         ];
 
-        let remaining_faces = TetGraph::assosiate_neighbors(&mut nodes);
+        let (remaining_faces, _edges) = TetGraph::assosiate_neighbors(&mut nodes);
 
-        assert!(nodes[0].neighbors[0].is_some_and(|neighbor| neighbor.index == TetIndex::new(1)));
-        assert!(nodes[1].neighbors[3].is_some_and(|neighbor| neighbor.index == TetIndex::new(0)));
+        assert!(nodes[0].neighbors[0].is_some_and(|neighbor| neighbor._index == TetIndex::new(1)));
+        assert!(nodes[1].neighbors[3].is_some_and(|neighbor| neighbor._index == TetIndex::new(0)));
 
         assert_eq!(remaining_faces.len(), 6);
     }

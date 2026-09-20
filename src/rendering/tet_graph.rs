@@ -1,4 +1,6 @@
-use three_d::{CpuMesh, InnerSpace, Instances, Mat4, MetricSpace, Quaternion, Srgba, Vector3};
+use three_d::{
+    CpuMesh, InnerSpace, Instances, Mat4, MetricSpace, Quaternion, Srgba, Vec3, Vector3,
+};
 
 use crate::{
     data::TetGraph,
@@ -23,7 +25,7 @@ impl TetGraph {
             .map(|node| node.center())
             .map(|center| remap_point_yz_axis(center))
             .map(|center| vec_cast(center))
-            .map(|center| Mat4::from_translation(center) * Mat4::from_scale(0.5))
+            .map(|center| Mat4::from_translation(center) * Mat4::from_scale(0.4))
             .collect();
 
         let mut rng = rand::rng();
@@ -75,6 +77,15 @@ impl TetGraph {
         //used for the color generation
         let mut rng = rand::rng();
 
+        let (min_dist, max_dist) = edges.iter().fold((f64::MAX, f64::MIN), |(min, max), edge| {
+            let neighbor_a_center = self.get_node(edge.neighbor_a).center();
+            let neighbor_b_center = self.get_node(edge.neighbor_b).center();
+
+            let dist = neighbor_a_center.distance(neighbor_b_center);
+
+            (min.min(dist), max.max(dist))
+        });
+
         for edge in edges {
             let neighbor_a_center = remap_point_yz_axis(self.get_node(edge.neighbor_a).center());
             let neighbor_b_center = remap_point_yz_axis(self.get_node(edge.neighbor_b).center());
@@ -91,8 +102,21 @@ impl TetGraph {
 
             edge_transforms.push(transform);
 
-            let color = random_color(&mut rng);
-            colors.push(color);
+            const RED: Vec3 = Vec3 {
+                x: 1.,
+                y: 0.,
+                z: 0.,
+            };
+            const BLUE: Vec3 = Vec3 {
+                x: 0.,
+                y: 0.,
+                z: 1.,
+            };
+
+            let dist_interp = ((dist - min_dist) / (max_dist - min_dist)) as f32;
+
+            let color = (RED * dist_interp) + (BLUE * (1. - dist_interp));
+            colors.push(color.into());
         }
 
         Instances {
