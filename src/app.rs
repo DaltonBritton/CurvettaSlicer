@@ -1,35 +1,18 @@
 use three_d::{
     Camera, ClearState, ColorMaterial, Context, CpuMesh, Event, FrameOutput, GUI, Gm,
     InstancedMesh, Mesh, MetricSpace, MouseButton, Object, OrbitControl, Viewport, Window,
-    WindowSettings, degrees, egui, vec3,
+    WindowSettings, degrees,
+    egui::{self, ComboBox},
+    vec3,
 };
 
-use crate::data::TetGraph;
-
-#[derive(Debug, Default)]
-struct RenderSettings {
-    show_graph_boundary_faces_mesh: bool,
-    show_neighbor_edges_mesh: bool,
-    show_graph_nodes_mesh: bool,
-}
-
-enum RenderObject {
-    TetNodes(Gm<InstancedMesh, ColorMaterial>),
-    TetEdges(Gm<InstancedMesh, ColorMaterial>),
-    TetBoundarySurface(Gm<Mesh, ColorMaterial>),
-    TetSurface(Gm<Mesh, ColorMaterial>),
-}
-
-impl RenderObject {
-    fn as_object(&self) -> &dyn Object {
-        match self {
-            RenderObject::TetNodes(gm) => gm,
-            RenderObject::TetEdges(gm) => gm,
-            RenderObject::TetBoundarySurface(gm) => gm,
-            RenderObject::TetSurface(gm) => gm,
-        }
-    }
-}
+use crate::{
+    data::TetGraph,
+    rendering::{
+        render_modes::{RenderMode, TetGraphRenderSettings},
+        render_object::RenderObject,
+    },
+};
 
 struct Scene {
     camera: Camera,
@@ -44,7 +27,7 @@ pub struct App {
     gui: GUI,
 
     scene: Scene,
-    render_settings: RenderSettings,
+    render_mode: RenderMode,
 }
 
 impl App {
@@ -87,7 +70,7 @@ impl App {
             gui,
             window,
             gl_context,
-            render_settings: Default::default(),
+            render_mode: RenderMode::TetGraphBoundaryFaces,
         }
     }
 
@@ -100,23 +83,38 @@ impl App {
                 frame_input.viewport,
                 frame_input.device_pixel_ratio,
                 |gui_context| {
-                    egui::Panel::left("clip_planes_panel").show_inside(gui_context, |ui| {
+                    egui::Panel::left("render_mode_settings").show_inside(gui_context, |ui| {
                         ui.heading("Render Modes");
+                        ComboBox::from_label("RenderMode")
+                            .selected_text(format!("{}", &mut self.render_mode))
+                            .show_ui(ui, |ui| {
+                                ui.selectable_value(
+                                    &mut self.render_mode,
+                                    RenderMode::TetGraphBoundaryFaces,
+                                    "BoundaryFaces",
+                                );
 
-                        ui.horizontal(|ui| {
-                            ui.checkbox(
-                                &mut self.render_settings.show_graph_boundary_faces_mesh,
-                                "Surface",
-                            );
-                            ui.checkbox(
-                                &mut self.render_settings.show_neighbor_edges_mesh,
-                                "Graph Edges",
-                            );
-                            ui.checkbox(
-                                &mut self.render_settings.show_graph_nodes_mesh,
-                                "Graph Nodes",
-                            );
-                        })
+                                ui.selectable_value(
+                                    &mut self.render_mode,
+                                    RenderMode::FullTets,
+                                    "FullTets",
+                                );
+
+                                ui.selectable_value(
+                                    &mut self.render_mode,
+                                    RenderMode::TetGraph(Default::default()),
+                                    "TetGraph",
+                                );
+                            });
+
+                        if let RenderMode::TetGraph(TetGraphRenderSettings {
+                            show_nodes,
+                            show_edges,
+                        }) = &mut self.render_mode
+                        {
+                            ui.checkbox(show_nodes, "Show Nodes");
+                            ui.checkbox(show_edges, "Show Edges");
+                        }
                     });
                     panel_width = gui_context.globally_used_rect().width();
                 },
@@ -164,22 +162,16 @@ impl App {
                 }
             }
 
-            if self.render_settings.show_graph_nodes_mesh {
-                //model.push(&graph_nodes_mesh);
-            }
-            if self.render_settings.show_graph_boundary_faces_mesh {
-                //model.push(&graph_boundary_faces_mesh);
-            }
-            if self.render_settings.show_neighbor_edges_mesh {
-                //model.push(&neighbor_edges_mesh);
-            }
-
             frame_input
                 .screen()
                 .clear(ClearState::color_and_depth(0.85, 0.85, 0.85, 1.0, 1.0))
                 .render(
                     &self.scene.camera,
-                    self.scene.objects.iter().map(RenderObject::as_object), //.chain(plane_models.iter()),
+                    self.scene
+                        .objects
+                        .iter()
+                        .filter(|obj| self.render_mode.should_render(obj))
+                        .map(RenderObject::as_object),
                     &[],
                 )
                 .write(|| self.gui.render())
