@@ -1115,6 +1115,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "ordered-float"
+version = "5.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8c7c9e0d9b23589f26070720bac724174bfec1083e82f7854cdd0267518343c0"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
 name = "owned_ttf_parser"
 version = "0.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1589,6 +1598,7 @@ name = "tet-visulizer"
 version = "0.1.0"
 dependencies = [
  "binrw",
+ "ordered-float",
  "rand",
  "strum",
  "strum_macros",

@@ -13,8 +13,18 @@ pub use tet::*;
 
 #[derive(Debug, Clone, Copy)]
 pub struct NeighborEdge {
-    _index: TetIndex,
-    _dist: f64,
+    index: TetIndex,
+    dist: f64,
+}
+
+impl NeighborEdge {
+    pub fn index(&self) -> TetIndex {
+        self.index
+    }
+
+    pub fn dist(&self) -> f64 {
+        self.dist
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -188,8 +198,8 @@ impl TetGraph {
                         node.set_neighbor(
                             face_id,
                             Some(NeighborEdge {
-                                _index: neighbor_i,
-                                _dist: dist,
+                                index: neighbor_i,
+                                dist: dist,
                             }),
                         );
 
@@ -201,8 +211,8 @@ impl TetGraph {
                         neighbor.set_neighbor(
                             neighbor_face_id,
                             Some(NeighborEdge {
-                                _index: node_i,
-                                _dist: dist,
+                                index: node_i,
+                                dist: dist,
                             }),
                         );
 
@@ -245,6 +255,18 @@ impl TetGraph {
 
     pub fn get_nodes(&self) -> &[TetNode] {
         &self.nodes
+    }
+
+    pub fn get_nodes_iter<'a>(
+        &'a self,
+    ) -> std::iter::Map<
+        std::iter::Enumerate<std::slice::Iter<'a, TetNode>>,
+        impl FnMut((usize, &'a TetNode)) -> (TetIndex, &'a TetNode),
+    > {
+        self.nodes
+            .iter()
+            .enumerate()
+            .map(|(i, node)| (TetIndex::new(i), node))
     }
 
     pub fn get_boundary_faces(&self) -> &HashMap<TetFace, TetIndex> {
@@ -295,8 +317,8 @@ mod tests {
 
         let (remaining_faces, _edges) = TetGraph::assosiate_neighbors(&mut nodes);
 
-        assert!(nodes[0].neighbors[0].is_some_and(|neighbor| neighbor._index == TetIndex::new(1)));
-        assert!(nodes[1].neighbors[3].is_some_and(|neighbor| neighbor._index == TetIndex::new(0)));
+        assert!(nodes[0].neighbors[0].is_some_and(|neighbor| neighbor.index == TetIndex::new(1)));
+        assert!(nodes[1].neighbors[3].is_some_and(|neighbor| neighbor.index == TetIndex::new(0)));
 
         assert_eq!(remaining_faces.len(), 6);
     }

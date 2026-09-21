@@ -18,7 +18,7 @@ impl Tet {
         self.points.iter()
     }
 
-    pub fn get_point(&self, vertex: TetVertexId) -> TetVertexIndex {
+    pub fn get_point_index(&self, vertex: TetVertexId) -> TetVertexIndex {
         match vertex {
             TetVertexId::A => self.points[0],
             TetVertexId::B => self.points[1],
@@ -30,31 +30,31 @@ impl Tet {
     pub fn get_face_across_from_vertex(&self, vertex: TetVertexId) -> TetFace {
         match vertex {
             TetVertexId::A => TetFace::new(
-                self.get_point(TetVertexId::B),
-                self.get_point(TetVertexId::C),
-                self.get_point(TetVertexId::D),
+                self.get_point_index(TetVertexId::B),
+                self.get_point_index(TetVertexId::C),
+                self.get_point_index(TetVertexId::D),
             ),
             TetVertexId::B => TetFace::new(
-                self.get_point(TetVertexId::A),
-                self.get_point(TetVertexId::C),
-                self.get_point(TetVertexId::D),
+                self.get_point_index(TetVertexId::A),
+                self.get_point_index(TetVertexId::C),
+                self.get_point_index(TetVertexId::D),
             ),
             TetVertexId::C => TetFace::new(
-                self.get_point(TetVertexId::A),
-                self.get_point(TetVertexId::B),
-                self.get_point(TetVertexId::D),
+                self.get_point_index(TetVertexId::A),
+                self.get_point_index(TetVertexId::B),
+                self.get_point_index(TetVertexId::D),
             ),
             TetVertexId::D => TetFace::new(
-                self.get_point(TetVertexId::A),
-                self.get_point(TetVertexId::B),
-                self.get_point(TetVertexId::C),
+                self.get_point_index(TetVertexId::A),
+                self.get_point_index(TetVertexId::B),
+                self.get_point_index(TetVertexId::C),
             ),
         }
     }
 
     pub fn get_vertex_across_from_face(&self, face: TetFace) -> Option<TetVertexId> {
         for vertex_id in TetVertexId::iter() {
-            if !face.points.contains(&self.get_point(vertex_id)) {
+            if !face.points.contains(&self.get_point_index(vertex_id)) {
                 return Some(vertex_id);
             }
         }
