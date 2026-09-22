@@ -13,10 +13,10 @@ impl RenderMode {
     pub fn should_render(&self, object: &RenderObject) -> bool {
         match (self, object) {
             (RenderMode::FullTets, RenderObject::TetSurface(_)) => true,
-            (RenderMode::TetGraph(tet_graph_render_settings), RenderObject::TetNodes(_)) => {
+            (RenderMode::TetGraph(tet_graph_render_settings), RenderObject::TetNodes(_, _)) => {
                 tet_graph_render_settings.show_nodes
             }
-            (RenderMode::TetGraph(tet_graph_render_settings), RenderObject::TetEdges(_)) => {
+            (RenderMode::TetGraph(tet_graph_render_settings), RenderObject::TetEdges(_, _)) => {
                 tet_graph_render_settings.show_edges
             }
             (RenderMode::TetGraphBoundaryFaces, RenderObject::TetBoundarySurface(_)) => true,

@@ -31,6 +31,7 @@ impl NeighborEdge {
 pub struct TwoWayNeighborEdge {
     pub neighbor_a: TetIndex,
     pub neighbor_b: TetIndex,
+    dist: f64,
 }
 
 #[derive(Debug)]
@@ -219,6 +220,7 @@ impl TetGraph {
                         edges.push(TwoWayNeighborEdge {
                             neighbor_a: node_i,
                             neighbor_b: neighbor_i,
+                            dist,
                         });
 
                         neighbor_node_entry.remove();
@@ -275,6 +277,16 @@ impl TetGraph {
 
     pub fn get_neighbor_edges(&self) -> &[TwoWayNeighborEdge] {
         &self.neighbor_edges
+    }
+
+    pub fn calculate_edge_length_bounds(&self) -> (f64, f64) {
+        let (mut min, mut max) = (f64::MAX, f64::MIN);
+        for edge in &self.neighbor_edges {
+            min = min.min(edge.dist);
+            max = max.max(edge.dist);
+        }
+
+        (min, max)
     }
 }
 

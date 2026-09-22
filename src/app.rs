@@ -188,7 +188,7 @@ impl App {
             InstancedMesh::new(context, &instances, &CpuMesh::cylinder(8)),
             ColorMaterial::default(),
         );
-        RenderObject::TetEdges(model)
+        RenderObject::TetEdges(model, instances)
     }
 
     fn construct_graph_nodes_mesh(context: &Context, tet_graph: &TetGraph) -> RenderObject {
@@ -199,7 +199,7 @@ impl App {
             ColorMaterial::default(),
         );
 
-        RenderObject::TetNodes(model)
+        RenderObject::TetNodes(model, instances)
     }
 
     fn construct_graph_boundary_faces_mesh(

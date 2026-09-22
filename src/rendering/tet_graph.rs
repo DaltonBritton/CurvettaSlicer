@@ -28,13 +28,10 @@ impl TetGraph {
             .map(|center| Mat4::from_translation(center) * Mat4::from_scale(0.4))
             .collect();
 
-        let mut rng = rand::rng();
-        let node_colors = nodes.iter().map(|_| random_color(&mut rng)).collect();
-
         Instances {
             transformations: node_instance_transforms,
             texture_transformations: None,
-            colors: Some(node_colors),
+            colors: None,
         }
     }
     pub fn _render_boundary_faces(&self) -> CpuMesh {
@@ -72,19 +69,6 @@ impl TetGraph {
     pub fn _render_neighbor_edges(&self) -> Instances {
         let edges = self.get_neighbor_edges();
         let mut edge_transforms = Vec::with_capacity(edges.len());
-        let mut colors: Vec<Srgba> = Vec::with_capacity(edges.len());
-
-        //used for the color generation
-        let mut rng = rand::rng();
-
-        let (min_dist, max_dist) = edges.iter().fold((f64::MAX, f64::MIN), |(min, max), edge| {
-            let neighbor_a_center = self.get_node(edge.neighbor_a).center();
-            let neighbor_b_center = self.get_node(edge.neighbor_b).center();
-
-            let dist = neighbor_a_center.distance(neighbor_b_center);
-
-            (min.min(dist), max.max(dist))
-        });
 
         for edge in edges {
             let neighbor_a_center = remap_point_yz_axis(self.get_node(edge.neighbor_a).center());
@@ -101,28 +85,12 @@ impl TetGraph {
             let transform = translation * rotation * scale;
 
             edge_transforms.push(transform);
-
-            const RED: Vec3 = Vec3 {
-                x: 1.,
-                y: 0.,
-                z: 0.,
-            };
-            const BLUE: Vec3 = Vec3 {
-                x: 0.,
-                y: 0.,
-                z: 1.,
-            };
-
-            let dist_interp = ((dist - min_dist) / (max_dist - min_dist)) as f32;
-
-            let color = (RED * dist_interp) + (BLUE * (1. - dist_interp));
-            colors.push(color.into());
         }
 
         Instances {
             transformations: edge_transforms,
             texture_transformations: None,
-            colors: Some(colors),
+            colors: None,
         }
     }
 }
