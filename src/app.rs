@@ -9,6 +9,7 @@ use three_d::{
 use crate::{
     data::TetGraph,
     rendering::{
+        color_mode::ColorMode,
         render_modes::{RenderMode, TetGraphRenderSettings},
         render_object::RenderObject,
     },
@@ -28,6 +29,7 @@ pub struct App {
 
     scene: Scene,
     render_mode: RenderMode,
+    color_mode: ColorMode,
 }
 
 impl App {
@@ -54,11 +56,15 @@ impl App {
 
         let gui = GUI::new(&gl_context);
 
-        let objects = vec![
+        let mut objects = vec![
             Self::construct_graph_nodes_mesh(&gl_context, &tet_graph),
             Self::construct_neighbor_edges_mesh(&gl_context, &tet_graph),
             Self::construct_graph_boundary_faces_mesh(&gl_context, &tet_graph),
         ];
+
+        let color_mode = ColorMode::EdgeLength;
+
+        color_mode.color_objects(&tet_graph, &mut objects);
 
         Self {
             tet_graph,
@@ -71,6 +77,7 @@ impl App {
             window,
             gl_context,
             render_mode: RenderMode::TetGraphBoundaryFaces,
+            color_mode: ColorMode::EdgeLength,
         }
     }
 
@@ -114,6 +121,34 @@ impl App {
                         {
                             ui.checkbox(show_nodes, "Show Nodes");
                             ui.checkbox(show_edges, "Show Edges");
+                        }
+
+                        let prev_color_mode = self.color_mode;
+                        ComboBox::from_label("Color Mode")
+                            .selected_text(format!("{}", &mut self.color_mode))
+                            .show_ui(ui, |ui| {
+                                ui.selectable_value(
+                                    &mut self.color_mode,
+                                    ColorMode::Random,
+                                    "Random",
+                                );
+
+                                ui.selectable_value(
+                                    &mut self.color_mode,
+                                    ColorMode::EdgeLength,
+                                    "EdgeLength",
+                                );
+
+                                ui.selectable_value(
+                                    &mut self.color_mode,
+                                    ColorMode::DistToGround,
+                                    "DistToGround",
+                                );
+                            });
+
+                        if self.color_mode != prev_color_mode {
+                            self.color_mode
+                                .color_objects(&self.tet_graph, &mut self.scene.objects);
                         }
                     });
                     panel_width = gui_context.globally_used_rect().width();

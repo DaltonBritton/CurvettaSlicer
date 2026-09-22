@@ -66,13 +66,14 @@ impl TetGraph {
 
         mesh
     }
+
     pub fn _render_neighbor_edges(&self) -> Instances {
         let edges = self.get_neighbor_edges();
         let mut edge_transforms = Vec::with_capacity(edges.len());
 
         for edge in edges {
-            let neighbor_a_center = remap_point_yz_axis(self.get_node(edge.neighbor_a).center());
-            let neighbor_b_center = remap_point_yz_axis(self.get_node(edge.neighbor_b).center());
+            let neighbor_a_center = remap_point_yz_axis(self.get_node(edge.neighbor_a()).center());
+            let neighbor_b_center = remap_point_yz_axis(self.get_node(edge.neighbor_b()).center());
 
             let dir = (neighbor_b_center - neighbor_a_center).normalize();
 

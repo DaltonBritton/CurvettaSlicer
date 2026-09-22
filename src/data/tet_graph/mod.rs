@@ -29,10 +29,26 @@ impl NeighborEdge {
 
 #[derive(Debug, Clone)]
 pub struct TwoWayNeighborEdge {
-    pub neighbor_a: TetIndex,
-    pub neighbor_b: TetIndex,
+    neighbor_a: TetIndex,
+    neighbor_b: TetIndex,
     dist: f64,
 }
+
+impl TwoWayNeighborEdge {
+    pub fn neighbor_a(&self) -> TetIndex {
+        self.neighbor_a
+    }
+
+    pub fn neighbor_b(&self) -> TetIndex {
+        self.neighbor_b
+    }
+
+    pub fn dist(&self) -> f64 {
+        self.dist
+    }
+}
+
+impl NeighborEdge {}
 
 #[derive(Debug)]
 pub struct TetNode {
