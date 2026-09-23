@@ -1,0 +1,16 @@
+[package]
+name = "tet-visulizer-gui"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "tet-visulizer"
+path = "src/main.rs"
+
+[dependencies]
+tet-visulizer-core.workspace = true
+
+binrw.workspace = true
+rand.workspace = true
+strum.workspace = true
+three-d = { workspace = true, features = ["egui-gui"] }

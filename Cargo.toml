@@ -1,13 +1,18 @@
-[package]
-name = "tet-visulizer"
+[workspace]
+members = ["crates/*"]
+resolver = "3"
+
+[workspace.package]
 version = "0.1.0"
 edition = "2024"
 
-[dependencies]
+[workspace.dependencies]
+tet-visulizer-core = { path = "crates/tet-visulizer-core" }
+
 binrw = "0.15.2"
 ordered-float = "5.5.0"
 rand = "0.10.2"
 strum = "0.28.0"
 strum_macros = "0.28.0"
-three-d = {version = "0.19", features=["egui-gui"]}
-tritet = {version="3.2.0", features=["with_tetgen"]}
+three-d = "0.19"
+tritet = { version = "3.2.0", features = ["with_tetgen"] }

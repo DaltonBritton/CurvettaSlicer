@@ -1594,16 +1594,28 @@ dependencies = [
 ]
 
 [[package]]
-name = "tet-visulizer"
+name = "tet-visulizer-core"
 version = "0.1.0"
 dependencies = [
  "binrw",
+ "cgmath",
  "ordered-float",
  "rand",
  "strum",
  "strum_macros",
  "three-d",
  "tritet",
+]
+
+[[package]]
+name = "tet-visulizer-gui"
+version = "0.1.0"
+dependencies = [
+ "binrw",
+ "rand",
+ "strum",
+ "tet-visulizer-core",
+ "three-d",
 ]
 
 [[package]]

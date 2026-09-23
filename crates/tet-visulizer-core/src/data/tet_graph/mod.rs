@@ -4,8 +4,8 @@ use std::{
     fmt::Display,
 };
 
+use cgmath::{MetricSpace, Vector3};
 use strum::IntoEnumIterator;
-use three_d::{MetricSpace, Vector3};
 
 mod tet;
 

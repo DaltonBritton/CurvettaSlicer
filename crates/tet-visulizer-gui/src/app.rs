@@ -6,13 +6,13 @@ use three_d::{
     vec3,
 };
 
-use crate::{
-    data::TetGraph,
-    rendering::{
-        color_mode::ColorMode,
-        render_modes::{RenderMode, TetGraphRenderSettings},
-        render_object::RenderObject,
-    },
+use tet_visulizer_core::data::TetGraph;
+
+use crate::rendering::{
+    color_mode::ColorMode,
+    render_modes::{RenderMode, TetGraphRenderSettings},
+    render_object::RenderObject,
+    tet_graph::TetGraphRender,
 };
 
 struct Scene {

@@ -2,10 +2,9 @@ use three_d::{
     CpuMesh, InnerSpace, Instances, Mat4, MetricSpace, Quaternion, Srgba, Vec3, Vector3,
 };
 
-use crate::{
-    data::TetGraph,
-    rendering::utils::{random_color, remap_point_yz_axis},
-};
+use tet_visulizer_core::data::TetGraph;
+
+use crate::rendering::utils::{random_color, remap_point_yz_axis};
 
 fn vec_cast(Vector3 { x, y, z }: Vector3<f64>) -> Vector3<f32> {
     Vector3 {
@@ -15,9 +14,18 @@ fn vec_cast(Vector3 { x, y, z }: Vector3<f64>) -> Vector3<f32> {
     }
 }
 
-impl TetGraph {
-    pub fn _render_tets(&self) {}
-    pub fn _render_tets_as_nodes(&self) -> Instances {
+/// Rendering-side extensions on [`TetGraph`]. These live on a trait rather than
+/// an inherent `impl` because `TetGraph` belongs to the core crate.
+pub trait TetGraphRender {
+    fn _render_tets(&self);
+    fn _render_tets_as_nodes(&self) -> Instances;
+    fn _render_boundary_faces(&self) -> CpuMesh;
+    fn _render_neighbor_edges(&self) -> Instances;
+}
+
+impl TetGraphRender for TetGraph {
+    fn _render_tets(&self) {}
+    fn _render_tets_as_nodes(&self) -> Instances {
         let nodes = self.get_nodes();
 
         let node_instance_transforms = nodes
@@ -34,7 +42,7 @@ impl TetGraph {
             colors: None,
         }
     }
-    pub fn _render_boundary_faces(&self) -> CpuMesh {
+    fn _render_boundary_faces(&self) -> CpuMesh {
         let boundary_faces = self.get_boundary_faces();
 
         let mut mesh_points: Vec<Vector3<f64>> = Vec::with_capacity(boundary_faces.len() * 3);
@@ -67,7 +75,7 @@ impl TetGraph {
         mesh
     }
 
-    pub fn _render_neighbor_edges(&self) -> Instances {
+    fn _render_neighbor_edges(&self) -> Instances {
         let edges = self.get_neighbor_edges();
         let mut edge_transforms = Vec::with_capacity(edges.len());
 

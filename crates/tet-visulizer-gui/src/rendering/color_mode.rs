@@ -4,12 +4,12 @@ use rand::rng;
 use strum::IntoEnumIterator;
 use three_d::{Instances, Srgba};
 
-use crate::{
-    data::{
-        Tet, TetGraph, TetIndex, TetNode, TetVertexId, TwoWayNeighborEdge, compute_dist_to_ground,
-    },
-    rendering::{render_object::RenderObject, tet_graph, utils},
+use tet_visulizer_core::data::{
+    DikstraPath, Tet, TetGraph, TetIndex, TetNode, TetVertexId, TwoWayNeighborEdge,
+    compute_dist_to_ground,
 };
+
+use crate::rendering::{render_object::RenderObject, utils};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ColorMode {
@@ -116,7 +116,7 @@ fn color_dist_to_ground(tet_graph: &TetGraph, objects: &mut [RenderObject]) {
 }
 
 fn node_dist(
-    path_map: &std::collections::HashMap<TetIndex, crate::data::DikstraPath>,
+    path_map: &std::collections::HashMap<TetIndex, DikstraPath>,
     node_index: TetIndex,
 ) -> Option<f64> {
     path_map.get(&node_index).map(|path| path.dist().into())

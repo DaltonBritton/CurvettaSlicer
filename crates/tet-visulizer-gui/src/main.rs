@@ -1,8 +1,8 @@
 use binrw::BinRead;
-use std::{env, fs::File, time::Instant};
-use three_d::*;
+use std::{env, fs::File};
 
-use tet_visulizer::{data::TetGraph, *};
+use tet_visulizer_core::{StlFile, data::TetGraph, gen_tet};
+use tet_visulizer_gui::App;
 
 pub fn main() {
     let args: Vec<String> = env::args().collect();
