@@ -5,8 +5,10 @@ use strum::IntoEnumIterator;
 use three_d::{Instances, Srgba};
 
 use crate::{
-    data::{TetGraph, TetNode, TetVertexId},
-    rendering::{render_object::RenderObject, utils},
+    data::{
+        Tet, TetGraph, TetIndex, TetNode, TetVertexId, TwoWayNeighborEdge, compute_dist_to_ground,
+    },
+    rendering::{render_object::RenderObject, tet_graph, utils},
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -61,44 +63,14 @@ fn color_instance_random(
 
 fn color_length(tet_graph: &TetGraph, objects: &mut [RenderObject]) {
     let (min, max) = tet_graph.calculate_edge_length_bounds();
-    let edges = tet_graph.get_neighbor_edges();
 
-    for object in objects {
-        match object {
-            RenderObject::TetNodes(gm, instances) => {
-                let colors: Vec<Srgba> = tet_graph
-                    .get_nodes()
-                    .iter()
-                    .map(|node| node_avg_edge_length(node))
-                    .map(|avg| {
-                        let Some(avg) = avg else {
-                            return Srgba::BLACK;
-                        };
-
-                        let interp = (avg - min) / (max - min);
-
-                        utils::interp_color(interp as f32, Srgba::BLUE, Srgba::RED)
-                    })
-                    .collect();
-
-                instances.colors = Some(colors);
-
-                gm.set_instances(instances);
-            }
-            RenderObject::TetEdges(gm, instances) => {
-                instances.colors = Some(
-                    edges
-                        .iter()
-                        .map(|edge| (edge.dist() - min) / (max - min))
-                        .map(|interp| utils::interp_color(interp as f32, Srgba::BLUE, Srgba::RED))
-                        .collect(),
-                );
-
-                gm.set_instances(instances);
-            }
-            _ => (),
-        }
-    }
+    color_by_metric(
+        objects,
+        tet_graph,
+        (min, max),
+        |_node_index, node| node_avg_edge_length(node),
+        |edge| Some(edge.dist()),
+    );
 }
 
 fn node_avg_edge_length(node: &TetNode) -> Option<f64> {
@@ -115,5 +87,90 @@ fn node_avg_edge_length(node: &TetNode) -> Option<f64> {
 }
 
 fn color_dist_to_ground(tet_graph: &TetGraph, objects: &mut [RenderObject]) {
-    todo!()
+    let path_map = compute_dist_to_ground(tet_graph);
+
+    let (min, max) =
+        path_map
+            .iter()
+            .fold((f64::MAX, f64::MIN), |(min, max), (_tet_index, path)| {
+                let dist: f64 = path.dist().into();
+
+                (min.min(dist), max.max(dist))
+            });
+
+    color_by_metric(
+        objects,
+        tet_graph,
+        (min, max),
+        |node_index, _node| path_map.get(&node_index).map(|path| path.dist().into()),
+        |edge| {
+            let a_dist = node_dist(&path_map, edge.neighbor_a());
+            let b_dist = node_dist(&path_map, edge.neighbor_b());
+
+            match (a_dist, b_dist) {
+                (Some(a_dist), Some(b_dist)) => Some((a_dist + b_dist) / 2.),
+                _ => None,
+            }
+        },
+    );
+}
+
+fn node_dist(
+    path_map: &std::collections::HashMap<TetIndex, crate::data::DikstraPath>,
+    node_index: TetIndex,
+) -> Option<f64> {
+    path_map.get(&node_index).map(|path| path.dist().into())
+}
+
+fn color_by_metric(
+    objects: &mut [RenderObject],
+    tet_graph: &TetGraph,
+    (min, max): (f64, f64),
+    node_metric: impl Fn(TetIndex, &TetNode) -> Option<f64>,
+    edge_metric: impl Fn(&TwoWayNeighborEdge) -> Option<f64>,
+) {
+    const FALLBACK_COLOR: Srgba = Srgba::BLACK;
+    for object in objects {
+        match object {
+            RenderObject::TetNodes(gm, instances) => {
+                let colors: Vec<Srgba> = tet_graph
+                    .get_nodes_iter()
+                    .map(|(node_index, node)| node_metric(node_index, node))
+                    .map(|avg| {
+                        let Some(avg) = avg else {
+                            return FALLBACK_COLOR;
+                        };
+
+                        let interp = (avg - min) / (max - min);
+                        utils::interp_color(interp as f32, Srgba::BLUE, Srgba::RED)
+                    })
+                    .collect();
+
+                instances.colors = Some(colors);
+
+                gm.set_instances(instances);
+            }
+            RenderObject::TetEdges(gm, instances) => {
+                let edges = tet_graph.get_neighbor_edges();
+
+                instances.colors = Some(
+                    edges
+                        .iter()
+                        .map(|edge| edge_metric(edge))
+                        .map(|metric| {
+                            let Some(metric) = metric else {
+                                return FALLBACK_COLOR;
+                            };
+
+                            let interp = (metric - min) / (max - min);
+                            utils::interp_color(interp as f32, Srgba::BLUE, Srgba::RED)
+                        })
+                        .collect(),
+                );
+
+                gm.set_instances(instances);
+            }
+            _ => (),
+        }
+    }
 }

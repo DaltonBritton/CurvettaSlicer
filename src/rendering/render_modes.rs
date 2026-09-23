@@ -46,7 +46,7 @@ pub struct TetGraphRenderSettings {
 impl Default for TetGraphRenderSettings {
     fn default() -> Self {
         Self {
-            show_nodes: false,
+            show_nodes: true,
             show_edges: true,
         }
     }

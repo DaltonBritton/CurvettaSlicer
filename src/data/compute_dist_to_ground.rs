@@ -9,10 +9,16 @@ use strum::IntoEnumIterator;
 use crate::data::{TetGraph, TetIndex, TetVertexId};
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-struct DikstraPath {
+pub struct DikstraPath {
     index: TetIndex,
     dist: OrderedFloat<f64>,
     prev: Option<TetIndex>,
+}
+
+impl DikstraPath {
+    pub fn dist(&self) -> OrderedFloat<f64> {
+        self.dist
+    }
 }
 
 impl Ord for DikstraPath {
@@ -23,19 +29,11 @@ impl Ord for DikstraPath {
 
 impl PartialOrd for DikstraPath {
     fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
-        match self.dist.partial_cmp(&other.dist) {
-            Some(core::cmp::Ordering::Equal) => {}
-            ord => return ord,
-        }
-        match self.dist.partial_cmp(&other.dist) {
-            Some(core::cmp::Ordering::Equal) => {}
-            ord => return ord,
-        }
-        self.prev.partial_cmp(&other.prev)
+        Some(self.dist.cmp(&other.dist))
     }
 }
 
-fn compute_dist_to_ground(tet_graph: TetGraph) -> HashMap<TetIndex, DikstraPath> {
+pub fn compute_dist_to_ground(tet_graph: &TetGraph) -> HashMap<TetIndex, DikstraPath> {
     let n_nodes = tet_graph.len();
 
     let mut dist_estimates = BinaryHeap::with_capacity(n_nodes);
@@ -48,7 +46,7 @@ fn compute_dist_to_ground(tet_graph: TetGraph) -> HashMap<TetIndex, DikstraPath>
         let is_supported = TetVertexId::iter()
             .map(|vertex_id| tet.get_point_index(vertex_id))
             .map(|point_id| tet_graph.get_point(point_id))
-            .any(|point| point.y < 0.01);
+            .any(|point| point.z < 0.01);
 
         if is_supported {
             let path = DikstraPath {
@@ -63,6 +61,9 @@ fn compute_dist_to_ground(tet_graph: TetGraph) -> HashMap<TetIndex, DikstraPath>
     }
 
     while let Some(Reverse(src_path)) = dist_estimates.pop() {
+        if dist_estimates.len() % 1000 == 0 {
+            println!("dist_estimates remaining: {}", dist_estimates.len());
+        }
         // Skip if a faster path has been processed
         let node = tet_graph.get_node(src_path.index);
 
@@ -87,17 +88,17 @@ fn compute_dist_to_ground(tet_graph: TetGraph) -> HashMap<TetIndex, DikstraPath>
                 prev: Some(src_path.index),
             };
 
-            dist_estimates.push(Reverse(neighbor_path.clone()));
-
             let dists_entry = dists.entry(neighbor_index);
             match dists_entry {
                 std::collections::hash_map::Entry::Occupied(mut occupied_entry) => {
                     let existing_path = occupied_entry.get();
                     if existing_path.dist > neighbor_dist {
+                        dist_estimates.push(Reverse(neighbor_path.clone()));
                         occupied_entry.insert(neighbor_path);
                     }
                 }
                 std::collections::hash_map::Entry::Vacant(vacant_entry) => {
+                    dist_estimates.push(Reverse(neighbor_path.clone()));
                     vacant_entry.insert(neighbor_path);
                 }
             }

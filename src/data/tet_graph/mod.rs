@@ -27,7 +27,7 @@ impl NeighborEdge {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct TwoWayNeighborEdge {
     neighbor_a: TetIndex,
     neighbor_b: TetIndex,
