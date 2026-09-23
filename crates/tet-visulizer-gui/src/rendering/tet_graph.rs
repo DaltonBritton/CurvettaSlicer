@@ -1,6 +1,4 @@
-use three_d::{
-    CpuMesh, InnerSpace, Instances, Mat4, MetricSpace, Quaternion, Srgba, Vec3, Vector3,
-};
+use three_d::{CpuMesh, InnerSpace, Instances, Mat4, MetricSpace, Quaternion, Srgba, Vector3};
 
 use tet_visulizer_core::data::TetGraph;
 

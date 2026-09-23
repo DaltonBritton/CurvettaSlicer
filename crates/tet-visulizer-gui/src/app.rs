@@ -1,7 +1,7 @@
 use three_d::{
     Camera, ClearState, ColorMaterial, Context, CpuMesh, Event, FrameOutput, GUI, Gm,
-    InstancedMesh, Mesh, MetricSpace, MouseButton, Object, OrbitControl, Viewport, Window,
-    WindowSettings, degrees,
+    InstancedMesh, Mesh, MetricSpace, MouseButton, OrbitControl, Viewport, Window, WindowSettings,
+    degrees,
     egui::{self, ComboBox},
     vec3,
 };
@@ -24,7 +24,7 @@ struct Scene {
 pub struct App {
     tet_graph: TetGraph,
     window: Window,
-    gl_context: Context,
+    _gl_context: Context,
     gui: GUI,
 
     scene: Scene,
@@ -75,7 +75,7 @@ impl App {
             },
             gui,
             window,
-            gl_context,
+            _gl_context: gl_context,
             render_mode: RenderMode::TetGraphBoundaryFaces,
             color_mode: ColorMode::EdgeLength,
         }

@@ -1,11 +1,10 @@
-use std::fmt::{Display, Write};
+use std::fmt::Display;
 
-use rand::rng;
 use strum::IntoEnumIterator;
 use three_d::{Instances, Srgba};
 
 use tet_visulizer_core::data::{
-    DikstraPath, Tet, TetGraph, TetIndex, TetNode, TetVertexId, TwoWayNeighborEdge,
+    DikstraPath, TetGraph, TetIndex, TetNode, TetVertexId, TwoWayNeighborEdge,
     compute_dist_to_ground,
 };
 
@@ -33,14 +32,14 @@ impl Display for ColorMode {
 impl ColorMode {
     pub fn color_objects(&self, tet_graph: &TetGraph, objects: &mut [RenderObject]) {
         match self {
-            ColorMode::Random => color_random(tet_graph, objects),
+            ColorMode::Random => color_random(objects),
             ColorMode::EdgeLength => color_length(tet_graph, objects),
             ColorMode::DistToGround => color_dist_to_ground(tet_graph, objects),
         }
     }
 }
 
-fn color_random(tet_graph: &TetGraph, objects: &mut [RenderObject]) {
+fn color_random(objects: &mut [RenderObject]) {
     for obj in objects {
         match obj {
             RenderObject::TetNodes(gm, instances) => color_instance_random(gm, instances),
