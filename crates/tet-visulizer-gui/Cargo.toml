@@ -14,3 +14,4 @@ binrw.workspace = true
 rand.workspace = true
 strum.workspace = true
 three-d = { workspace = true, features = ["egui-gui"] }
+directories = "6.0.0"
