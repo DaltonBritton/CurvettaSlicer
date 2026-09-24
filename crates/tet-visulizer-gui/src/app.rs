@@ -1,3 +1,4 @@
+use directories::ProjectDirs;
 use three_d::{
     Camera, ClearState, ColorMaterial, Context, CpuMesh, Event, FrameOutput, GUI, Gm,
     InstancedMesh, Mesh, MetricSpace, MouseButton, OrbitControl, Viewport, Window, WindowSettings,
@@ -30,6 +31,7 @@ pub struct App {
     scene: Scene,
     render_mode: RenderMode,
     color_mode: ColorMode,
+    project_dirs: ProjectDirs,
 }
 
 impl App {
@@ -66,6 +68,9 @@ impl App {
 
         color_mode.color_objects(&tet_graph, &mut objects);
 
+        let project_dirs = ProjectDirs::from("com", "CurvettaSlicer", "CurvettaSlicer")
+            .expect("Unable to instantiate project directories.");
+
         Self {
             tet_graph,
             scene: Scene {
@@ -78,6 +83,7 @@ impl App {
             _gl_context: gl_context,
             render_mode: RenderMode::TetGraphBoundaryFaces,
             color_mode: ColorMode::EdgeLength,
+            project_dirs,
         }
     }
 
