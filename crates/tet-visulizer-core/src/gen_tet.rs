@@ -1,45 +1,46 @@
-use tritet::{StrError, Tetgen};
+use std::{error::Error, fs, path::Path, process::Command};
 
-use crate::{StlFile, stl_to_tet_input};
+use mshio::{ElementType, MshFile};
 
-const SAVE_FIGURE: bool = false;
+pub fn gen_tet(
+    input_path: &Path,
+    output_path: &Path,
+    f_wild_tet_bin: &Path,
+) -> Result<(), Box<dyn Error>> {
+    let mut tet_wild_cmd = Command::new(f_wild_tet_bin);
 
-pub fn gen_tet(stl_file: StlFile) -> Result<Tetgen, StrError> {
-    let input_data = stl_to_tet_input(stl_file);
+    tet_wild_cmd
+        .arg("-i")
+        .arg(input_path)
+        .arg("-o")
+        .arg(output_path)
+        .arg("--no-binary"); // TODO: calc actual epsr ie. espr = resolution / bbox;
 
-    // allocate data for 4 points
-    // let input_data = InputDataTetMesh {
-    //     points: vec![
-    //         (0, 0.0, 5.0, 0.0), // marker, x, y, z
-    //         (0, 0.0, 0.0, 0.0),
-    //         (0, 5.0, 5.0, 0.0),
-    //         (0, 0.0, 5.0, 5.0),
-    //     ],
-    //     facets: vec![
-    //         (0, vec![0, 2, 1]), // marker, point indices
-    //         (0, vec![0, 1, 3]),
-    //         (0, vec![0, 3, 2]),
-    //         (0, vec![1, 2, 3]),
-    //     ],
-    //     holes: vec![],                           // no holes
-    //     regions: vec![(1, 0.1, 0.9, 0.1, None)], // region marker, x, y, z, max volume
-    // };
+    tet_wild_cmd
+        .output()
+        .map_err(|_| "TetWild exited unexpectedly")?;
 
-    // allocate generator from input data
-    let tetgen = Tetgen::from_input_data(&input_data)?;
+    let msh = read_msh(output_path)?;
 
-    // generate mesh
-    let global_max_volume = Some(100.);
-    let min_angle = Some(45.);
-    tetgen.generate_mesh(true, false, global_max_volume, min_angle)?;
+    msh_to_tet_graph(msh)?;
+    todo!()
+}
 
-    // draw edges of tetrahedra
-    if SAVE_FIGURE {
-        let mut file_path = std::env::current_dir().unwrap();
-        file_path.push("mesh.vtu");
+fn msh_to_tet_graph(msh: MshFile<u64, i32, f64>) -> Result<(), Box<dyn Error>> {
+    let data = msh.data;
+    let points = data.nodes.ok_or("Msh contains no nodes")?;
+    let elements = data.elements.ok_or("Msh contains no elements")?;
+    let tets = elements
+        .element_blocks
+        .iter()
+        .filter(|block| block.element_type == ElementType::Tet4)
+        .for_each(|block| println!("{}", block.elements.len()));
+    Ok(())
+}
 
-        tetgen.write_vtu(file_path.as_os_str()).unwrap();
-    }
-
-    Ok(tetgen)
+fn read_msh(msh_path: &Path) -> Result<MshFile<u64, i32, f64>, Box<dyn Error>> {
+    let msh_bytes = fs::read(msh_path)?;
+    let parser_result = mshio::parse_msh_bytes(msh_bytes.as_slice());
+    let msh = parser_result.map_err(|e| format!("Error while parsing msh file:\n{}", e))?;
+    Ok(msh)
 }

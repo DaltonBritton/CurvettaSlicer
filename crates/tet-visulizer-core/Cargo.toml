@@ -6,6 +6,8 @@ edition.workspace = true
 [dependencies]
 binrw.workspace = true
 cgmath = "0.18.0"
+mshio = "0.4.2"
+nom = "8.0.0"
 ordered-float.workspace = true
 rand.workspace = true
 strum.workspace = true

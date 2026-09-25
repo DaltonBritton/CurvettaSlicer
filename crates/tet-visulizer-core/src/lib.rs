@@ -12,3 +12,5 @@ pub use tet_to_mesh::*;
 
 pub mod data;
 pub mod sphere_tet;
+
+pub mod msh_parser;
