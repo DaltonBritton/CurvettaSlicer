@@ -2,6 +2,8 @@ use std::{error::Error, fs, path::Path, process::Command};
 
 use mshio::{ElementType, MshFile};
 
+use crate::msh_parser;
+
 pub fn gen_tet(
     input_path: &Path,
     output_path: &Path,
@@ -40,6 +42,7 @@ fn msh_to_tet_graph(msh: MshFile<u64, i32, f64>) -> Result<(), Box<dyn Error>> {
 
 fn read_msh(msh_path: &Path) -> Result<MshFile<u64, i32, f64>, Box<dyn Error>> {
     let msh_bytes = fs::read(msh_path)?;
+
     let parser_result = mshio::parse_msh_bytes(msh_bytes.as_slice());
     let msh = parser_result.map_err(|e| format!("Error while parsing msh file:\n{}", e))?;
     Ok(msh)

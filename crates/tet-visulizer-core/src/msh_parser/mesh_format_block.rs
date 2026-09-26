@@ -56,8 +56,8 @@ fn msh_header_line<'a, E: ParseError<&'a [u8]>>()
     )
 }
 
-pub fn msh_format_block<'a, E: ParseError<&'a [u8]>>()
--> impl Parser<&'a [u8], Output = MeshFormat, Error = E> {
+pub fn parser<'a, E: ParseError<&'a [u8]>>() -> impl Parser<&'a [u8], Output = MeshFormat, Error = E>
+{
     block::block("MeshFormat", msh_header_line())
 }
 
@@ -101,9 +101,7 @@ mod tests {
     fn parse_mesh_header_test() {
         let header_data = "$MeshFormat\n2.2 0 8\n$EndMeshFormat\n".as_bytes();
 
-        let (_, header) = msh_format_block::<TestErr>()
-            .parse_complete(header_data)
-            .unwrap();
+        let (_, header) = parser::<TestErr>().parse_complete(header_data).unwrap();
 
         assert_eq!(header.file_version, 2.2);
         assert_eq!(header.file_type, MeshFileType::Ascii);
