@@ -1,4 +1,4 @@
-use std::{collections::HashMap, hash::Hash};
+use std::hash::Hash;
 
 use cgmath::Vector3;
 use nom::{
@@ -10,9 +10,9 @@ use nom::{
     },
     combinator::map,
     error::ParseError,
-    multi::{fold_many_m_n, length_count},
-    number::{self, complete::double},
-    sequence::{preceded, terminated},
+    multi::length_count,
+    number::{self},
+    sequence::terminated,
 };
 
 use crate::msh_parser::block::block;

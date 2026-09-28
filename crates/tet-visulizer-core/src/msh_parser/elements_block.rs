@@ -7,10 +7,7 @@ use nom::{
     sequence::terminated,
 };
 
-use crate::{
-    data::{Tet, TetVertexIndex},
-    msh_parser::{block::block, nodes_block::NodeId},
-};
+use crate::msh_parser::{block::block, nodes_block::NodeId};
 
 enum MshElementType {
     Tet = 4,

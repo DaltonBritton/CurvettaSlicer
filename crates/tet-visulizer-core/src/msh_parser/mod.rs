@@ -1,9 +1,4 @@
-use std::{
-    array,
-    collections::HashMap,
-    error::Error,
-    fmt::{Display, write},
-};
+use std::{collections::HashMap, error::Error, fmt::Display};
 
 use cgmath::Vector3;
 use nom::{Parser, combinator::map, error::ParseError};

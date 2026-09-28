@@ -1,7 +1,6 @@
-use binrw::BinRead;
-use std::{env, fs::File, path::Path};
+use std::{env, path::Path};
 
-use tet_visulizer_core::{StlFile, data::TetGraph, gen_tet};
+use tet_visulizer_core::gen_tet;
 use tet_visulizer_gui::App;
 
 pub fn main() {

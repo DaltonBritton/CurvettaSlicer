@@ -1,6 +1,5 @@
 use std::{error::Error, fs, path::Path, process::Command};
 
-use mshio::{ElementType, MshFile};
 use nom::Parser;
 
 use crate::{data::TetGraph, msh_parser};

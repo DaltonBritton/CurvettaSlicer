@@ -31,7 +31,7 @@ pub struct App {
     scene: Scene,
     render_mode: RenderMode,
     color_mode: ColorMode,
-    project_dirs: ProjectDirs,
+    _project_dirs: ProjectDirs,
 }
 
 impl App {
@@ -83,7 +83,7 @@ impl App {
             _gl_context: gl_context,
             render_mode: RenderMode::TetGraphBoundaryFaces,
             color_mode: ColorMode::EdgeLength,
-            project_dirs,
+            _project_dirs: project_dirs,
         }
     }
 

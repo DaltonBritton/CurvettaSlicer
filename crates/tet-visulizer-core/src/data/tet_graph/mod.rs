@@ -145,26 +145,6 @@ impl TetGraph {
         }
     }
 
-    fn read_vertices(tetgen: &tritet::Tetgen) -> Vec<Vector3<f64>> {
-        let n = tetgen.out_npoint();
-
-        let mut points = Vec::with_capacity(n);
-
-        for i in 0..n {
-            let point = Vector3::new(
-                tetgen.out_point(i, 0),
-                tetgen.out_point(i, 1),
-                tetgen.out_point(i, 2),
-            );
-
-            points.push(point);
-        }
-
-        println!("Read {} Points!", points.len());
-
-        points
-    }
-
     fn assosiate_neighbors(
         nodes: &mut Vec<TetNode>,
     ) -> (HashMap<TetFace, TetIndex>, Vec<TwoWayNeighborEdge>) {
@@ -305,19 +285,19 @@ mod tests {
         let mut nodes = vec![
             TetNode::new(
                 Tet::new([
-                    TetVertexIndex::new(0),
-                    TetVertexIndex::new(1),
-                    TetVertexIndex::new(2),
-                    TetVertexIndex::new(3),
+                    TetVertexIndex::_new(0),
+                    TetVertexIndex::_new(1),
+                    TetVertexIndex::_new(2),
+                    TetVertexIndex::_new(3),
                 ]),
                 &points,
             ),
             TetNode::new(
                 Tet::new([
-                    TetVertexIndex::new(1),
-                    TetVertexIndex::new(2),
-                    TetVertexIndex::new(3),
-                    TetVertexIndex::new(4),
+                    TetVertexIndex::_new(1),
+                    TetVertexIndex::_new(2),
+                    TetVertexIndex::_new(3),
+                    TetVertexIndex::_new(4),
                 ]),
                 &points,
             ),

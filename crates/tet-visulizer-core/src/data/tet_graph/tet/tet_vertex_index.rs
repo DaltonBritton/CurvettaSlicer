@@ -3,7 +3,7 @@ pub struct TetVertexIndex {
     pub(in crate::data::tet_graph) index: usize,
 }
 impl TetVertexIndex {
-    pub(in crate::data::tet_graph) fn new(index: usize) -> Self {
+    pub(in crate::data::tet_graph) fn _new(index: usize) -> Self {
         Self { index }
     }
 

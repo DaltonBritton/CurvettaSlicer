@@ -20,9 +20,9 @@ pub enum MeshFileType {
 }
 
 pub struct MeshFormat {
-    file_version: f64,
-    file_type: MeshFileType,
-    data_size: u8,
+    _file_version: f64,
+    _file_type: MeshFileType,
+    _data_size: u8,
 }
 
 fn parse_format_type<'a, E: ParseError<&'a [u8]>>()
@@ -49,9 +49,9 @@ fn msh_header_line<'a, E: ParseError<&'a [u8]>>()
             line_ending,
         ),
         |(file_version, _, file_type, _, data_size, _)| MeshFormat {
-            file_version,
-            file_type,
-            data_size,
+            _file_version: file_version,
+            _file_type: file_type,
+            _data_size: data_size,
         },
     )
 }
@@ -103,8 +103,8 @@ mod tests {
 
         let (_, header) = parser::<TestErr>().parse_complete(header_data).unwrap();
 
-        assert_eq!(header.file_version, 2.2);
-        assert_eq!(header.file_type, MeshFileType::Ascii);
-        assert_eq!(header.data_size, 8);
+        assert_eq!(header._file_version, 2.2);
+        assert_eq!(header._file_type, MeshFileType::Ascii);
+        assert_eq!(header._data_size, 8);
     }
 }
