@@ -33,5 +33,5 @@ fn read_msh(msh_path: &Path) -> Result<TetGraph, Box<dyn Error>> {
 
     let parser_result = msh_parser::parser::<nom::error::Error<&[u8]>>().parse_complete(&msh_bytes);
     let (_, graph) = parser_result.map_err(|_e| "Failed To Parse msh file")?;
-    Ok(graph)
+    Ok(graph.try_into()?)
 }

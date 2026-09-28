@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, hash::Hash};
 
 use cgmath::Vector3;
 use nom::{
@@ -17,26 +17,33 @@ use nom::{
 
 use crate::msh_parser::block::block;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct NodeId(pub(super) u64);
+
 #[derive(Debug, PartialEq)]
 pub struct Node {
-    id: u64,
+    id: NodeId,
     x: f64,
     y: f64,
     z: f64,
 }
 
 impl Node {
-    fn new(id: u64, x: f64, y: f64, z: f64) -> Self {
+    fn new(id: NodeId, x: f64, y: f64, z: f64) -> Self {
         Self { id, x, y, z }
+    }
+
+    pub fn id(&self) -> NodeId {
+        self.id
     }
 }
 
-impl Into<Vector3<f64>> for Node {
-    fn into(self) -> Vector3<f64> {
+impl From<&Node> for Vector3<f64> {
+    fn from(node: &Node) -> Self {
         Vector3 {
-            x: self.x,
-            y: self.y,
-            z: self.z,
+            x: node.x,
+            y: node.y,
+            z: node.z,
         }
     }
 }
@@ -45,8 +52,8 @@ fn num_nodes<'a, E: ParseError<&'a [u8]>>() -> impl Parser<&'a [u8], Output = u6
     terminated(character::complete::u64, newline)
 }
 
-fn node_id<'a, E: ParseError<&'a [u8]>>() -> impl Parser<&'a [u8], Output = u64, Error = E> {
-    character::complete::u64
+fn node_id<'a, E: ParseError<&'a [u8]>>() -> impl Parser<&'a [u8], Output = NodeId, Error = E> {
+    map(character::complete::u64, |id| NodeId(id))
 }
 
 fn coordinate<'a, E: ParseError<&'a [u8]>>() -> impl Parser<&'a [u8], Output = f64, Error = E> {
@@ -69,25 +76,12 @@ fn node<'a, E: ParseError<&'a [u8]>>() -> impl Parser<&'a [u8], Output = Node, E
     )
 }
 
-fn nodes<'a, E: ParseError<&'a [u8]>>()
--> impl Parser<&'a [u8], Output = HashMap<u64, Node>, Error = E> {
-    num_nodes().flat_map(|n| {
-        let n = n as usize;
-        fold_many_m_n(
-            n,
-            n,
-            node(),
-            move || HashMap::with_capacity(n),
-            |mut map, node: Node| {
-                map.insert(node.id, node);
-                map
-            },
-        )
-    })
+fn nodes<'a, E: ParseError<&'a [u8]>>() -> impl Parser<&'a [u8], Output = Vec<Node>, Error = E> {
+    length_count(num_nodes(), node())
 }
 
-pub fn parser<'a, E: ParseError<&'a [u8]>>()
--> impl Parser<&'a [u8], Output = HashMap<u64, Node>, Error = E> {
+pub fn parser<'a, E: ParseError<&'a [u8]>>() -> impl Parser<&'a [u8], Output = Vec<Node>, Error = E>
+{
     block("Nodes", nodes())
 }
 
