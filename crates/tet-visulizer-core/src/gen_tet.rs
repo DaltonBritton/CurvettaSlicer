@@ -17,7 +17,9 @@ pub fn gen_tet(
         .arg(input_path)
         .arg("-o")
         .arg(output_path)
-        .arg("--no-binary"); // TODO: calc actual epsr ie. espr = resolution / bbox;
+        .arg("-e")
+        .arg("0.001") // TODO: calc actual epsr ie. espr = resolution / bbox;
+        .arg("--no-binary");
 
     tet_wild_cmd
         .output()
