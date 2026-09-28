@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use cgmath::Vector3;
 use nom::{
     Parser,
     character::{
@@ -17,7 +18,7 @@ use nom::{
 use crate::msh_parser::block::block;
 
 #[derive(Debug, PartialEq)]
-struct Node {
+pub struct Node {
     id: u64,
     x: f64,
     y: f64,
@@ -27,6 +28,16 @@ struct Node {
 impl Node {
     fn new(id: u64, x: f64, y: f64, z: f64) -> Self {
         Self { id, x, y, z }
+    }
+}
+
+impl Into<Vector3<f64>> for Node {
+    fn into(self) -> Vector3<f64> {
+        Vector3 {
+            x: self.x,
+            y: self.y,
+            z: self.z,
+        }
     }
 }
 

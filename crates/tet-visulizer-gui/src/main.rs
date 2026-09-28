@@ -12,10 +12,8 @@ pub fn main() {
     let f_tet_wild_bin = std::env::var("fTetWild_bin").expect("Unable to locate fTetWild");
     let f_tet_wild_bin = Path::new(&f_tet_wild_bin);
 
-    let tet_mesh = gen_tet(input_filepath, output_filepath, f_tet_wild_bin)
+    let tet_graph = gen_tet(input_filepath, output_filepath, f_tet_wild_bin)
         .expect("Error Occured while generating tets");
 
-    //let tet_graph = TetGraph::new(&tet_mesh);
-    //
-    //App::new(tet_graph).run();
+    App::new(tet_graph).run();
 }

@@ -1,5 +1,4 @@
 use std::{
-    array,
     collections::{HashMap, hash_map},
     fmt::Display,
 };
@@ -58,9 +57,8 @@ pub struct TetNode {
 }
 
 impl TetNode {
-    fn new(point_indices: [TetVertexIndex; 4], points: &[Vector3<f64>]) -> Self {
-        let tet = Tet::new(point_indices);
-        let center = Self::calculate_center(point_indices, points);
+    fn new(tet: Tet, points: &[Vector3<f64>]) -> Self {
+        let center = Self::calculate_center(tet, points);
 
         Self {
             tet,
@@ -69,11 +67,8 @@ impl TetNode {
         }
     }
 
-    fn calculate_center(
-        point_indices: [TetVertexIndex; 4],
-        points: &[Vector3<f64>],
-    ) -> Vector3<f64> {
-        let sum = point_indices
+    fn calculate_center(tet: Tet, points: &[Vector3<f64>]) -> Vector3<f64> {
+        let sum = tet
             .iter()
             .map(|i| points[i.index])
             .reduce(|acc, p| acc + p)
@@ -133,10 +128,12 @@ pub struct TetGraph {
 }
 
 impl TetGraph {
-    pub fn new(tetgen: &tritet::Tetgen) -> Self {
+    pub fn new(points: Vec<Vector3<f64>>, nodes: &[Tet]) -> Self {
         println!("Computing Graph");
-        let points = Self::read_vertices(&tetgen);
-        let mut nodes = Self::read_tets(&tetgen, &points);
+        let mut nodes = nodes
+            .iter()
+            .map(|tet| TetNode::new(*tet, &points))
+            .collect();
         let (boundary_faces, neighbor_edges) = Self::assosiate_neighbors(&mut nodes);
         println!("Graph Complete");
 
@@ -166,23 +163,6 @@ impl TetGraph {
         println!("Read {} Points!", points.len());
 
         points
-    }
-
-    fn read_tets(tetgen: &tritet::Tetgen, points: &Vec<Vector3<f64>>) -> Vec<TetNode> {
-        let n = tetgen.out_ncell();
-        let mut nodes = Vec::with_capacity(n);
-
-        for tet_i in 0..n {
-            let point_indices: [TetVertexIndex; 4] =
-                array::from_fn(|p_i| TetVertexIndex::new(tetgen.out_cell_point(tet_i, p_i)));
-
-            let node = TetNode::new(point_indices, points);
-            nodes.push(node);
-        }
-
-        println!("Read {} Tets!", nodes.len());
-
-        nodes
     }
 
     fn assosiate_neighbors(
@@ -324,21 +304,21 @@ mod tests {
 
         let mut nodes = vec![
             TetNode::new(
-                [
+                Tet::new([
                     TetVertexIndex::new(0),
                     TetVertexIndex::new(1),
                     TetVertexIndex::new(2),
                     TetVertexIndex::new(3),
-                ],
+                ]),
                 &points,
             ),
             TetNode::new(
-                [
+                Tet::new([
                     TetVertexIndex::new(1),
                     TetVertexIndex::new(2),
                     TetVertexIndex::new(3),
                     TetVertexIndex::new(4),
-                ],
+                ]),
                 &points,
             ),
         ];
