@@ -9,6 +9,7 @@ pub fn gen_tet(
     output_path: &Path,
     f_wild_tet_bin: &Path,
 ) -> Result<TetGraph, Box<dyn Error>> {
+    println!("Generating Tet Graph");
     let mut tet_wild_cmd = Command::new(f_wild_tet_bin);
 
     tet_wild_cmd
@@ -22,7 +23,11 @@ pub fn gen_tet(
         .output()
         .map_err(|_| "TetWild exited unexpectedly")?;
 
+    println!("Finished Generating Tet Graph");
+
+    println!("Reading Tet Graph");
     let graph = read_msh(output_path)?;
+    println!("Finished Tet Graph");
 
     Ok(graph)
 }
