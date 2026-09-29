@@ -1794,6 +1794,7 @@ dependencies = [
  "directories",
  "rand",
  "strum",
+ "strum_macros",
  "tet-visulizer-core",
  "three-d",
 ]

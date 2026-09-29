@@ -1,4 +1,5 @@
 use directories::ProjectDirs;
+use strum::IntoEnumIterator;
 use three_d::{
     Camera, ClearState, ColorMaterial, Context, CpuMesh, Event, FrameOutput, GUI, Gm,
     InstancedMesh, Mesh, MetricSpace, MouseButton, OrbitControl, Viewport, Window, WindowSettings,
@@ -133,23 +134,13 @@ impl App {
                         ComboBox::from_label("Color Mode")
                             .selected_text(format!("{}", &mut self.color_mode))
                             .show_ui(ui, |ui| {
-                                ui.selectable_value(
-                                    &mut self.color_mode,
-                                    ColorMode::Random,
-                                    "Random",
-                                );
-
-                                ui.selectable_value(
-                                    &mut self.color_mode,
-                                    ColorMode::EdgeLength,
-                                    "EdgeLength",
-                                );
-
-                                ui.selectable_value(
-                                    &mut self.color_mode,
-                                    ColorMode::DistToGround,
-                                    "DistToGround",
-                                );
+                                for color_mode in ColorMode::iter() {
+                                    ui.selectable_value(
+                                        &mut self.color_mode,
+                                        color_mode,
+                                        format!("{}", color_mode),
+                                    );
+                                }
                             });
 
                         if self.color_mode != prev_color_mode {

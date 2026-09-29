@@ -1,20 +1,22 @@
 use std::fmt::Display;
 
 use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
 use three_d::{Instances, Srgba};
 
 use tet_visulizer_core::data::{
-    DikstraPath, TetGraph, TetIndex, TetNode, TetVertexId, TwoWayNeighborEdge,
-    compute_dist_to_ground,
+    DikstraPath, FaceDirClassification, TetGraph, TetIndex, TetNode, TetVertexId,
+    TwoWayNeighborEdge, compute_dist_to_ground,
 };
 
 use crate::rendering::{render_object::RenderObject, utils};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, EnumIter)]
 pub enum ColorMode {
     Random,
     EdgeLength,
     DistToGround,
+    FaceDir,
 }
 
 impl Display for ColorMode {
@@ -23,6 +25,7 @@ impl Display for ColorMode {
             ColorMode::Random => "Random",
             ColorMode::EdgeLength => "Edge Length",
             ColorMode::DistToGround => "Dist To Ground",
+            ColorMode::FaceDir => "Face Dir",
         };
 
         f.write_str(color_mode_name)
@@ -35,6 +38,33 @@ impl ColorMode {
             ColorMode::Random => color_random(objects),
             ColorMode::EdgeLength => color_length(tet_graph, objects),
             ColorMode::DistToGround => color_dist_to_ground(tet_graph, objects),
+            ColorMode::FaceDir => color_face_dir(tet_graph, objects),
+        }
+    }
+}
+
+fn color_face_dir(tet_graph: &TetGraph, objects: &mut [RenderObject]) {
+    for obj in objects {
+        match obj {
+            RenderObject::TetBoundarySurface(gm) => {
+                let new_colors = tet_graph
+                    .get_boundary_faces()
+                    .iter()
+                    .map(|(face, tet)| face.get_dir_classification(&tet_graph, *tet))
+                    .map(|dir| match dir {
+                        FaceDirClassification::GroundSupported => Srgba::GREEN,
+                        FaceDirClassification::Overhang => Srgba::RED,
+                        FaceDirClassification::StairStepping => Srgba::BLUE,
+                        FaceDirClassification::TopSurface => Srgba::WHITE,
+                        FaceDirClassification::Wall => Srgba::BLACK,
+                    })
+                    .map(|color| color.into())
+                    .flat_map(|color| [color, color, color])
+                    .collect::<Vec<_>>();
+
+                gm.set_colors(&new_colors).expect("Error Setting Colors");
+            }
+            _ => (),
         }
     }
 }
